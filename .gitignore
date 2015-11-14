@@ -1,0 +1,42 @@
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+
+# Android Studio
+*.iml
+.idea
+
+/gradle
+app/build/
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+*.pro
+*.gradle
+*.properties
+gradlew
+*.bat
+src/test
+src/androidTest
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Windows thumbnail db
+Thumbs.db
+
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/datasources.xml
+.idea/dataSources.ids
+
