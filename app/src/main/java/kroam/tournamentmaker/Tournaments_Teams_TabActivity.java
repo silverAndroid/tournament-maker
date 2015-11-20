@@ -17,7 +17,8 @@ import java.util.List;
 
 
 
-public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment.OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
+public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment
+        .OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -33,6 +34,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(getIntent().getIntExtra("tabNumber", 0));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
