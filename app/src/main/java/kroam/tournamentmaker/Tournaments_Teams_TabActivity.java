@@ -2,19 +2,17 @@ package kroam.tournamentmaker;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment
@@ -40,8 +38,14 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                switch (viewPager.getCurrentItem()) {
+                    case 0:
+                        //add Intent to Activity to send to create tournament
+                        break;
+                    case 1:
+                        //add Intent to Activity to send to create team
+                        break;
+                }
             }
         });
     }
@@ -86,4 +90,5 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
             return mFragmentTitleList.get(position);
         }
 
-    }}
+    }
+}
