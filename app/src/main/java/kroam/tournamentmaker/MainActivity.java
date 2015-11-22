@@ -24,7 +24,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        DatabaseSingleton.createInstance(getApplicationContext());
+
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+*/
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -84,12 +86,12 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.menu_teams:
                 Intent intent = new Intent(getBaseContext(), Tournaments_Teams_TabActivity.class);
-                intent.putExtra("tabNumber", 0);
+                intent.putExtra("tabNumber", 1);
                 startActivity(intent);
                 break;
             case R.id.menu_tournaments:
                 intent = new Intent(getBaseContext(), Tournaments_Teams_TabActivity.class);
-                intent.putExtra("tabNumber", 1);
+                intent.putExtra("tabNumber", 0);
                 startActivity(intent);
                 break;
         }
