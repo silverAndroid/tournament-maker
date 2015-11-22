@@ -9,4 +9,15 @@
     <string name="team_logo_prompt">Team Logo :</string>
     <string name="menu_team">Teams</string>
     <string name="menu_tournament">Tournaments</string>
+    <string name="round_robin">Round Robin</string>
+    <string name="knockout">Knockout</string>
+    <string name="combination">Combination</string>
+    <string name="name_prompt">Name :</string>
+    <string name="tournament_name_hint">Enter Tournament Name</string>
+    <string name="tournament_type_hint">Tournament Type :</string>
+    <string name="select_teams">Select Teams :</string>
+    <string name="now">Now</string>
+    <string name="later">Later</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
 </resources>
