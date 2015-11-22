@@ -8,9 +8,24 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Rushil Perera on 11/20/2015.
  */
 public class DatabaseSingleton extends SQLiteOpenHelper {
-    private static DatabaseSingleton instance;
+
+    public static final String TOURNAMENTS_NAME = "NAME";
+    public static final String TOURNAMENTS_TYPE = "TYPE";
+    public static final String TOURNAMENTS_TEAMS = "TEAMS";
+    public static final String TOURNAMENTS_MAX_SIZE = "SIZE";
+    public static final String TOURNAMENTS_COMPLETED = "FINISHED";
+    public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
+
     private static final String NAME = "TOURNAMENT_DB";
     private static final int VERSION = 1;
+    private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
+            TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
+            TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
+    private static DatabaseSingleton instance;
+
+    private DatabaseSingleton(Context context) {
+        this(context, NAME, null, VERSION);
+    }
 
     /**
      * Create a helper object to create, open, and/or manage a database.
@@ -25,8 +40,8 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
      *                {@link #onUpgrade} will be used to upgrade the database; if the database is
      *                newer, {@link #onDowngrade} will be used to downgrade the database
      */
-    private DatabaseSingleton(Context context) {
-        super(context, NAME, null, VERSION);
+    private DatabaseSingleton(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+        super(context, name, factory, version);
     }
 
     public static DatabaseSingleton getInstance() {
@@ -39,11 +54,12 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(CREATE_TOURNAMENTS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TOURNAMENTS_TABLE);
+        onCreate(db);
     }
 }
