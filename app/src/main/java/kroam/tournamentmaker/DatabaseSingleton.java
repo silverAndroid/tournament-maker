@@ -25,7 +25,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String STATS_TABLE = "STATS";
     public static final String STATS_KEY = "KEY";
     public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
-    public static final String STATS_VALUES = "VALUES";
+    public static final String STATS_VALUES = "KEY_VALUES";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
     private static final int VERSION = 2;
@@ -70,7 +70,8 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     }
 
     public static void createInstance(Context context) {
-        instance = new DatabaseSingleton(context);
+        if (instance == null)
+            instance = new DatabaseSingleton(context);
     }
 
     @Override
