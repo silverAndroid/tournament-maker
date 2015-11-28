@@ -7,14 +7,14 @@ public class Tournament {
 
     private final String name;
     private final String type;
-    private final String[] teams;
+    private final Team[] teams;
     private final int maxSize;
     private boolean completed;
 
-    public Tournament(String name, String type, String[] teams, int maxSize) {
+    public Tournament(String name, String type, Team[] teams, int maxSize) {
         this.name = name;
         this.type = type;
-        this.teams = new String[teams.length];
+        this.teams = new Team[teams.length];
         System.arraycopy(teams, 0, this.teams, 0, teams.length);
         this.maxSize = maxSize;
     }
@@ -31,7 +31,7 @@ public class Tournament {
         return maxSize;
     }
 
-    public String[] getTeams() {
+    public Team[] getTeams() {
         return teams;
     }
 

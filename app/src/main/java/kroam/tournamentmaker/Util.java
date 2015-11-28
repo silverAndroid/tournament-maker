@@ -30,4 +30,7 @@ public class Util {
                 .getString(1)))), new ArrayList<>(Arrays.asList(Util.convertStringToArray(cursor.getString(2)))));
         return stat;
     }
+    public static Team cursorToTeam(Cursor cursor){
+        Team team = new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+    }
 }
