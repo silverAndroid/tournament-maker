@@ -29,3 +29,4 @@ Thumbs.db
 # Android Studio
 *.iml
 build/
+*.zip
