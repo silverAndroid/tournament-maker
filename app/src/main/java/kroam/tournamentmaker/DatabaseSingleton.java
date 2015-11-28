@@ -56,7 +56,8 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     }
 
     public static void createInstance(Context context) {
-        instance = new DatabaseSingleton(context);
+        if (instance == null)
+            instance = new DatabaseSingleton(context);
     }
 
     @Override
