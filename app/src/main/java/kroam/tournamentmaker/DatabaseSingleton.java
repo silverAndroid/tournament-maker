@@ -27,8 +27,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
     private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
-            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + "UNIQUE(" + STATS_KEY + "), FOREIGN KEY(" +
-            TOURNAMENTS_NAME + ") REFERENCES " + TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
+            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + "UNIQUE(" + STATS_KEY + "));";
     private static DatabaseSingleton instance;
 
     private DatabaseSingleton(Context context) {
