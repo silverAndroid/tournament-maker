@@ -15,6 +15,12 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String TOURNAMENTS_MAX_SIZE = "SIZE";
     public static final String TOURNAMENTS_COMPLETED = "FINISHED";
     public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
+    public static final String TEAMS_TABLE = "TEAMS";
+
+    public static final String TEAMS_NAME = "NAME";
+    public static final String TEAMS_CAPTAIN_NAME = "CAPTAIN_NAME";
+    public static final String TEAMS_EMAIL = "CAPTAIN_EMAIL";
+    public static final String TEAMS_PHONE_NUMBER = "PHONE_NUMBER";
 
     public static final String STATS_TABLE = "STATS";
     public static final String STATS_KEY = "KEY";
@@ -23,6 +29,9 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
     private static final int VERSION = 2;
+    private static final String CREATE_TEAMS_TABLE = "CREATE TABLE" + TEAMS_TABLE + "(" +
+            TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME +" TEXT, " + TEAMS_EMAIL + " TEXT, " +
+            TEAMS_PHONE_NUMBER +" INT, UNIQUE ("+ TEAMS_NAME+ "));";
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
@@ -64,6 +73,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_STATS_TABLE);
+        db.execSQL(CREATE_TEAMS_TABLE);
     }
 
     @Override
