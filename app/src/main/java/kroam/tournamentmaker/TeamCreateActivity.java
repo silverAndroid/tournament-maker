@@ -47,19 +47,11 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             /* case R.id.edit_team_logo:
                 team.setLogo(
              */
-            case R.id.edit_team_name:
-                team.setName(name.getText().toString());
-                break;
-            case R.id.edit_captain_name:
-                team.setCaptainName(captainName.getText().toString());
-                break;
-            case R.id.edit_email:
-                team.setCaptainEmail(email.getText().toString());
-                break;
-            case R.id.edit_phone:
-                team.setPhoneNumber(Integer.parseInt(phoneNumber.getText().toString()));
-                break;
             case R.id.btn_confirm:
+                team.setName(name.getText().toString());
+                team.setCaptainName(captainName.getText().toString());
+                team.setCaptainEmail(email.getText().toString());
+                team.setPhoneNumber(Integer.parseInt(phoneNumber.getText().toString()));
                 teamData.createTeam(team);
                 break;
             case R.id.btn_cancel:
