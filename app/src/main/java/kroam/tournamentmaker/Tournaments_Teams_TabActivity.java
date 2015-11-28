@@ -1,5 +1,6 @@
 package kroam.tournamentmaker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -41,6 +42,8 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
                 switch (viewPager.getCurrentItem()) {
                     case 0:
                         //add Intent to Activity to send to create tournament
+                        Intent intent = new Intent(Tournaments_Teams_TabActivity.this, TournamentCreateActivity.class);
+                        startActivity(intent);
                         break;
                     case 1:
                         //add Intent to Activity to send to create team
