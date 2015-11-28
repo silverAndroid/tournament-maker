@@ -19,7 +19,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String STATS_TABLE = "STATS";
     public static final String STATS_KEY = "KEY";
     public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
-    public static final String STATS_VALUES = "VALUES";
+    public static final String STATS_VALUES = "KEY_VALUES";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
     private static final int VERSION = 2;
