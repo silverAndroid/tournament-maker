@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Rushil Perera on 11/22/2015.
@@ -30,7 +29,7 @@ public class TournamentsDataSource {
         ContentValues values = new ContentValues();
         values.put(columns[0], tournament.getName());
         values.put(columns[1], tournament.getType());
-        values.put(columns[2], convertArrayToString(tournament.getTeams()));
+        values.put(columns[2], Util.convertArrayToString(tournament.getTeams()));
         values.put(columns[3], tournament.getMaxSize());
         values.put(columns[4], tournament.isCompleted() ? 1 : 0);
         database.insertOrThrow(DatabaseSingleton.TOURNAMENTS_TABLE, null, values);
@@ -44,7 +43,7 @@ public class TournamentsDataSource {
         Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
-                Tournament tournament = cursorToTournament(cursor);
+                Tournament tournament = Util.cursorToTournament(cursor);
                 tournaments.add(tournament);
             } while (cursor.moveToNext());
         }
@@ -52,22 +51,7 @@ public class TournamentsDataSource {
         return tournaments;
     }
 
-    private Tournament cursorToTournament(Cursor cursor) {
-        Tournament tournament = new Tournament(cursor.getString(0), cursor.getColumnName(1), convertStringToArray
-                (cursor.getString(2)), cursor.getInt(3));
-        tournament.setCompleted(cursor.getInt(4) == 1);
-        return tournament;
-    }
-
     private void close() {
-        DatabaseSingleton.getInstance().close();
-    }
-
-    private String convertArrayToString(Object[] array) {
-        return Arrays.toString(array);
-    }
-
-    private String[] convertStringToArray(String arrayString) {
-        return arrayString.replace("[", "").replace("]", "").split(", ");
+        database.close();
     }
 }
