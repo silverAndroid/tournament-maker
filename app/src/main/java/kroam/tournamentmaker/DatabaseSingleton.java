@@ -16,11 +16,19 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String TOURNAMENTS_COMPLETED = "FINISHED";
     public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
 
-    private static final String NAME = "TOURNAMENT_DB";
-    private static final int VERSION = 1;
+    public static final String STATS_TABLE = "STATS";
+    public static final String STATS_KEY = "KEY";
+    public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
+    public static final String STATS_VALUES = "VALUES";
+
+    private static final String NAME = "TOURNAMENT_MAKER_DB";
+    private static final int VERSION = 2;
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
+    private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
+            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + "UNIQUE(" + STATS_KEY + "), FOREIGN KEY(" +
+            TOURNAMENTS_NAME + ") REFERENCES " + TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
     private static DatabaseSingleton instance;
 
     private DatabaseSingleton(Context context) {
@@ -55,11 +63,13 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
+        db.execSQL(CREATE_STATS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TOURNAMENTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_STATS_TABLE);
         onCreate(db);
     }
 }
