@@ -85,6 +85,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TOURNAMENTS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_STATS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS" + CREATE_TEAMS_TABLE);
         onCreate(db);
     }
 }
