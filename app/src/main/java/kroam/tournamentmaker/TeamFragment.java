@@ -32,12 +32,8 @@ public class TeamFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
-    public static TeamFragment newInstance(String param1, String param2) {
+    public static TeamFragment newInstance() {
         TeamFragment fragment = new TeamFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
