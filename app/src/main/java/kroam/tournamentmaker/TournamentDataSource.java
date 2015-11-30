@@ -9,18 +9,18 @@ import java.util.ArrayList;
 /**
  * Created by Rushil Perera on 11/22/2015.
  */
-public class TournamentsDataSource {
+public class TournamentDataSource {
 
-    private static TournamentsDataSource instance = new TournamentsDataSource();
+    private static TournamentDataSource instance = new TournamentDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TOURNAMENTS_NAME, DatabaseSingleton.TOURNAMENTS_TYPE,
             DatabaseSingleton.TOURNAMENTS_TEAMS, DatabaseSingleton.TOURNAMENTS_MAX_SIZE, DatabaseSingleton
             .TOURNAMENTS_COMPLETED};
 
-    private TournamentsDataSource() {
+    private TournamentDataSource() {
     }
 
-    public static TournamentsDataSource getInstance() {
+    public static TournamentDataSource getInstance() {
         return instance;
     }
 
