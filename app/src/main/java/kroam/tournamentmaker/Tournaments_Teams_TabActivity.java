@@ -103,7 +103,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_ADDED) {
             TournamentFragment.getInstance().setListAdapter(new ArrayAdapter<>(this, android.R.layout
-                    .simple_list_item_1, android.R.id.text1, TournamentsDataSource.getInstance().getTournaments()));
+                    .simple_list_item_1, android.R.id.text1, TournamentDataSource.getInstance().getTournaments()));
         }
     }
 }

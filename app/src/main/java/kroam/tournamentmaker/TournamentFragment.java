@@ -1,6 +1,5 @@
 package kroam.tournamentmaker;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -62,7 +61,7 @@ public class TournamentFragment extends ListFragment {
 
         // TODO: Change Adapter to display your content
         setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TournamentsDataSource.getInstance().getTournaments()));
+                TournamentDataSource.getInstance().getTournaments()));
     }
 
 

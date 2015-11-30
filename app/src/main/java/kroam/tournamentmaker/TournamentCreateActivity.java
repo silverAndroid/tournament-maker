@@ -86,7 +86,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                         selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
                 Tournament tournament = new Tournament(name.getText().toString(), tournamentType, new ArrayList<Team>(),
                         sizePicker.getValue());
-                TournamentsDataSource.getInstance().createTournament(tournament);
+                TournamentDataSource.getInstance().createTournament(tournament);
 
                 Intent returnIntent = new Intent();
                 setResult(1, returnIntent);
