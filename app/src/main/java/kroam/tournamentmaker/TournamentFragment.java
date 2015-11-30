@@ -1,13 +1,14 @@
 package kroam.tournamentmaker;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 
 import kroam.tournamentmaker.dummy.DummyContent;
 
@@ -30,22 +31,24 @@ public class TournamentFragment extends ListFragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    // TODO: Rename and change types of parameters
-    public static TournamentFragment newInstance(String param1, String param2) {
-        TournamentFragment fragment = new TournamentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private static TournamentFragment instance;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public TournamentFragment() {
+    }
+
+    // TODO: Rename and change types of parameters
+    public static TournamentFragment newInstance() {
+        TournamentFragment fragment = new TournamentFragment();
+        instance = fragment;
+        return fragment;
+    }
+
+    public static TournamentFragment getInstance() {
+        return instance;
     }
 
     @Override
@@ -58,18 +61,18 @@ public class TournamentFragment extends ListFragment {
         }
 
         // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
+                TournamentsDataSource.getInstance().getTournaments()));
     }
 
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
