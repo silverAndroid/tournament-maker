@@ -1,5 +1,7 @@
 package kroam.tournamentmaker;
 
+import java.util.ArrayList;
+
 /**
  * Created by Rushil Perera on 11/21/2015.
  */
@@ -7,15 +9,15 @@ public class Tournament {
 
     private final String name;
     private final String type;
-    private final Team[] teams;
+    private final ArrayList<Team> teams;
     private final int maxSize;
     private boolean completed;
 
-    public Tournament(String name, String type, Team[] teams, int maxSize) {
+    public Tournament(String name, String type, ArrayList<Team> teams, int maxSize) {
         this.name = name;
         this.type = type;
-        this.teams = new Team[teams.length];
-        System.arraycopy(teams, 0, this.teams, 0, teams.length);
+        this.teams = new ArrayList<>(teams.size());
+        this.teams.addAll(teams);
         this.maxSize = maxSize;
     }
 
@@ -31,7 +33,7 @@ public class Tournament {
         return maxSize;
     }
 
-    public Team[] getTeams() {
+    public ArrayList<Team> getTeams() {
         return teams;
     }
 
