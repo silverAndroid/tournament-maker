@@ -15,8 +15,8 @@
     <string name="name_prompt">Name :</string>
     <string name="tournament_name_hint">Enter Tournament Name</string>
     <string name="tournament_type_hint">Tournament Type :</string>
-    <string name="select_teams">Select Teams :</string>
-    <string name="now">Now</string>
+    <string name="select_teams_prompt">Select Teams (optional):</string>
+    <string name="select_teams">Select Teams…</string>
     <string name="later">Later</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
