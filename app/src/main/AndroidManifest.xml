@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="kroam.tournamentmaker"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="kroam.tournamentmaker"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
         android:allowBackup="true"
@@ -18,18 +19,20 @@
             android:name=".Tournaments_Teams_TabActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-            android:name=".Schedule_Result_TabActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Schedule_Result_TabActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity android:name=".TournamentCreateActivity">
+        </activity>
+        <activity android:name=".TeamCreateActivity">
         </activity>
     </application>
 
