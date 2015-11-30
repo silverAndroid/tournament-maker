@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private static int RESULT_ADDED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,8 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
         tabLayout.setupWithViewPager(viewPager);
         viewPager.setCurrentItem(getIntent().getIntExtra("tabNumber", 0));
 
+        DatabaseSingleton.createInstance(getApplicationContext());
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,7 +47,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
                     case 0:
                         //add Intent to Activity to send to create tournament
                         Intent intent = new Intent(Tournaments_Teams_TabActivity.this, TournamentCreateActivity.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, RESULT_ADDED);
                         break;
                     case 1:
                         //add Intent to Activity to send to create team
@@ -55,8 +59,8 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new TournamentFragment(), "Tournaments");
-        adapter.addFragment(new TeamFragment(), "Teams");
+        adapter.addFragment(TournamentFragment.newInstance(), "Tournaments");
+        adapter.addFragment(TeamFragment.newInstance(), "Teams");
         viewPager.setAdapter(adapter);
     }
 
@@ -93,5 +97,13 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
             return mFragmentTitleList.get(position);
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_ADDED) {
+            TournamentFragment.getInstance().setListAdapter(new ArrayAdapter<>(this, android.R.layout
+                    .simple_list_item_1, android.R.id.text1, TournamentsDataSource.getInstance().getTournaments()));
+        }
     }
 }
