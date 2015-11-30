@@ -13,7 +13,6 @@ import android.widget.ImageButton;
  */
 public class TeamCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TeamDataSource teamData;
     Team team;
     EditText name;
     EditText captainName;
@@ -48,11 +47,9 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                 team.setLogo(
              */
             case R.id.btn_confirm:
-                team.setName(name.getText().toString());
-                team.setCaptainName(captainName.getText().toString());
-                team.setCaptainEmail(email.getText().toString());
-                team.setPhoneNumber(Integer.parseInt(phoneNumber.getText().toString()));
-                teamData.createTeam(team);
+                team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText().toString
+                        (), Integer.parseInt(phoneNumber.getText().toString()));
+                TeamDataSource.getInstance().createTeam(team);
                 break;
             case R.id.btn_cancel:
                 finish();
