@@ -121,31 +121,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_marginLeft="30dp"
-                    android:text="@string/select_teams"
+                    android:text="@string/select_teams_prompt"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/btn_select_teams"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:text="@string/select_teams"/>
 
-                    <Button
-                        android:id="@+id/btn_selectnow"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:height="60dp"
-                        android:text="@string/now"/>
-
-                    <Button
-                        android:id="@+id/btn_selectlater"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:height="60dp"
-                        android:text="@string/later"/>
-                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/selected_teams"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
 
