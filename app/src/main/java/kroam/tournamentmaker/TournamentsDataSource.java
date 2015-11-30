@@ -29,7 +29,7 @@ public class TournamentsDataSource {
         ContentValues values = new ContentValues();
         values.put(columns[0], tournament.getName());
         values.put(columns[1], tournament.getType());
-        values.put(columns[2], Util.convertArrayToString(tournament.getTeams()));
+        values.put(columns[2], tournament.getTeams().toString());
         values.put(columns[3], tournament.getMaxSize());
         values.put(columns[4], tournament.isCompleted() ? 1 : 0);
         database.insertOrThrow(DatabaseSingleton.TOURNAMENTS_TABLE, null, values);
