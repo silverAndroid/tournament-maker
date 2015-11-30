@@ -41,20 +41,22 @@ public class StatsDataSource {
         SQLiteStatement statement = database.compileStatement(query);
         database.beginTransaction();
         for (Stat stat : stats) {
-            statement.bindString(0, stat.getKey());
-            statement.bindString(0, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(0, Util.convertArrayToString(stat.getValues().toArray()));
-            long id = statement.executeInsert();
-            if (id == -1) {
-                Cursor cursor = database.query(DatabaseSingleton.STATS_TABLE, columns, DatabaseSingleton.STATS_KEY +
-                        "=?", new String[]{stat.getKey()}, null, null, null);
+            statement.bindString(1, stat.getKey());
+            statement.bindString(2, Util.convertArrayToString(stat.getTournamentNames().toArray()));
+            statement.bindString(3, Util.convertArrayToString(stat.getValues().toArray()));
+            Cursor cursor = database.query(DatabaseSingleton.STATS_TABLE, columns, DatabaseSingleton.STATS_KEY
+                    + " = ?", new String[]{stat.getKey()}, null, null, null);
+            if (cursor.moveToFirst()) {
                 String newTournamentNames = cursor.getString(1);
                 String newValues = cursor.getString(2);
-                statement.bindString(1, cursor.getString(1) + newTournamentNames);
-                statement.bindString(2, cursor.getString(2) + newValues);
-                statement.executeUpdateDelete();
-                cursor.close();
+                query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'" + newTournamentNames
+                        + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2] + "=\'" +
+                        newValues + Util.convertArrayToString(stat.getValues().toArray()) + "\';";
+                database.execSQL(query);
+            } else {
+                statement.executeInsert();
             }
+            cursor.close();
         }
         database.setTransactionSuccessful();
         database.endTransaction();
@@ -78,6 +80,7 @@ public class StatsDataSource {
     public void deleteStat(String key) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
         database.delete(DatabaseSingleton.STATS_TABLE, DatabaseSingleton.STATS_KEY + "=?", new String[]{key});
+        close();
     }
 
     private void close() {
