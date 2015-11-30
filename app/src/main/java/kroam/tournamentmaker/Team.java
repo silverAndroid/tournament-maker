@@ -8,12 +8,14 @@ public class Team {
     private String captainName;
     private String captainEmail;
     private int phoneNumber;
+    private int selected;
 
     public Team(String name, String captainName, String captainEmail, int phoneNumber) {
         this.name = name;
         this.captainName = captainName;
         this.captainEmail = captainEmail;
         this.phoneNumber = phoneNumber;
+        selected = -1;
     }
 
     public String getName() {return name;}
@@ -35,5 +37,13 @@ public class Team {
     @Override
     public String toString() {
         return name;
+    }
+
+    public int isSelected() {
+        return selected;
+    }
+
+    public void setSelected(int selected) {
+        this.selected = selected;
     }
 }
