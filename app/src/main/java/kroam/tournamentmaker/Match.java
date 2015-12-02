@@ -7,6 +7,7 @@ public class Match {
     private final Team homeTeam;
     private final Team awayTeam;
     private boolean completed;
+    private Tournament associatedTournament;
 
     public Match(Team team1, Team team2) {
         homeTeam = team1;
@@ -27,5 +28,13 @@ public class Match {
 
     public Team getAwayTeam() {
         return awayTeam;
+    }
+
+    public Tournament getAssociatedTournament() {
+        return associatedTournament;
+    }
+
+    public void setAssociatedTournament(Tournament associatedTournament) {
+        this.associatedTournament = associatedTournament;
     }
 }
