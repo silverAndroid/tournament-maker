@@ -12,6 +12,7 @@ public class Tournament {
     private final String type;
     private final ArrayList<Team> teams;
     private final int maxSize;
+    private boolean registrationClosed;
     private boolean completed;
 
     public Tournament(String name, String type, ArrayList<Team> teams, int maxSize) {
@@ -49,5 +50,13 @@ public class Tournament {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean isRegistrationClosed() {
+        return registrationClosed;
+    }
+
+    public void setRegistrationClosed(boolean registrationClosed) {
+        this.registrationClosed = registrationClosed;
     }
 }

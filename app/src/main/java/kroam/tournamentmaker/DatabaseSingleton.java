@@ -14,9 +14,10 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String TOURNAMENTS_TEAMS = "TEAMS";
     public static final String TOURNAMENTS_MAX_SIZE = "SIZE";
     public static final String TOURNAMENTS_COMPLETED = "FINISHED";
+    public static final String TOURNAMENTS_CLOSED = "REGISTRATION_CLOSED";
     public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
-    public static final String TEAMS_TABLE = "TEAMS";
 
+    public static final String TEAMS_TABLE = "TEAMS";
     public static final String TEAMS_NAME = "NAME";
     public static final String TEAMS_CAPTAIN_NAME = "CAPTAIN_NAME";
     public static final String TEAMS_EMAIL = "CAPTAIN_EMAIL";
@@ -34,7 +35,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String MATCHES_COMPLETED = "COMPLETED";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 4;
+    private static final int VERSION = 5;
 
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
@@ -42,7 +43,8 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
-            TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
+            TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, " + TOURNAMENTS_CLOSED + " INT, " +
+            "UNIQUE(" + TOURNAMENTS_NAME + "));";
 
     private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
             STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + STATS_WIN + " TEXT, " + "UNIQUE(" +

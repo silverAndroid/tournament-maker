@@ -51,6 +51,7 @@ public class Util {
         Tournament tournament = new Tournament(cursor.getString(0), cursor.getString(1), Util
                 .convertStringtoTeamArray(cursor.getString(2)), cursor.getInt(3));
         tournament.setCompleted(cursor.getInt(4) == 1);
+        tournament.setRegistrationClosed(cursor.getInt(5) == 1);
         return tournament;
     }
 

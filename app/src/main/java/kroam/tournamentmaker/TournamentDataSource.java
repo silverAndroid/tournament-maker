@@ -15,7 +15,7 @@ public class TournamentDataSource {
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TOURNAMENTS_NAME, DatabaseSingleton.TOURNAMENTS_TYPE,
             DatabaseSingleton.TOURNAMENTS_TEAMS, DatabaseSingleton.TOURNAMENTS_MAX_SIZE, DatabaseSingleton
-            .TOURNAMENTS_COMPLETED};
+            .TOURNAMENTS_COMPLETED, DatabaseSingleton.TOURNAMENTS_CLOSED};
 
     private TournamentDataSource() {
     }
@@ -32,6 +32,7 @@ public class TournamentDataSource {
         values.put(columns[2], tournament.getTeams().toString());
         values.put(columns[3], tournament.getMaxSize());
         values.put(columns[4], tournament.isCompleted() ? 1 : 0);
+        values.put(columns[5], tournament.isRegistrationClosed() ? 1 : 0);
         database.insertOrThrow(DatabaseSingleton.TOURNAMENTS_TABLE, null, values);
         close();
         return tournament;
