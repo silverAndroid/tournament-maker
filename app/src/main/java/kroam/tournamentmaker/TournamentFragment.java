@@ -60,7 +60,6 @@ public class TournamentFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
         setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
                 TournamentDataSource.getInstance().getTournaments()));
     }
@@ -95,7 +94,7 @@ public class TournamentFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
         Intent intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
-        intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position));
+        intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position).getName());
         startActivity(intent);
     }
 
