@@ -89,7 +89,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 TournamentDataSource.getInstance().createTournament(tournament);
 
                 Intent returnIntent = new Intent();
-                setResult(1, returnIntent);
+                setResult(RESULT_OK, returnIntent);
                 finish();
                 break;
             case R.id.btn_cancel:
@@ -105,9 +105,9 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                             public void onClick(DialogInterface dialog, int which) {
                                 RecyclerView teamNameList = (RecyclerView) findViewById(R.id
                                         .selected_teams);
-                                teamNameList.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                                teamNameList.setAdapter(new ViewTeamsAdapter(adapter[0].getTeams
-                                        ()));
+                                teamNameList.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager
+                                        (getBaseContext()));
+                                teamNameList.setAdapter(new ViewTeamsAdapter(adapter[0].getSelectedTeams()));
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -129,7 +129,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(getBaseContext(), TeamCreateActivity.class);
-                                startActivityForResult(intent, RESULT_OK);
+                                startActivityForResult(intent, Util.TEAM_REQUEST_CODE);
                             }
                         });
                     }
@@ -141,9 +141,11 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.selected_teams);
-            selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+        if (requestCode == Util.TEAM_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
+                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+            }
         }
     }
 }
