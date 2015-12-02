@@ -38,9 +38,9 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ScheduleFragment(), "Schedule");
-        adapter.addFragment(new ResultFragment(), "Results");
-        adapter.addFragment(new RankingFragment(), "Rankings");
+        adapter.addFragment(ScheduleFragment.newInstance(), "Schedule");
+        adapter.addFragment(ResultFragment.newInstance(), "Results");
+        adapter.addFragment(RankingFragment.newInstance(), "Rankings");
         viewPager.setAdapter(adapter);
     }
 
