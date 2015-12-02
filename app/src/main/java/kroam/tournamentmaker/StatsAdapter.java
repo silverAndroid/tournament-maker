@@ -3,7 +3,6 @@ package kroam.tournamentmaker;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +17,24 @@ import java.util.ArrayList;
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHolder> {
 
     private ArrayList<Stat> stats;
+    private String tournamentName;
 
     public StatsAdapter() {
         stats = new ArrayList<>();
         stats.add(new Stat());
+    }
+
+    public StatsAdapter(String tournamentName) {
+        stats = new ArrayList<>();
+        Stat emptyStat = new Stat();
+        emptyStat.addTournamentName(tournamentName);
+        this.tournamentName = tournamentName;
+        stats.add(emptyStat);
+    }
+
+    public StatsAdapter(ArrayList<Stat> stats) {
+        this.stats = new ArrayList<>();
+        this.stats.addAll(stats);
     }
 
     @Override
@@ -36,10 +49,12 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
         holder.stat.setText(stat.getKey());
         holder.stat.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable newText) {
@@ -48,13 +63,26 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
         });
     }
 
+    public void setTournamentName(String name) {
+        tournamentName = name;
+        for (Stat stat : stats) {
+            stat.addTournamentName(name);
+        }
+    }
+
     @Override
     public int getItemCount() {
         return stats.size();
     }
 
     public void addItem() {
-        stats.add(new Stat());
+        if (tournamentName == null)
+            stats.add(new Stat());
+        else {
+            Stat stat = new Stat();
+            stat.addTournamentName(tournamentName);
+            stats.add(stat);
+        }
         notifyItemInserted(stats.size());
     }
 
