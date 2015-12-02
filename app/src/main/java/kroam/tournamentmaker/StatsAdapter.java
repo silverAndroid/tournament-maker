@@ -46,12 +46,6 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
                 stats.set(position, new Stat(newText.toString()));
             }
         });
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteItem(stat);
-            }
-        });
     }
 
     @Override
@@ -64,13 +58,16 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
         notifyItemInserted(stats.size());
     }
 
-    public void deleteItem(Stat stat) {
-        int position = stats.indexOf(stat);
+    public void deleteItem(int position) {
         stats.remove(position);
         notifyItemRemoved(position);
     }
 
     public ArrayList<Stat> getItems() {
+        for (Stat stat : stats) {
+            if (stat.getKey().equals(""))
+                stats.remove(stat);
+        }
         return stats;
     }
 
@@ -82,6 +79,12 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
             super(view);
             stat = (EditText) view.findViewById(R.id.stat);
             delete = (ImageButton) view.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(getAdapterPosition());
+                }
+            });
         }
     }
 }
