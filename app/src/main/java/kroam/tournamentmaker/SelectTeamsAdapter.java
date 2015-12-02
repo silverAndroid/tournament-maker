@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 
@@ -36,11 +37,11 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         return teams.size();
     }
 
-    public ArrayList<String> getTeams() {
-        ArrayList<String> selectedTeams = new ArrayList<>();
+    public ArrayList<Team> getSelectedTeams() {
+        ArrayList<Team> selectedTeams = new ArrayList<>();
         for (Team team : teams) {
             if (team.isSelected() == 1) {
-                selectedTeams.add(team.getName());
+                selectedTeams.add(team);
             }
         }
         return selectedTeams;
@@ -58,7 +59,12 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
                 @Override
                 public void onClick(View v) {
                     chkTeam.setChecked(!chkTeam.isChecked());
-                    team.setSelected(chkTeam.isChecked() ? 1 : 0);
+                }
+            });
+            chkTeam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    team.setSelected(isChecked ? 1 : 0);
                 }
             });
         }
