@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
  * Created by Rushil Perera on 11/23/2015.
  */
 public class StatsDataSource {
+    private static final String TAG = "STATSDATA";
     private static StatsDataSource instance = new StatsDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.STATS_KEY, DatabaseSingleton.STATS_TOURNAMENT_NAMES,
@@ -50,8 +52,9 @@ public class StatsDataSource {
                 String newTournamentNames = cursor.getString(1);
                 String newValues = cursor.getString(2);
                 query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'" + newTournamentNames
-                        + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2] + "=\'" +
-                        newValues + Util.convertArrayToString(stat.getValues().toArray()) + "\';";
+                        + ", " + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2]
+                        + "=\'" + newValues + (newValues.isEmpty() || stat.getValues().isEmpty() ? "" : ", ") + Util
+                        .convertArrayToString(stat.getValues().toArray()) + "\';";
                 database.execSQL(query);
             } else {
                 statement.executeInsert();
@@ -61,6 +64,22 @@ public class StatsDataSource {
         database.setTransactionSuccessful();
         database.endTransaction();
         close();
+    }
+
+    public ArrayList<Stat> getTournamentStats(String name) {
+        ArrayList<Stat> stats = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        String query = "SELECT * FROM " + DatabaseSingleton.STATS_TABLE + " LIKE \'%?%\'";
+        Log.i(TAG, "getTournamentStats: " + query);
+        Cursor cursor = database.rawQuery(query, new String[]{name});
+        if (cursor.moveToFirst()) {
+            do {
+                Stat stat = Util.cursorToStat(cursor);
+                stats.add(stat);
+            } while (cursor.moveToNext());
+        }
+        close();
+        return stats;
     }
 
     public void updateStats(ArrayList<Stat> stats) {
