@@ -32,11 +32,11 @@ public class RankingFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
-    public static RankingFragment newInstance(String param1, String param2) {
+    public static RankingFragment newInstance(/*String param1, String param2*/) {
         RankingFragment fragment = new RankingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        /*args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }

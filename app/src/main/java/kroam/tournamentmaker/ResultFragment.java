@@ -34,11 +34,11 @@ public class ResultFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
-    public static ResultFragment newInstance(String param1, String param2) {
+    public static ResultFragment newInstance(/*String param1, String param2*/) {
         ResultFragment fragment = new ResultFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        /*args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }
