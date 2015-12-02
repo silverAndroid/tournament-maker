@@ -1,6 +1,6 @@
 package kroam.tournamentmaker;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -20,22 +20,8 @@ import kroam.tournamentmaker.dummy.DummyContent;
  */
 public class TeamFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+    private static TeamFragment instance;
     private OnFragmentInteractionListener mListener;
-
-    // TODO: Rename and change types of parameters
-    public static TeamFragment newInstance() {
-        TeamFragment fragment = new TeamFragment();
-        return fragment;
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,28 +30,32 @@ public class TeamFragment extends ListFragment {
     public TeamFragment() {
     }
 
+    public static TeamFragment newInstance() {
+        TeamFragment fragment = new TeamFragment();
+        instance = fragment;
+        return fragment;
+    }
+
+    public static TeamFragment getInstance() {
+        return instance;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
+                TeamDataSource.getInstance().getTeams()));
     }
 
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -90,7 +80,7 @@ public class TeamFragment extends ListFragment {
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+//            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
         }
     }
 
