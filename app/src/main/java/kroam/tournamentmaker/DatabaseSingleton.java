@@ -26,20 +26,32 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String STATS_KEY = "KEY";
     public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
     public static final String STATS_VALUES = "KEY_VALUES";
+    public static final String STATS_WIN = "WIN_CHECK";
+
+    public static final String MATCHES_TABLE = "SCHEDULE";
+    public static final String MATCHES_TEAM_1 = "TEAM_1";
+    public static final String MATCHES_TEAM_2 = "TEAM_2";
+    public static final String MATCHES_COMPLETED = "COMPLETED";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 3;
+    private static final int VERSION = 4;
 
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
-            TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME +" TEXT, " + TEAMS_EMAIL + " TEXT, " +
-            TEAMS_PHONE_NUMBER +" INT, UNIQUE ("+ TEAMS_NAME+ "));";
+            TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
+            TEAMS_PHONE_NUMBER + " INT, UNIQUE (" + TEAMS_NAME + "));";
 
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, UNIQUE(" + TOURNAMENTS_NAME + "));";
 
     private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
-            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + "UNIQUE(" + STATS_KEY + "));";
+            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + STATS_WIN + " TEXT, " + "UNIQUE(" +
+            STATS_KEY + "));";
+
+    private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
+            "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, FOREIGN KEY(" + MATCHES_TEAM_1 + "," +
+            " " + MATCHES_TEAM_2 + ") REFERENCES " + TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + ", " +
+            TOURNAMENTS_NAME + "));";
 
     private static DatabaseSingleton instance;
 
@@ -78,13 +90,15 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_STATS_TABLE);
         db.execSQL(CREATE_TEAMS_TABLE);
+        db.execSQL(CREATE_MATCHES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TOURNAMENTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_STATS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS" + CREATE_TEAMS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TOURNAMENTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + STATS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + MATCHES_TABLE);
         onCreate(db);
     }
 }
