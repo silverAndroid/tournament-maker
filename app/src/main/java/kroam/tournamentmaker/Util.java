@@ -11,6 +11,9 @@ import java.util.Arrays;
  */
 public class Util {
 
+    public static final int TOURNAMENT_REQUEST_CODE = 0;
+    public static final int TEAM_REQUEST_CODE = 1;
+
     public static String convertArrayToString(Object[] array) {
         return Arrays.toString(array).replace("[", "").replace("]", "");
     }
@@ -58,5 +61,12 @@ public class Util {
 
     public static Team cursorToTeam(Cursor cursor) {
         return new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+    }
+
+    public static Match cursorToMatch(Cursor cursor) {
+        TeamDataSource teamDatabase = TeamDataSource.getInstance();
+        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
+        match.setCompleted(cursor.getInt(2) == 1);
+        return null;
     }
 }
