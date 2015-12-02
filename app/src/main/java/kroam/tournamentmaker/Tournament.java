@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * Created by Rushil Perera on 11/21/2015.
  */
-public class Tournament implements Serializable {
+public class Tournament {
 
     private final String name;
     private final String type;
