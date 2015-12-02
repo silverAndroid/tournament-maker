@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 /**
  * Created by Rushil Perera on 11/24/2015.
@@ -69,5 +72,16 @@ public class Util {
         Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
         match.setCompleted(cursor.getInt(2) == 1);
         return null;
+    }
+    /*
+    * Instantiates Matches with randomly matched teams that are in <code>tournament</code>.
+    * */
+    public static void generateMatches(Tournament tournament){
+        ArrayList<Team> teams = TeamDataSource.getInstance().getTeamFromTournament(tournament.getName());
+        Collections.shuffle(teams);
+        Iterator<Team> teamIterator = teams.listIterator();
+        while(teamIterator.hasNext()){
+            MatchDataSource.getInstance().createMatch(new Match(teamIterator.next(), teamIterator.next()));
+        }
     }
 }

@@ -11,6 +11,8 @@ public class Match {
     public Match(Team team1, Team team2) {
         homeTeam = team1;
         awayTeam = team2;
+        if(team2 == null)       //Ocean:    Implementation added for the creation of Matches (see Util::generateMatches(Tournament))
+            completed = true;   //          homeTeam should not be given a win in this case
     }
 
     public boolean isCompleted() {

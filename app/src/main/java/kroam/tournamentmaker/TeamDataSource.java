@@ -49,6 +49,19 @@ public class TeamDataSource {
         return Teams;
     }
 
+    public ArrayList<Team> getTeamFromTournament(String tournamentName){
+        ArrayList<Team> teams = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[2] + "=?", new
+        String[]{tournamentName}, null, null, null);
+        if(cursor.moveToFirst()){
+                Tournament tournament = Util.cursorToTournament(cursor);
+                teams.addAll(tournament.getTeams());
+        }
+        close();
+        return teams;
+    }
+
     private void close() {
         database.close();
     }
