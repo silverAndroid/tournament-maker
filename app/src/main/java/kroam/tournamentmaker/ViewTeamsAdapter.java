@@ -13,9 +13,9 @@ import java.util.ArrayList;
  */
 public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.ViewTeamHolder> {
 
-    private ArrayList<String> teamNames;
+    private ArrayList<Team> teamNames;
 
-    public ViewTeamsAdapter(ArrayList<String> teamNames) {
+    public ViewTeamsAdapter(ArrayList<Team> teamNames) {
         this.teamNames = new ArrayList<>();
         this.teamNames.addAll(teamNames);
     }
@@ -29,7 +29,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewTeamHolder holder, int position) {
-        holder.teamName.setText(teamNames.get(position));
+        holder.teamName.setText(teamNames.get(position).getName());
     }
 
     @Override
