@@ -38,6 +38,19 @@ public class TournamentDataSource {
         return tournament;
     }
 
+    public ArrayList<Team> getTeamsFromTournament(String tournamentName) {
+        ArrayList<Team> teams = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[2] + "=?", new
+                String[]{tournamentName}, null, null, null);
+        if (cursor.moveToFirst()) {
+            Tournament tournament = Util.cursorToTournament(cursor);
+            teams.addAll(tournament.getTeams());
+        }
+        close();
+        return teams;
+    }
+
     public ArrayList<Tournament> getTournaments() {
         ArrayList<Tournament> tournaments = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();

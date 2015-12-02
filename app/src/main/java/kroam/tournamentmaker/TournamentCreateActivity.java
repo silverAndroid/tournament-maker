@@ -16,8 +16,6 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import java.util.ArrayList;
-
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String ROUND_ROBIN = "Round Robin";
@@ -66,6 +64,9 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
 
         selectTeams = (Button) findViewById(R.id.btn_select_teams);
         selectTeams.setOnClickListener(this);
+        if (getIntent().hasExtra("name")) {
+            String name = getIntent().getStringExtra("name");
+        }
     }
 
     /**
@@ -75,6 +76,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
      */
     @Override
     public void onClick(View v) {
+        final SelectTeamsAdapter[] selectTeamsAdapter = new SelectTeamsAdapter[1];
         switch (v.getId()) {
             case R.id.btn_add:
                 adapter.addItem();
@@ -84,8 +86,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 int selectedRadioButtonID = typeGroup.getCheckedRadioButtonId();
                 String tournamentType = selectedRadioButtonID == R.id.radio_round_robin ? ROUND_ROBIN :
                         selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
-                Tournament tournament = new Tournament(name.getText().toString(), tournamentType, new ArrayList<Team>(),
-                        sizePicker.getValue());
+                Tournament tournament = new Tournament(name.getText().toString(), tournamentType,
+                        selectTeamsAdapter[0].getSelectedTeams(), sizePicker.getValue());
                 TournamentDataSource.getInstance().createTournament(tournament);
 
                 Intent returnIntent = new Intent();
@@ -96,7 +98,6 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 finish();
                 break;
             case R.id.btn_select_teams:
-                final SelectTeamsAdapter[] adapter = new SelectTeamsAdapter[1];
                 selectDialog = new AlertDialog.Builder(TournamentCreateActivity.this, R.style.DialogTheme)
                         .setView(R.layout.select_team_panel)
                         .setTitle("Select Teams")
@@ -107,7 +108,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                                         .selected_teams);
                                 teamNameList.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager
                                         (getBaseContext()));
-                                teamNameList.setAdapter(new ViewTeamsAdapter(adapter[0].getSelectedTeams()));
+                                teamNameList.setAdapter(new ViewTeamsAdapter(selectTeamsAdapter[0].getSelectedTeams()));
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -123,7 +124,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                         Dialog view = (Dialog) dialog;
                         RecyclerView teams = (RecyclerView) view.findViewById(R.id.teams);
                         teams.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                        teams.setAdapter(adapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+                        teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
                         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
                         fab.setOnClickListener(new View.OnClickListener() {
                             @Override

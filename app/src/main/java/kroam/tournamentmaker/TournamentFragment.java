@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import kroam.tournamentmaker.dummy.DummyContent;
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -25,13 +23,11 @@ public class TournamentFragment extends ListFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static TournamentFragment instance;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-    private static TournamentFragment instance;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -93,7 +89,12 @@ public class TournamentFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        Intent intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
+        Intent intent;
+        Tournament tournament = TournamentDataSource.getInstance().getTournaments().get(position);
+        if (tournament.isRegistrationClosed())
+            intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
+        else
+            intent = new Intent(getContext(), TournamentCreateActivity.class);
         intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position).getName());
         startActivity(intent);
     }
