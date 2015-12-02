@@ -63,6 +63,23 @@ public class StatsDataSource {
         close();
     }
 
+    public void updateStats(ArrayList<Stat> stats) {
+        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        String query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'?\', " + columns[2] +
+                "=\'?\';";
+
+        SQLiteStatement statement = database.compileStatement(query);
+        database.beginTransaction();
+        for (Stat stat : stats) {
+            statement.bindString(2, Util.convertArrayToString(stat.getTournamentNames().toArray()));
+            statement.bindString(3, Util.convertArrayToString(stat.getValues().toArray()));
+            statement.executeUpdateDelete();
+        }
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close();
+    }
+
     public ArrayList<Stat> getStats() {
         ArrayList<Stat> stats = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
