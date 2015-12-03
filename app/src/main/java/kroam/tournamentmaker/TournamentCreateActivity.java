@@ -21,16 +21,16 @@ import java.util.ArrayList;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     public static final String ROUND_ROBIN = "Round Robin";
     public static final String KNOCKOUT = "Knockout";
     public static final String COMBINATION = "Combination";
-=======
-    private static final String ROUND_ROBIN = "Round Robin";
-    private static final String KNOCKOUT = "Knockout";
-    private static final String COMBINATION = "Combination";
+//=======
+//    private static final String ROUND_ROBIN = "Round Robin";
+//    private static final String KNOCKOUT = "Knockout";
+//    private static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
->>>>>>> ce9884ab68f8b473571f871ab5f157eedae4f44d
+//>>>>>>> ce9884ab68f8b473571f871ab5f157eedae4f44d
     StatsAdapter adapter;
     NumberPicker sizePicker;
     RadioGroup typeGroup;

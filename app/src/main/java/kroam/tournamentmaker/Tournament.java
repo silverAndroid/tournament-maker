@@ -66,11 +66,16 @@ public class Tournament {
 
     public int getCurrentRound(){   return currentRound+1;    }
 
+    /*  !!!
+    * Amount of qualifiers out of the first round of Combination needs to be specified
+    * Need Stat that will define the standings of the first round of Combination
+    */
     public void generateNextRoundOfMatches(){
         if(currentRound == -1)
-            roundsOfMatches.add(Util.generateMatches(this));    //change implementation of Util.generateMatches(Tournament)
-        else
+            roundsOfMatches.add(Util.generateMatches(this));
+        else {
             Util.generateMatches(this, Util.getListOfWinners(roundsOfMatches.get(currentRound))); //index to keep track of current round
+        }
         currentRound++;
     }
 }
