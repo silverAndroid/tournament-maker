@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_close_registration"
+          android:title="@string/menu_close_registration"
+          android:icon="@drawable/account_check"
+          app:showAsAction="ifRoom"/>
+</menu>
