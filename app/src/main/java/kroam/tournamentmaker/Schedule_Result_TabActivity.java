@@ -44,7 +44,7 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
         viewPager.setAdapter(adapter);
     }
 
-    @Override
+    @Override   //Unused method
     public void onFragmentInteraction(String id) {
 
     }

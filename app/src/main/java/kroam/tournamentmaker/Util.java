@@ -75,13 +75,52 @@ public class Util {
     }
     /*
     * Instantiates Matches with randomly matched teams that are in <code>tournament</code>.
+    * Method currently only does Knockout Format(still requires Round Robin and Combinations)
     * */
     public static void generateMatches(Tournament tournament){
         ArrayList<Team> teams = TeamDataSource.getInstance().getTeamFromTournament(tournament.getName());
         Collections.shuffle(teams);
         Iterator<Team> teamIterator = teams.listIterator();
-        while(teamIterator.hasNext()){
-            MatchDataSource.getInstance().createMatch(new Match(teamIterator.next(), teamIterator.next()));
+
+        switch(tournament.getType()){
+            case TournamentCreateActivity.KNOCKOUT:
+                while(teamIterator.hasNext())
+                    MatchDataSource.getInstance().createMatch(new Match(teamIterator.next(), teamIterator.next()));
+                break;  //this is used to generate the first round of matches
+
+            case TournamentCreateActivity.ROUND_ROBIN:
+                for(int aTeam = 0; aTeam < teams.size() - 1; aTeam++){
+                    for(int otherTeam = aTeam +1; otherTeam < teams.size(); otherTeam++)
+                        MatchDataSource.getInstance().createMatch(new Match(teams.get(aTeam), teams.get(otherTeam)));
+                }
+                break;
+
+            case TournamentCreateActivity.COMBINATION:
+                for(int aTeam = 0; aTeam < teams.size() - 1; aTeam++){
+                    for(int otherTeam = aTeam +1; otherTeam < teams.size(); otherTeam++)
+                        MatchDataSource.getInstance().createMatch(new Match(teams.get(aTeam), teams.get(otherTeam)));
+                }
+                break;
+                //generates the first round of Combination format, in Round Robin. Next rounds will be held
+                //knockout format.
+        }
+
+    }
+
+    /*
+    * Method utlized to generate 2nd+ round of a tournament with Knockout or Combination format
+    * */
+    public static void generateMatches(Tournament tournament, ArrayList<Team> qualifyingTeams){
+        switch(tournament.getType()){
+            case TournamentCreateActivity.ROUND_ROBIN:
+                System.out.print("Exceptional case. Round Robin only has 1 round of matches\n");
+                generateMatches(tournament);
+                break;
+            default:
+                Iterator<Team> teamIterator = qualifyingTeams.listIterator();
+                while(teamIterator.hasNext())
+                    MatchDataSource.getInstance().createMatch(new Match(teamIterator.next(), teamIterator.next()));
+                break;
         }
     }
 }

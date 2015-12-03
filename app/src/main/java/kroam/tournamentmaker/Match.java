@@ -7,6 +7,8 @@ public class Match {
     private final Team homeTeam;
     private final Team awayTeam;
     private boolean completed;
+    private Team winner;
+    private int homeScore, awayScore;
 
     public Match(Team team1, Team team2) {
         homeTeam = team1;
@@ -21,6 +23,8 @@ public class Match {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+        if(completed)
+            setWinner();
     }
 
     public Team getHomeTeam() {
@@ -30,4 +34,12 @@ public class Match {
     public Team getAwayTeam() {
         return awayTeam;
     }
+
+    public void setWinner(){
+        if(homeScore < awayScore)
+            winner = awayTeam;          //Exception: Ties not handled
+        else                            //Ties go to home team
+            winner = homeTeam;
+    }
 }
+

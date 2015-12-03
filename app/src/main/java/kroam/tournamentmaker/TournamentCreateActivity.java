@@ -20,9 +20,9 @@ import java.util.ArrayList;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String ROUND_ROBIN = "Round Robin";
-    private static final String KNOCKOUT = "Knockout";
-    private static final String COMBINATION = "Combination";
+    public static final String ROUND_ROBIN = "Round Robin";
+    public static final String KNOCKOUT = "Knockout";
+    public static final String COMBINATION = "Combination";
     StatsAdapter adapter;
     NumberPicker sizePicker;
     RadioGroup typeGroup;
