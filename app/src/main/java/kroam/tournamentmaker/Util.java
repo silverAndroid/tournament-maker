@@ -3,10 +3,8 @@ package kroam.tournamentmaker;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -23,22 +21,24 @@ public class Util {
     }
 
     public static String convertTeamArrayToString(Team[] array) {
-        String[] teamnames = new String[array.length];
+        String[] teamNames = new String[array.length];
         for (int i = 0; i < array.length; ++i) {
-            teamnames[i] = array[i].getName();
+            teamNames[i] = array[i].getName();
         }
-        return Util.convertArrayToString(teamnames);
+        return Util.convertArrayToString(teamNames);
     }
 
     public static ArrayList<Team> convertStringtoTeamArray(String teamArrayString) {
         SQLiteDatabase database = DatabaseSingleton.getInstance().getReadableDatabase();
         String names[] = Util.convertStringToArray(teamArrayString);
-        ArrayList<Team> teams = new ArrayList<Team>();
+        ArrayList<Team> teams = new ArrayList<>();
 
-        String columns[] = {DatabaseSingleton.TEAMS_NAME, DatabaseSingleton.TEAMS_CAPTAIN_NAME, DatabaseSingleton.TEAMS_EMAIL, DatabaseSingleton.TEAMS_PHONE_NUMBER};
+        String columns[] = {DatabaseSingleton.TEAMS_NAME, DatabaseSingleton.TEAMS_CAPTAIN_NAME, DatabaseSingleton
+                .TEAMS_EMAIL, DatabaseSingleton.TEAMS_PHONE_NUMBER};
 
-        for (int i = 0; i < names.length; i++) {
-            Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, columns[0] + "=?", new String[]{names[i]}, null, null, null);
+        for (String name : names) {
+            Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, columns[0] + "=?", new
+                    String[]{name}, null, null, null);
             if (cursor.moveToFirst())
                 teams.add(cursorToTeam(cursor));
         }
@@ -75,20 +75,22 @@ public class Util {
         match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor.getString(3)));
         return match;
     }
+
     /*
     * Instantiates Matches with randomly matched teams that are in <code>tournament</code>.
     * Method currently only does Knockout Format(still requires Round Robin and Combinations)
-    * */
-    public static ArrayList<Match> generateMatches(Tournament tournament){
+    *
+    */
+    public static ArrayList<Match> generateMatches(Tournament tournament) {
         ArrayList<Team> teams = TeamDataSource.getInstance().getTeamFromTournament(tournament.getName());
         Collections.shuffle(teams);
         Iterator<Team> teamIterator = teams.listIterator();
-        ArrayList<Match> matches = new ArrayList<Match>();
+        ArrayList<Match> matches = new ArrayList<>();
         Match newMatch;
 
-        switch(tournament.getType()){
+        switch (tournament.getType()) {
             case TournamentCreateActivity.KNOCKOUT:
-                while(teamIterator.hasNext()){
+                while (teamIterator.hasNext()) {
                     newMatch = new Match(tournament, teamIterator.next(), teamIterator.next());
                     matches.add(newMatch);
                     MatchDataSource.getInstance().createMatch(newMatch);
@@ -96,8 +98,8 @@ public class Util {
                 break;  //this is used to generate the first round of matches
 
             case TournamentCreateActivity.ROUND_ROBIN:
-                for(int aTeam = 0; aTeam < teams.size() - 1; aTeam++){
-                    for(int otherTeam = aTeam +1; otherTeam < teams.size(); otherTeam++){
+                for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
+                    for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
                         newMatch = new Match(tournament, teams.get(aTeam), teams.get(otherTeam));
                         matches.add(newMatch);
                         MatchDataSource.getInstance().createMatch(newMatch);
@@ -106,48 +108,46 @@ public class Util {
                 break;
 
             case TournamentCreateActivity.COMBINATION:
-                for(int aTeam = 0; aTeam < teams.size() - 1; aTeam++){
-                    for(int otherTeam = aTeam +1; otherTeam < teams.size(); otherTeam++){
+                for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
+                    for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
                         newMatch = new Match(tournament, teams.get(aTeam), teams.get(otherTeam));
                         matches.add(newMatch);
                         MatchDataSource.getInstance().createMatch(newMatch);        //Figure this error
                     }
                 }
                 break;
-                //generates the first round of Combination format, in Round Robin. Next rounds will be held
-                //knockout format.
+            //generates the first round of Combination format, in Round Robin. Next rounds will be held
+            //knockout format.
         }
         return matches;
 
     }
 
     /*
-    * Method utlized to generate 2nd+ round of a tournament with Knockout or Combination format
+    * Method utilized to generate 2nd+ round of a tournament with Knockout or Combination format
     * */
-    public static ArrayList<Match> generateMatches(Tournament tournament, ArrayList<Team> qualifyingTeams){
+    public static ArrayList<Match> generateMatches(Tournament tournament, ArrayList<Team> qualifyingTeams) {
         Match newMatch;
-        ArrayList<Match> matches = new ArrayList<Match>();
+        ArrayList<Match> matches = new ArrayList<>();
 
-        switch(tournament.getType()){
+        switch (tournament.getType()) {
             case TournamentCreateActivity.ROUND_ROBIN:
                 System.out.print("Exceptional case. Round Robin only has 1 round of matches\n");
                 return generateMatches(tournament);
-//                break;
             default:
                 Iterator<Team> teamIterator = qualifyingTeams.listIterator();
-                while(teamIterator.hasNext()) {
+                while (teamIterator.hasNext()) {
                     newMatch = new Match(tournament, teamIterator.next(), teamIterator.next());
                     matches.add(newMatch);
                     MatchDataSource.getInstance().createMatch(newMatch);
                 }
                 return matches;
-//                break;
         }
     }
 
-    public static ArrayList<Team> getListOfWinners(ArrayList<Match> matches){
-        ArrayList<Team> winners = new ArrayList<Team>();
-        for(int aWinner = 0; aWinner < matches.size(); aWinner++){
+    public static ArrayList<Team> getListOfWinners(ArrayList<Match> matches) {
+        ArrayList<Team> winners = new ArrayList<>();
+        for (int aWinner = 0; aWinner < matches.size(); aWinner++) {
             winners.add(matches.get(aWinner).getWinner());
         }
         return winners;
