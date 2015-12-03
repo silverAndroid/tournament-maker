@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Rushil Perera on 12/1/2015.
+ *
+ * Singleton class for the Match Section of the Database
  */
 public class MatchDataSource {
     private static MatchDataSource ourInstance = new MatchDataSource();

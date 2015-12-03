@@ -21,9 +21,9 @@ import java.util.ArrayList;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String ROUND_ROBIN = "Round Robin";
-    private static final String KNOCKOUT = "Knockout";
-    private static final String COMBINATION = "Combination";
+    public static final String ROUND_ROBIN = "Round Robin";
+    public static final String KNOCKOUT = "Knockout";
+    public static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
     StatsAdapter adapter;
     NumberPicker sizePicker;

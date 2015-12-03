@@ -1,7 +1,9 @@
 package kroam.tournamentmaker;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
 /**
  * Created by Rushil Perera on 11/21/2015.
@@ -14,6 +16,8 @@ public class Tournament {
     private final int maxSize;
     private boolean registrationClosed;
     private boolean completed;
+    private int currentRound = -1;
+    private ArrayList<ArrayList<Match>> roundsOfMatches;        //ArrayLists within roundOfMatches represent a round
 
     public Tournament(String name, String type, ArrayList<Team> teams, int maxSize) {
         this.name = name;
@@ -58,5 +62,15 @@ public class Tournament {
 
     public void setRegistrationClosed(boolean registrationClosed) {
         this.registrationClosed = registrationClosed;
+    }
+
+    public int getCurrentRound(){   return currentRound+1;    }
+
+    public void generateNextRoundOfMatches(){
+        if(currentRound == -1)
+            roundsOfMatches.add(Util.generateMatches(this));    //change implementation of Util.generateMatches(Tournament)
+        else
+            Util.generateMatches(this, Util.getListOfWinners(roundsOfMatches.get(currentRound))); //index to keep track of current round
+        currentRound++;
     }
 }

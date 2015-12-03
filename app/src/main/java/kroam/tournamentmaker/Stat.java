@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Rushil Perera on 11/23/2015.
+ *
+ * An instance of Stat represents one particular match statistic. Each instance of Stat is defined
+ * when chosen to be "used" in a Tournament.
  */
 public class Stat {
 
