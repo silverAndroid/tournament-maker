@@ -9,12 +9,19 @@ public class Match {
     private boolean completed;
     private Team winner;
     private int homeScore, awayScore;
+    private Tournament belongingTournament;
 
-    public Match(Team team1, Team team2) {
+    public Match(Tournament tournament, Team team1, Team team2) {
+        belongingTournament = tournament;
         homeTeam = team1;
         awayTeam = team2;
         if(team2 == null)       //Ocean:    Implementation added for the creation of Matches (see Util::generateMatches(Tournament))
             completed = true;   //          homeTeam should not be given a win in this case
+    }
+
+    public Match(Team team1, Team team2){
+        homeTeam = team1;
+        awayTeam = team2;
     }
 
     public boolean isCompleted() {
@@ -40,6 +47,10 @@ public class Match {
             winner = awayTeam;          //Exception: Ties not handled
         else                            //Ties go to home team
             winner = homeTeam;
+    }
+
+    public Team getWinner(){
+        return winner;
     }
 }
 
