@@ -74,6 +74,7 @@ public class TeamDataSource {
         if (cursor.moveToFirst()) {
             team = Util.cursorToTeam(cursor);
         }
+        close();
         return team;
     }
 }

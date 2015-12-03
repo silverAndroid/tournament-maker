@@ -2,7 +2,9 @@ package kroam.tournamentmaker;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import java.util.ArrayList;
 
@@ -24,18 +26,51 @@ public class TournamentDataSource {
         return instance;
     }
 
-    public Tournament createTournament(Tournament tournament) {
+    public Tournament createTournament(Tournament tournament) throws SQLiteConstraintException {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(columns[0], tournament.getName());
         values.put(columns[1], tournament.getType());
-        values.put(columns[2], tournament.getTeams().toString());
+        values.put(columns[2], Util.convertArrayToString(tournament.getTeams().toArray()));
         values.put(columns[3], tournament.getMaxSize());
         values.put(columns[4], tournament.isCompleted() ? 1 : 0);
         values.put(columns[5], tournament.isRegistrationClosed() ? 1 : 0);
         database.insertOrThrow(DatabaseSingleton.TOURNAMENTS_TABLE, null, values);
         close();
         return tournament;
+    }
+
+    public Tournament updateTournament(Tournament tournament) {
+        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=\'?\', " +
+                columns[2] + "=\'?\', " + columns[3] + "=\'?\', " + columns[4] + "=\'?\', " + columns[5] + "=\'?\';";
+
+        SQLiteStatement statement = database.compileStatement(query);
+
+        statement.bindString(2, tournament.getType());
+        statement.bindString(3, Util.convertArrayToString(tournament.getTeams().toArray()));
+        statement.bindLong(4, tournament.getMaxSize());
+        statement.bindLong(5, tournament.isCompleted() ? 1 : 0);
+        statement.bindLong(6, tournament.isRegistrationClosed() ? 1 : 0);
+        statement.executeUpdateDelete();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close();
+        return tournament;
+    }
+
+    public ArrayList<Team> getTeamsFromTournament(String tournamentName) {
+        ArrayList<Team> teams = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[2] + "=?", new
+                String[]{tournamentName}, null, null, null);
+        if (cursor.moveToFirst()) {
+            Tournament tournament = Util.cursorToTournament(cursor);
+            teams.addAll(tournament.getTeams());
+        }
+        close();
+        return teams;
     }
 
     public ArrayList<Tournament> getTournaments() {
@@ -54,5 +89,17 @@ public class TournamentDataSource {
 
     private void close() {
         database.close();
+    }
+
+    public Tournament getTournament(String name) {
+        Tournament tournament = null;
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[0] + "=?", new
+                String[]{name}, null, null, null);
+        if (cursor.moveToFirst()) {
+            tournament = Util.cursorToTournament(cursor);
+        }
+        close();
+        return tournament;
     }
 }

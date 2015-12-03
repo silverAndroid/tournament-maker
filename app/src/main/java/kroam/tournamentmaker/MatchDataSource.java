@@ -15,7 +15,7 @@ public class MatchDataSource {
     private static MatchDataSource ourInstance = new MatchDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.MATCHES_TEAM_1, DatabaseSingleton.MATCHES_TEAM_2, DatabaseSingleton
-            .MATCHES_COMPLETED};
+            .MATCHES_COMPLETED, DatabaseSingleton.MATCHES_TOURNAMENT_NAME};
 
     private MatchDataSource() {
     }
@@ -30,6 +30,7 @@ public class MatchDataSource {
         values.put(columns[0], match.getHomeTeam().getName());
         values.put(columns[1], match.getAwayTeam().getName());
         values.put(columns[2], match.isCompleted() ? 1 : 0);
+        values.put(columns[3], match.getAssociatedTournament().getName());
         database.insertOrThrow(DatabaseSingleton.MATCHES_TABLE, null, values);
     }
 

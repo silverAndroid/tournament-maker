@@ -32,10 +32,11 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String MATCHES_TABLE = "SCHEDULE";
     public static final String MATCHES_TEAM_1 = "TEAM_1";
     public static final String MATCHES_TEAM_2 = "TEAM_2";
+    public static final String MATCHES_TOURNAMENT_NAME = "TOURNAMENT";
     public static final String MATCHES_COMPLETED = "COMPLETED";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 5;
+    private static final int VERSION = 6;
 
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
@@ -51,9 +52,10 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
             STATS_KEY + "));";
 
     private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
-            "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, FOREIGN KEY(" + MATCHES_TEAM_1 + "," +
-            " " + MATCHES_TEAM_2 + ") REFERENCES " + TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + ", " +
-            TOURNAMENTS_NAME + "));";
+            "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TOURNAMENT_NAME + " TEXT, " +
+            "FOREIGN KEY(" + MATCHES_TEAM_1 + ", " + MATCHES_TEAM_2 + ") REFERENCES " + TEAMS_TABLE + "(" +
+            TEAMS_NAME + ", " + TEAMS_NAME + "), FOREIGN KEY(" + MATCHES_TOURNAMENT_NAME + ") REFERENCES " +
+            TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
 
     private static DatabaseSingleton instance;
 

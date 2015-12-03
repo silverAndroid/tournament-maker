@@ -13,11 +13,11 @@ import java.util.ArrayList;
  */
 public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.ViewTeamHolder> {
 
-    private ArrayList<Team> teamNames;
+    private ArrayList<Team> teams;
 
-    public ViewTeamsAdapter(ArrayList<Team> teamNames) {
-        this.teamNames = new ArrayList<>();
-        this.teamNames.addAll(teamNames);
+    public ViewTeamsAdapter(ArrayList<Team> teams) {
+        this.teams = new ArrayList<>();
+        this.teams.addAll(teams);
     }
 
     @Override
@@ -29,12 +29,16 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewTeamHolder holder, int position) {
-        holder.teamName.setText(teamNames.get(position).getName());
+        holder.teamName.setText(teams.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return teamNames.size();
+        return teams.size();
+    }
+
+    public ArrayList<Team> getSelectedTeams() {
+        return teams;
     }
 
     class ViewTeamHolder extends RecyclerView.ViewHolder {

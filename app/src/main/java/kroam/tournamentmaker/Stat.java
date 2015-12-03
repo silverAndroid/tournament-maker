@@ -39,7 +39,8 @@ public class Stat {
     }
 
     public void addTournamentName(String name) {
-        tournamentNames.add(name);
+        if (!tournamentNames.contains(name))
+            tournamentNames.add(name);
     }
 
     public String getTournament(int index) {
