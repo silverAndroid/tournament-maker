@@ -68,6 +68,7 @@ public class Util {
         TeamDataSource teamDatabase = TeamDataSource.getInstance();
         Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
         match.setCompleted(cursor.getInt(2) == 1);
+        match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor.getString(3)));
         return null;
     }
 }
