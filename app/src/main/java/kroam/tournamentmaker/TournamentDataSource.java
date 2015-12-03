@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
  */
 public class TournamentDataSource {
 
+    private static final String TAG = "TOURNAMENTDATA";
     private static TournamentDataSource instance = new TournamentDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TOURNAMENTS_NAME, DatabaseSingleton.TOURNAMENTS_TYPE,
@@ -43,7 +45,8 @@ public class TournamentDataSource {
     public Tournament updateTournament(Tournament tournament) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
         String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=?, " +
-                columns[2] + "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=?;";
+                columns[2] + "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=? WHERE " +
+                columns[0] + "=?";
 
         SQLiteStatement statement = database.compileStatement(query);
         database.beginTransaction();
@@ -52,6 +55,8 @@ public class TournamentDataSource {
         statement.bindLong(3, tournament.getMaxSize());
         statement.bindLong(4, tournament.isCompleted() ? 1 : 0);
         statement.bindLong(5, tournament.isRegistrationClosed() ? 1 : 0);
+        statement.bindString(6, tournament.getName());
+        Log.i(TAG, "updateTournament: " + statement.toString());
         statement.executeUpdateDelete();
 
         database.setTransactionSuccessful();
