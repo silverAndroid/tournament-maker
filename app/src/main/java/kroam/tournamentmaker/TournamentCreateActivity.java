@@ -140,7 +140,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams(), viewTeamsAdapter[0].getSelectedTeams()));
             }
         }
     }
@@ -174,7 +174,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 Dialog view = (Dialog) dialog;
                 RecyclerView teams = (RecyclerView) view.findViewById(R.id.teams);
                 teams.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+                teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams
+                        (), viewTeamsAdapter[0].getSelectedTeams()));
                 FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
