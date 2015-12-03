@@ -61,7 +61,7 @@ public class Util {
     }
 
     public static Team cursorToTeam(Cursor cursor) {
-        return new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+        return new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
     }
 
     public static Match cursorToMatch(Cursor cursor) {
@@ -69,6 +69,6 @@ public class Util {
         Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
         match.setCompleted(cursor.getInt(2) == 1);
         match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor.getString(3)));
-        return null;
+        return match;
     }
 }
