@@ -72,7 +72,7 @@ public class Util {
         TeamDataSource teamDatabase = TeamDataSource.getInstance();
         Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
         match.setCompleted(cursor.getInt(2) == 1);
-        return null;
+        return match;
     }
     /*
     * Instantiates Matches with randomly matched teams that are in <code>tournament</code>.
