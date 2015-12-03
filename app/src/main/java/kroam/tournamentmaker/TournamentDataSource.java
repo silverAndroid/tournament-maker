@@ -42,16 +42,16 @@ public class TournamentDataSource {
 
     public Tournament updateTournament(Tournament tournament) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
-        String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=\'?\', " +
-                columns[2] + "=\'?\', " + columns[3] + "=\'?\', " + columns[4] + "=\'?\', " + columns[5] + "=\'?\';";
+        String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=?, " +
+                columns[2] + "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=?;";
 
         SQLiteStatement statement = database.compileStatement(query);
-
-        statement.bindString(2, tournament.getType());
-        statement.bindString(3, Util.convertArrayToString(tournament.getTeams().toArray()));
-        statement.bindLong(4, tournament.getMaxSize());
-        statement.bindLong(5, tournament.isCompleted() ? 1 : 0);
-        statement.bindLong(6, tournament.isRegistrationClosed() ? 1 : 0);
+        database.beginTransaction();
+        statement.bindString(1, tournament.getType());
+        statement.bindString(2, Util.convertArrayToString(tournament.getTeams().toArray()));
+        statement.bindLong(3, tournament.getMaxSize());
+        statement.bindLong(4, tournament.isCompleted() ? 1 : 0);
+        statement.bindLong(5, tournament.isRegistrationClosed() ? 1 : 0);
         statement.executeUpdateDelete();
 
         database.setTransactionSuccessful();
