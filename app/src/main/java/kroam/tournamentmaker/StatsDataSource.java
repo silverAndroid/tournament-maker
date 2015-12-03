@@ -54,7 +54,9 @@ public class StatsDataSource {
                 query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'" + newTournamentNames
                         + ", " + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2]
                         + "=\'" + newValues + (newValues.isEmpty() || stat.getValues().isEmpty() ? "" : ", ") + Util
-                        .convertArrayToString(stat.getValues().toArray()) + "\';";
+                        .convertArrayToString(stat.getValues().toArray()) + "\' WHERE " + DatabaseSingleton.STATS_KEY +
+                        "=?;";
+                Log.i(TAG, "addStats: " + query);
                 database.execSQL(query);
             } else {
                 statement.executeInsert();
@@ -85,18 +87,20 @@ public class StatsDataSource {
 
     public void updateStats(ArrayList<Stat> stats) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
-        String query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'?\', " + columns[2] +
-                "=\'?\';";
-
-        SQLiteStatement statement = database.compileStatement(query);
-        database.beginTransaction();
         for (Stat stat : stats) {
-            statement.bindString(2, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(3, Util.convertArrayToString(stat.getValues().toArray()));
+            String query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=?, " + columns[2] +
+                    "=? WHERE " + DatabaseSingleton.STATS_KEY + "=?;";
+
+            Log.i(TAG, "updateStats: " + query);
+            SQLiteStatement statement = database.compileStatement(query);
+            database.beginTransaction();
+            statement.bindString(1, Util.convertArrayToString(stat.getTournamentNames().toArray()));
+            statement.bindString(2, Util.convertArrayToString(stat.getValues().toArray()));
+            statement.bindString(3, stat.getKey());
             statement.executeUpdateDelete();
+            database.setTransactionSuccessful();
+            database.endTransaction();
         }
-        database.setTransactionSuccessful();
-        database.endTransaction();
         close();
     }
 
