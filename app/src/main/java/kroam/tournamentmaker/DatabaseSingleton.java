@@ -40,7 +40,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
-            TEAMS_PHONE_NUMBER + " INT, UNIQUE (" + TEAMS_NAME + "));";
+            TEAMS_PHONE_NUMBER + " TEXT, UNIQUE (" + TEAMS_NAME + "));";
 
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
