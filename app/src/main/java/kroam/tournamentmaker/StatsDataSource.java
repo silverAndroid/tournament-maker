@@ -69,9 +69,10 @@ public class StatsDataSource {
     public ArrayList<Stat> getTournamentStats(String name) {
         ArrayList<Stat> stats = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
-        String query = "SELECT * FROM " + DatabaseSingleton.STATS_TABLE + " LIKE \'%?%\'";
+        String query = "SELECT * FROM " + DatabaseSingleton.STATS_TABLE + " WHERE " + DatabaseSingleton
+                .STATS_TOURNAMENT_NAMES + " LIKE \'%" + name + "%\'";
         Log.i(TAG, "getTournamentStats: " + query);
-        Cursor cursor = database.rawQuery(query, new String[]{name});
+        Cursor cursor = database.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
                 Stat stat = Util.cursorToStat(cursor);
