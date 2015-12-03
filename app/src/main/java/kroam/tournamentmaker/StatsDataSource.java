@@ -55,7 +55,7 @@ public class StatsDataSource {
                         + ", " + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2]
                         + "=\'" + newValues + (newValues.isEmpty() || stat.getValues().isEmpty() ? "" : ", ") + Util
                         .convertArrayToString(stat.getValues().toArray()) + "\' WHERE " + DatabaseSingleton.STATS_KEY +
-                        "=?;";
+                        "=\'" + stat.getKey() + "\';";
                 Log.i(TAG, "addStats: " + query);
                 database.execSQL(query);
             } else {
