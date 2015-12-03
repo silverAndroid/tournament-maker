@@ -80,6 +80,7 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         public void setTeam(Team team) {
             this.team = team;
             chkTeam.setText(team.getName());
+            chkTeam.setChecked(team.isSelected() == 1);
         }
     }
 }
