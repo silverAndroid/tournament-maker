@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 
 /**
@@ -18,7 +19,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
     EditText captainName;
     EditText phoneNumber;
     EditText email;
-    //ImageButton teamLogo;
+    ImageButton teamLogo;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +37,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
         captainName = (EditText) findViewById(R.id.edit_captain_name);
         phoneNumber = (EditText) findViewById(R.id.edit_phone);
         email = (EditText) findViewById(R.id.edit_email);
-        //teamLogo = (ImageButton) findViewById(R.id.btn_teamlogo);
-
+        teamLogo = (ImageButton) findViewById(R.id.btn_teamlogo);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
              */
             case R.id.btn_confirm:
                 team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText().toString
-                        (), Integer.parseInt(phoneNumber.getText().toString()));
+                        (), phoneNumber.getText().toString());
                 TeamDataSource.getInstance().createTeam(team);
 
                 Intent returnIntent = new Intent();

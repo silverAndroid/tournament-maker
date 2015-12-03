@@ -7,10 +7,10 @@ public class Team {
     private String name;
     private String captainName;
     private String captainEmail;
-    private int phoneNumber;
+    private String phoneNumber;
     private int selected;
 
-    public Team(String name, String captainName, String captainEmail, int phoneNumber) {
+    public Team(String name, String captainName, String captainEmail, String phoneNumber) {
         this.name = name;
         this.captainName = captainName;
         this.captainEmail = captainEmail;
@@ -22,7 +22,7 @@ public class Team {
 
     public String getCaptainName() {return captainName;}
 
-    public int getPhoneNumber() {return phoneNumber;}
+    public String getPhoneNumber() {return phoneNumber;}
 
     public String getCaptainEmail() {return captainEmail;}
 
@@ -32,7 +32,7 @@ public class Team {
 
     public void setCaptainEmail(String captainEmail) {this.captainEmail = captainEmail;}
 
-    public void setPhoneNumber(int phoneNumber) {this.phoneNumber = phoneNumber;}
+    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
 
     @Override
     public String toString() {

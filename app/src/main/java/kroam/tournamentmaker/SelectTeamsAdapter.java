@@ -16,8 +16,16 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
 
     private ArrayList<Team> teams;
 
-    public SelectTeamsAdapter(ArrayList<Team> teams) {
+    public SelectTeamsAdapter(ArrayList<Team> teams, ArrayList<Team> selectedTeams) {
         this.teams = new ArrayList<>(teams.size());
+        for (Team selectedTeam : selectedTeams) {
+            for (Team team : teams) {
+                if (team.getName().equals(selectedTeam.getName())) {
+                    team.setSelected(1);
+                    break;
+                }
+            }
+        }
         this.teams.addAll(teams);
     }
 
@@ -72,6 +80,7 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         public void setTeam(Team team) {
             this.team = team;
             chkTeam.setText(team.getName());
+            chkTeam.setChecked(team.isSelected() == 1);
         }
     }
 }

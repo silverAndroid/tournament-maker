@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -44,10 +45,23 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
     class ViewTeamHolder extends RecyclerView.ViewHolder {
 
         TextView teamName;
+        ImageButton delete;
 
         public ViewTeamHolder(View itemView) {
             super(itemView);
             teamName = (TextView) itemView.findViewById(R.id.txt_team_name);
+            delete = (ImageButton) itemView.findViewById(R.id.delete);
+            delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteItem(getAdapterPosition());
+                }
+            });
         }
+    }
+
+    private void deleteItem(int position) {
+        teams.remove(position);
+        notifyItemRemoved(position);
     }
 }

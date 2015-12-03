@@ -24,4 +24,5 @@
     <string name="create_stat">New Stat</string>
     <string name="stats_use_prompt">Statistics To Use:</string>
     <string name="stat_hint">Stat</string>
+    <string name="menu_close_registration">Close Registration</string>
 </resources>

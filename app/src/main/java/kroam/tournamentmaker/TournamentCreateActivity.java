@@ -10,6 +10,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,16 +23,11 @@ import java.util.ArrayList;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
-//<<<<<<< HEAD
     public static final String ROUND_ROBIN = "Round Robin";
     public static final String KNOCKOUT = "Knockout";
     public static final String COMBINATION = "Combination";
-//=======
-//    private static final String ROUND_ROBIN = "Round Robin";
-//    private static final String KNOCKOUT = "Knockout";
-//    private static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
-//>>>>>>> ce9884ab68f8b473571f871ab5f157eedae4f44d
+
     StatsAdapter adapter;
     NumberPicker sizePicker;
     RadioGroup typeGroup;
@@ -55,7 +52,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         stats.setAdapter(adapter = new StatsAdapter());
 
         sizePicker = (NumberPicker) findViewById(R.id.numberPicker);
-        sizePicker.setMinValue(1);
+        sizePicker.setMinValue(2);
         sizePicker.setMaxValue(16);
 
         typeGroup = (RadioGroup) findViewById(R.id.tournament_type_group);
@@ -102,6 +99,41 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.create_tournament, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.menu_close_registration:
+                new AlertDialog.Builder(TournamentCreateActivity.this)
+                        .setTitle("Closing Registration")
+                        //TODO: Get someone to check message
+                        .setMessage("Are you sure you want to close registration?\nIf you do, you will not be able to" +
+                                " edit this tournament again.")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveTournament(true);
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Called when a view has been clicked.
      *
@@ -114,23 +146,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 adapter.addItem();
                 break;
             case R.id.btn_confirm:
-                String tournamentName = name.getText().toString();
-                adapter.setTournamentName(tournamentName);
-                StatsDataSource.getInstance().addStats(adapter.getItems());
-                int selectedRadioButtonID = typeGroup.getCheckedRadioButtonId();
-                String tournamentType = selectedRadioButtonID == R.id.radio_round_robin ? ROUND_ROBIN :
-                        selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
-                Tournament tournament = new Tournament(tournamentName, tournamentType, viewTeamsAdapter[0] != null ?
-                        viewTeamsAdapter[0].getSelectedTeams() : new ArrayList<Team>(), sizePicker.getValue());
-                try {
-                    TournamentDataSource.getInstance().createTournament(tournament);
-                } catch (SQLiteConstraintException e) {
-                    TournamentDataSource.getInstance().updateTournament(tournament);
-                }
-
-                Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish();
+                saveTournament();
                 break;
             case R.id.btn_cancel:
                 finish();
@@ -146,7 +162,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams(), viewTeamsAdapter[0].getSelectedTeams()));
             }
         }
     }
@@ -180,7 +196,9 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 Dialog view = (Dialog) dialog;
                 RecyclerView teams = (RecyclerView) view.findViewById(R.id.teams);
                 teams.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams()));
+                teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams
+                        (), viewTeamsAdapter[0] == null ? new ArrayList<Team>() : viewTeamsAdapter[0].getSelectedTeams
+                        ()));
                 FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -192,5 +210,29 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
             }
         });
         selectDialog.show();
+    }
+
+    private void saveTournament() {
+        saveTournament(false);
+    }
+
+    private void saveTournament(boolean registrationCompleted) {
+        String tournamentName = name.getText().toString();
+        adapter.setTournamentName(tournamentName);
+        StatsDataSource.getInstance().addStats(adapter.getItems());
+        int selectedRadioButtonID = typeGroup.getCheckedRadioButtonId();
+        String tournamentType = selectedRadioButtonID == R.id.radio_round_robin ? ROUND_ROBIN :
+                selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
+        Tournament tournament = new Tournament(tournamentName, tournamentType, viewTeamsAdapter[0] != null ?
+                viewTeamsAdapter[0].getSelectedTeams() : new ArrayList<Team>(), sizePicker.getValue());
+        tournament.setRegistrationClosed(registrationCompleted);
+        try {
+            TournamentDataSource.getInstance().createTournament(tournament);
+        } catch (SQLiteConstraintException e) {
+            TournamentDataSource.getInstance().updateTournament(tournament);
+        }
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK, returnIntent);
+        finish();
     }
 }
