@@ -9,11 +9,10 @@ public class Match {
     private boolean completed;
     private Team winner;
     private int homeScore, awayScore;
-    private Tournament belongingTournament;
     private Tournament associatedTournament;
 
     public Match(Tournament tournament, Team team1, Team team2) {
-        belongingTournament = tournament;
+        associatedTournament = tournament;
         homeTeam = team1;
         awayTeam = team2;
         if (team2 == null)       //Ocean:    Implementation added for the creation of Matches (see Util::generateMatches(Tournament))
@@ -44,10 +43,12 @@ public class Match {
     }
 
     public void setWinner() {
-        if (homeScore < awayScore)
+        if (homeScore < awayScore) {
             winner = awayTeam;          //Exception: Ties not handled
-        else                            //Ties go to home team
+        }
+        else{                            //Ties go to home team
             winner = homeTeam;
+        }
     }
 
     public Team getWinner() {

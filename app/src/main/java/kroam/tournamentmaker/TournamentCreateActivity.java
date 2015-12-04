@@ -26,6 +26,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
     public static final String KNOCKOUT = "Knockout";
     public static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
+
     StatsAdapter adapter;
     NumberPicker sizePicker;
     RadioGroup typeGroup;
