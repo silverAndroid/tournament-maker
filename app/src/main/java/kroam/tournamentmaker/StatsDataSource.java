@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * Created by Rushil Perera on 11/23/2015.
  */
 public class StatsDataSource {
-    private static final String TAG = "STATSDATA";
+    private static final String TAG = "StatsData";
     private static StatsDataSource instance = new StatsDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.STATS_KEY, DatabaseSingleton.STATS_TOURNAMENT_NAMES,
@@ -29,8 +29,8 @@ public class StatsDataSource {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
         ContentValues values = new ContentValues(3);
         values.put(columns[0], stat.getKey());
-        values.put(columns[1], stat.getTournamentNames().toString());
-        values.put(columns[2], stat.getValues().toString());
+        values.put(columns[1], Util.convertArrayToString(stat.getTournamentNames().toArray()));
+        values.put(columns[2], Util.convertArrayToString(stat.getValues().toArray()));
         database.insert(DatabaseSingleton.STATS_TABLE, null, values);
         close();
     }
@@ -126,5 +126,19 @@ public class StatsDataSource {
 
     private void close() {
         database.close();
+    }
+
+    public Stat getStat(String key) {
+        if (key == null)
+            return null;
+        Stat stat;
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.STATS_TABLE, columns, columns[0] + "=?", new String[]{key},
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            stat = Util.cursorToStat(cursor);
+            return stat;
+        }
+        return null;
     }
 }
