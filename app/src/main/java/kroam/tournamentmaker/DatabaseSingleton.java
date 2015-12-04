@@ -16,6 +16,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String TOURNAMENTS_COMPLETED = "FINISHED";
     public static final String TOURNAMENTS_CLOSED = "REGISTRATION_CLOSED";
     public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
+    public static final String TOURNAMENTS_WIN_STAT = "STAT_WIN";
 
     public static final String TEAMS_TABLE = "TEAMS";
     public static final String TEAMS_NAME = "NAME";
@@ -27,7 +28,6 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String STATS_KEY = "KEY";
     public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
     public static final String STATS_VALUES = "KEY_VALUES";
-    public static final String STATS_WIN = "WIN_CHECK";
 
     public static final String MATCHES_TABLE = "SCHEDULE";
     public static final String MATCHES_TEAM_1 = "TEAM_1";
@@ -36,7 +36,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String MATCHES_COMPLETED = "COMPLETED";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 6;
+    private static final int VERSION = 7;
 
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
@@ -45,11 +45,10 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, " + TOURNAMENTS_CLOSED + " INT, " +
-            "UNIQUE(" + TOURNAMENTS_NAME + "));";
+            TOURNAMENTS_WIN_STAT + " TEXT, UNIQUE(" + TOURNAMENTS_NAME + "));";
 
     private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
-            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, " + STATS_WIN + " TEXT, " + "UNIQUE(" +
-            STATS_KEY + "));";
+            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, UNIQUE(" + STATS_KEY + "));";
 
     private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
             "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TOURNAMENT_NAME + " TEXT, " +
