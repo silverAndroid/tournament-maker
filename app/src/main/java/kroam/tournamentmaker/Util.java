@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Rushil Perera on 11/24/2015.
@@ -15,6 +16,7 @@ public class Util {
 
     public static final int TOURNAMENT_REQUEST_CODE = 0;
     public static final int TEAM_REQUEST_CODE = 1;
+    private static final String TAG = "Util";
 
     public static String convertArrayToString(Object[] array) {
         return Arrays.toString(array).replace("[", "").replace("]", "");
@@ -56,6 +58,7 @@ public class Util {
                 .convertStringtoTeamArray(cursor.getString(2)), cursor.getInt(3));
         tournament.setCompleted(cursor.getInt(4) == 1);
         tournament.setRegistrationClosed(cursor.getInt(5) == 1);
+        tournament.setWinningStat(StatsDataSource.getInstance().getStat(cursor.getString(6)));
         return tournament;
     }
 
@@ -70,9 +73,11 @@ public class Util {
 
     public static Match cursorToMatch(Cursor cursor) {
         TeamDataSource teamDatabase = TeamDataSource.getInstance();
-        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)));
+        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam
+                (cursor.getString(1)));
         match.setCompleted(cursor.getInt(2) == 1);
-        match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor.getString(3)));
+        match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor
+                .getString(3)));
         return match;
     }
 
@@ -82,7 +87,7 @@ public class Util {
     *
     */
     public static ArrayList<Match> generateMatches(Tournament tournament) {
-        ArrayList<Team> teams = TeamDataSource.getInstance().getTeamFromTournament(tournament.getName());
+        ArrayList<Team> teams = TeamDataSource.getInstance().getTeamsFromTournament(tournament.getName());
         Collections.shuffle(teams);
         Iterator<Team> teamIterator = teams.listIterator();
         ArrayList<Match> matches = new ArrayList<>();
@@ -151,5 +156,9 @@ public class Util {
             winners.add(matches.get(aWinner).getWinner());
         }
         return winners;
+    }
+
+    public static String convertMapToString(Map<String, Boolean> winningStats) {
+        return winningStats.toString().replace("{", "").replace("}", "");
     }
 }
