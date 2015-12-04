@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -113,12 +112,13 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 new AlertDialog.Builder(TournamentCreateActivity.this)
                         .setTitle("Closing Registration")
                         //TODO: Get someone to check message
-                        .setMessage("Are you sure you want to close registration?\nIf you do, you will not be able to" +
-                                " edit this tournament again.")
+                        .setMessage("Are you sure you want to close registration?\nIf you do, you" +
+                                " will not be able to edit this tournament again.")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 saveTournament(true);
+                                chooseWinningStat(name.getText().toString());
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -146,6 +146,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 break;
             case R.id.btn_confirm:
                 saveTournament();
+                finish();
                 break;
             case R.id.btn_cancel:
                 finish();
@@ -161,7 +162,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams(), viewTeamsAdapter[0].getSelectedTeams()));
+                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams(),
+                        viewTeamsAdapter[0] == null ? new ArrayList<Team>() : viewTeamsAdapter[0].getSelectedTeams()));
             }
         }
     }
@@ -194,7 +196,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
             public void onShow(DialogInterface dialog) {
                 Dialog view = (Dialog) dialog;
                 RecyclerView teams = (RecyclerView) view.findViewById(R.id.teams);
-                teams.setLayoutManager(new LinearLayoutManager(getBaseContext()));
+                teams.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getBaseContext()));
                 teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams
                         (), viewTeamsAdapter[0] == null ? new ArrayList<Team>() : viewTeamsAdapter[0].getSelectedTeams
                         ()));
@@ -232,6 +234,33 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         }
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
-        finish();
+    }
+
+    private void chooseWinningStat(final String tournamentName) {
+        final WinningStatAdapter[] adapter = new WinningStatAdapter[1];
+        AlertDialog dialog = new AlertDialog.Builder(TournamentCreateActivity.this)
+                .setTitle("Choose Win Stat")
+                .setView(R.layout.winning_stat_select)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+                        tournament.setWinningStat(adapter[0].getWinningStat());
+                        TournamentDataSource.getInstance().updateTournament(tournament);
+                        finish();
+                    }
+                }).create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Dialog view = (Dialog) dialog;
+                RecyclerView selectStatList = (RecyclerView) view.findViewById(R.id.select_stat);
+                selectStatList.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getBaseContext
+                        ()));
+                selectStatList.setAdapter(adapter[0] = new WinningStatAdapter(StatsDataSource.getInstance()
+                        .getTournamentStats(tournamentName)));
+            }
+        });
+        dialog.show();
     }
 }
