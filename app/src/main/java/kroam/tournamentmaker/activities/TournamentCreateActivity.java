@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.activities;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -19,6 +19,18 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import java.util.ArrayList;
+
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.SelectTeamsAdapter;
+import kroam.tournamentmaker.StatsAdapter;
+import kroam.tournamentmaker.StatsDataSource;
+import kroam.tournamentmaker.Team;
+import kroam.tournamentmaker.TeamDataSource;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.TournamentDataSource;
+import kroam.tournamentmaker.Util;
+import kroam.tournamentmaker.ViewTeamsAdapter;
+import kroam.tournamentmaker.WinningStatAdapter;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -248,6 +260,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                         Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
                         tournament.setWinningStat(adapter[0].getWinningStat());
                         TournamentDataSource.getInstance().updateTournament(tournament);
+                        Util.generateMatches(tournament);
                         finish();
                     }
                 }).create();

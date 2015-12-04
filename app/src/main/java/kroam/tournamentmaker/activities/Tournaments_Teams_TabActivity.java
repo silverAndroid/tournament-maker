@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +16,16 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import kroam.tournamentmaker.DatabaseSingleton;
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.TeamDataSource;
+import kroam.tournamentmaker.TeamFragment;
+import kroam.tournamentmaker.TournamentDataSource;
+import kroam.tournamentmaker.TournamentFragment;
+import kroam.tournamentmaker.Util;
 
-public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment
-        .OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
+
+public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment.OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;

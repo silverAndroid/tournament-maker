@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import java.util.ArrayList;
+
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Stat;
 
 /**
  * Created by Rushil Perera on 11/26/2015.

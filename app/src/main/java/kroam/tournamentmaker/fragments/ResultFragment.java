@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.dummy.DummyContent;
 
 /**

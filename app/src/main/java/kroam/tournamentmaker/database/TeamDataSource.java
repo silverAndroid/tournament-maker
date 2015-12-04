@@ -1,10 +1,14 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+
+import kroam.tournamentmaker.Team;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.Util;
 
 /**
  * Created by Kyle on 2015-11-28.

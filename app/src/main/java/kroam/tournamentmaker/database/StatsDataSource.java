@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.database;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -7,6 +7,9 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
+
+import kroam.tournamentmaker.Stat;
+import kroam.tournamentmaker.Util;
 
 /**
  * Created by Rushil Perera on 11/23/2015.

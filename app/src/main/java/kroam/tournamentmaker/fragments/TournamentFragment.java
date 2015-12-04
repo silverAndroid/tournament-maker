@@ -1,9 +1,8 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import kroam.tournamentmaker.dummy.DummyContent;
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.TournamentDataSource;
+import kroam.tournamentmaker.activities.Schedule_Result_TabActivity;
+import kroam.tournamentmaker.activities.TournamentCreateActivity;
 
 /**
  * A fragment representing a list of Items.
@@ -20,30 +23,34 @@ import kroam.tournamentmaker.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class ScheduleFragment extends ListFragment {
+public class TournamentFragment extends ListFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
-
-    private String mParam1;
-
-    private OnFragmentInteractionListener mListener;
-
+    private static final String ARG_PARAM2 = "param2";
+    private static TournamentFragment instance;
     // TODO: Rename and change types of parameters
-    public static ScheduleFragment newInstance(/*String param1*/) {
-        ScheduleFragment fragment = new ScheduleFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private String mParam1;
+    private String mParam2;
+    private OnFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ScheduleFragment() {
+    public TournamentFragment() {
+    }
+
+    // TODO: Rename and change types of parameters
+    public static TournamentFragment newInstance() {
+        TournamentFragment fragment = new TournamentFragment();
+        instance = fragment;
+        return fragment;
+    }
+
+    public static TournamentFragment getInstance() {
+        return instance;
     }
 
     @Override
@@ -52,11 +59,11 @@ public class ScheduleFragment extends ListFragment {
 
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
+                TournamentDataSource.getInstance().getTournaments()));
     }
 
 
@@ -75,16 +82,7 @@ public class ScheduleFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.schedule_fragment, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        return view;
+        return inflater.inflate(R.layout.tournament_fragment, container, false);
     }
 
     @Override
@@ -97,11 +95,14 @@ public class ScheduleFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
+        Intent intent;
+        Tournament tournament = TournamentDataSource.getInstance().getTournaments().get(position);
+        if (tournament.isRegistrationClosed())
+            intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
+        else
+            intent = new Intent(getContext(), TournamentCreateActivity.class);
+        intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position).getName());
+        startActivity(intent);
     }
 
     /**

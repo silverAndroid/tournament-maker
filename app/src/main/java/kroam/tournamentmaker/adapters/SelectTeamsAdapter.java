@@ -1,4 +1,4 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +8,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import java.util.ArrayList;
+
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Team;
 
 /**
  * Created by Rushil Perera on 11/28/2015.
