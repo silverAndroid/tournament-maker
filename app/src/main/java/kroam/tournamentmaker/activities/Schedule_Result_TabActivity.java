@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.RankingFragment;
-import kroam.tournamentmaker.ResultFragment;
-import kroam.tournamentmaker.ScheduleFragment;
+import kroam.tournamentmaker.fragments.RankingFragment;
+import kroam.tournamentmaker.fragments.ResultFragment;
+import kroam.tournamentmaker.fragments.ScheduleFragment;
 
 
 public class Schedule_Result_TabActivity extends AppCompatActivity implements ResultFragment.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener {

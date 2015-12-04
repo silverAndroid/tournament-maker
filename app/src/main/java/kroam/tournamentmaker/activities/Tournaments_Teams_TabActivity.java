@@ -16,12 +16,12 @@ import android.widget.ArrayAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import kroam.tournamentmaker.DatabaseSingleton;
+import kroam.tournamentmaker.database.DatabaseSingleton;
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.TeamDataSource;
-import kroam.tournamentmaker.TeamFragment;
-import kroam.tournamentmaker.TournamentDataSource;
-import kroam.tournamentmaker.TournamentFragment;
+import kroam.tournamentmaker.database.TeamDataSource;
+import kroam.tournamentmaker.fragments.TeamFragment;
+import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.fragments.TournamentFragment;
 import kroam.tournamentmaker.Util;
 
 

@@ -21,16 +21,16 @@ import android.widget.RadioGroup;
 import java.util.ArrayList;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.SelectTeamsAdapter;
-import kroam.tournamentmaker.StatsAdapter;
-import kroam.tournamentmaker.StatsDataSource;
+import kroam.tournamentmaker.adapters.SelectTeamsAdapter;
+import kroam.tournamentmaker.adapters.StatsAdapter;
+import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.Team;
-import kroam.tournamentmaker.TeamDataSource;
+import kroam.tournamentmaker.database.TeamDataSource;
 import kroam.tournamentmaker.Tournament;
-import kroam.tournamentmaker.TournamentDataSource;
+import kroam.tournamentmaker.database.TournamentDataSource;
 import kroam.tournamentmaker.Util;
-import kroam.tournamentmaker.ViewTeamsAdapter;
-import kroam.tournamentmaker.WinningStatAdapter;
+import kroam.tournamentmaker.adapters.ViewTeamsAdapter;
+import kroam.tournamentmaker.adapters.WinningStatAdapter;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 

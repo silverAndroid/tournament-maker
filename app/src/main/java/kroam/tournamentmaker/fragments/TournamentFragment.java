@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Tournament;
-import kroam.tournamentmaker.TournamentDataSource;
+import kroam.tournamentmaker.database.TournamentDataSource;
 import kroam.tournamentmaker.activities.Schedule_Result_TabActivity;
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
 

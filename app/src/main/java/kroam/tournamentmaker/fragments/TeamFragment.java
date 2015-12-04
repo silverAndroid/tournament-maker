@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.TeamDataSource;
+import kroam.tournamentmaker.database.TeamDataSource;
 
 /**
  * A fragment representing a list of Items.

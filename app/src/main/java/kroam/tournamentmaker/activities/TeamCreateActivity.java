@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
-import kroam.tournamentmaker.TeamDataSource;
+import kroam.tournamentmaker.database.TeamDataSource;
 
 
 /**
