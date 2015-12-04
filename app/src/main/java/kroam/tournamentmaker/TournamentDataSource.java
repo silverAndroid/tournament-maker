@@ -19,7 +19,7 @@ public class TournamentDataSource {
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TOURNAMENTS_NAME, DatabaseSingleton.TOURNAMENTS_TYPE,
             DatabaseSingleton.TOURNAMENTS_TEAMS, DatabaseSingleton.TOURNAMENTS_MAX_SIZE, DatabaseSingleton
-            .TOURNAMENTS_COMPLETED, DatabaseSingleton.TOURNAMENTS_CLOSED};
+            .TOURNAMENTS_COMPLETED, DatabaseSingleton.TOURNAMENTS_CLOSED, DatabaseSingleton.TOURNAMENTS_WIN_STAT};
 
     private TournamentDataSource() {
     }
@@ -44,8 +44,8 @@ public class TournamentDataSource {
 
     public Tournament updateTournament(Tournament tournament) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
-        String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=?, " +
-                columns[2] + "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=? WHERE " +
+        String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=?, " + columns[2] +
+                "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=?, " + columns[6] + "=? WHERE " +
                 columns[0] + "=?";
 
         SQLiteStatement statement = database.compileStatement(query);
@@ -55,7 +55,9 @@ public class TournamentDataSource {
         statement.bindLong(3, tournament.getMaxSize());
         statement.bindLong(4, tournament.isCompleted() ? 1 : 0);
         statement.bindLong(5, tournament.isRegistrationClosed() ? 1 : 0);
-        statement.bindString(6, tournament.getName());
+        Stat winningStat = tournament.getWinningStat();
+        statement.bindString(6, winningStat == null ? "" : tournament.getWinningStat().getKey());
+        statement.bindString(7, tournament.getName());
         Log.i(TAG, "updateTournament: " + statement.toString());
         statement.executeUpdateDelete();
 
