@@ -16,7 +16,7 @@ import kroam.tournamentmaker.dummy.DummyContent;
 /**
  * A fragment representing a list of Items.
  * <p/>
- *
+ * <p/>
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.

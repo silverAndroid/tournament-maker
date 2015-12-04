@@ -18,21 +18,37 @@ public class Team {
         selected = -1;
     }
 
-    public String getName() {return name;}
+    public String getName() {
+        return name;
+    }
 
-    public String getCaptainName() {return captainName;}
+    public String getCaptainName() {
+        return captainName;
+    }
 
-    public String getPhoneNumber() {return phoneNumber;}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public String getCaptainEmail() {return captainEmail;}
+    public String getCaptainEmail() {
+        return captainEmail;
+    }
 
-    public void setName(String name){this.name = name;}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public void setCaptainName(String captainName) {this.captainName = captainName;}
+    public void setCaptainName(String captainName) {
+        this.captainName = captainName;
+    }
 
-    public void setCaptainEmail(String captainEmail) {this.captainEmail = captainEmail;}
+    public void setCaptainEmail(String captainEmail) {
+        this.captainEmail = captainEmail;
+    }
 
-    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber;}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     @Override
     public String toString() {

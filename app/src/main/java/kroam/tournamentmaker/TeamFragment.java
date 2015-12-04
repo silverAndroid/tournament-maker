@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import kroam.tournamentmaker.dummy.DummyContent;
-
 /**
  * A fragment representing a list of Items.
  * <p/>

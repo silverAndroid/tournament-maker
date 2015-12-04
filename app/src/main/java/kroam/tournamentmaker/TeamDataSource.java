@@ -36,27 +36,27 @@ public class TeamDataSource {
     }
 
     public ArrayList<Team> getTeams() {
-        ArrayList<Team> Teams = new ArrayList<>();
+        ArrayList<Team> teams = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
         Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Team team = Util.cursorToTeam(cursor);
-                Teams.add(team);
+                teams.add(team);
             } while (cursor.moveToNext());
         }
         close();
-        return Teams;
+        return teams;
     }
 
-    public ArrayList<Team> getTeamFromTournament(String tournamentName){
+    public ArrayList<Team> getTeamsFromTournament(String tournamentName) {
         ArrayList<Team> teams = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
         Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[2] + "=?", new
-        String[]{tournamentName}, null, null, null);
-        if(cursor.moveToFirst()){
-                Tournament tournament = Util.cursorToTournament(cursor);
-                teams.addAll(tournament.getTeams());
+                String[]{tournamentName}, null, null, null);
+        if (cursor.moveToFirst()) {
+            Tournament tournament = Util.cursorToTournament(cursor);
+            teams.addAll(tournament.getTeams());
         }
         close();
         return teams;
@@ -67,14 +67,15 @@ public class TeamDataSource {
     }
 
     public Team getTeam(String teamName) {
-        Team team = null;
+        Team team;
         database = DatabaseSingleton.getInstance().getReadableDatabase();
         Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, columns[0] + "=?", new
                 String[]{teamName}, null, null, null);
         if (cursor.moveToFirst()) {
             team = Util.cursorToTeam(cursor);
+            return team;
         }
         close();
-        return team;
+        return null;
     }
 }

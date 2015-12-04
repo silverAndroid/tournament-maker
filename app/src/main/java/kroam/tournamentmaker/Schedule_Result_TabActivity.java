@@ -1,21 +1,16 @@
 package kroam.tournamentmaker;
 
 import android.os.Bundle;
-import android.service.notification.NotificationListenerService;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class Schedule_Result_TabActivity extends AppCompatActivity implements ResultFragment.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener {
@@ -80,4 +75,5 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
             return mFragmentTitleList.get(position);
         }
 
-    }}
+    }
+}
