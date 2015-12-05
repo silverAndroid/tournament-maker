@@ -17,9 +17,11 @@
         android:id="@+id/stat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceLarge"/>
+        android:layout_alignBottom="@+id/team1_stat"
+        android:layout_marginBottom="8dp"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"/>
 
     <EditText
         android:id="@+id/team2_stat"
