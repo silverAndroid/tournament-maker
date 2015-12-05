@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
 import kroam.tournamentmaker.database.DatabaseSingleton;
@@ -27,14 +27,6 @@ public class Util {
 
     public static String convertArrayToString(Object[] array) {
         return Arrays.toString(array).replace("[", "").replace("]", "");
-    }
-
-    public static String convertTeamArrayToString(Team[] array) {
-        String[] teamNames = new String[array.length];
-        for (int i = 0; i < array.length; ++i) {
-            teamNames[i] = array[i].getName();
-        }
-        return Util.convertArrayToString(teamNames);
     }
 
     public static ArrayList<Team> convertStringtoTeamArray(String teamArrayString) {
@@ -71,7 +63,7 @@ public class Util {
 
     public static Stat cursorToStat(Cursor cursor) {
         return new Stat(cursor.getString(0), new ArrayList<>(Arrays.asList(Util.convertStringToArray(cursor
-                .getString(1)))), new ArrayList<>(Arrays.asList(Util.convertStringToArray(cursor.getString(2)))));
+                .getString(1)))), convertStatValuesToMap(cursor.getString(2)));
     }
 
     public static Team cursorToTeam(Cursor cursor) {
@@ -86,6 +78,38 @@ public class Util {
         match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor
                 .getString(3)));
         return match;
+    }
+
+    private static HashMap<String, StatValue> convertStatValuesToMap(String values) {
+        HashMap<String, StatValue> valuesMap = new HashMap<>();
+        String[] valuesSplit = values.split(", ");
+        if (valuesSplit.length != 1) {
+            for (String value : valuesSplit) {
+                String[] statsValues = value.split(": ");
+                if (statsValues.length != 1) {
+                    StatValue statValue = new StatValue(statsValues[0], statsValues[1], Integer.parseInt
+                            (statsValues[2]));
+                    valuesMap.put(statValue.toString(), statValue);
+                }
+            }
+        }
+        return valuesMap;
+    }
+
+    public static String convertHashMapToString(HashMap<String, StatValue> stats) {
+        String statString = "";
+        ArrayList<StatValue> values = new ArrayList<>(stats.values());
+        if (values.size() != 0) {
+            statString += values.get(0).getTournamentName() + ": " + values.get(0).getTeamName() + ": " + values.get(0)
+                    .getValue();
+            for (int i = 1; i < values.size(); i++) {
+                statString += ", ";
+                StatValue statValue = values.get(i);
+                statString += statValue.getTournamentName() + ": " + statValue.getTeamName() + ": " + statValue
+                        .getValue();
+            }
+        }
+        return statString;
     }
 
     /*
@@ -163,9 +187,5 @@ public class Util {
             winners.add(matches.get(aWinner).getWinner());
         }
         return winners;
-    }
-
-    public static String convertMapToString(Map<String, Boolean> winningStats) {
-        return winningStats.toString().replace("{", "").replace("}", "");
     }
 }
