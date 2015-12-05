@@ -19,6 +19,7 @@ public class WinningStatAdapter extends RecyclerView.Adapter<WinningStatAdapter.
 
     private ArrayList<Stat> stats;
     private int statSelectedPosition;
+    private boolean onBind;
 
     public WinningStatAdapter(ArrayList<Stat> stats) {
         this.stats = new ArrayList<>();
@@ -33,8 +34,10 @@ public class WinningStatAdapter extends RecyclerView.Adapter<WinningStatAdapter.
 
     @Override
     public void onBindViewHolder(StatsViewHolder holder, int position) {
+        onBind = true;
         holder.stat.setText(stats.get(position).getKey());
         holder.stat.setChecked(position == statSelectedPosition);
+        onBind = false;
     }
 
     @Override
@@ -55,8 +58,10 @@ public class WinningStatAdapter extends RecyclerView.Adapter<WinningStatAdapter.
             stat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    statSelectedPosition = getAdapterPosition();
-                    notifyItemRangeChanged(0, stats.size());
+                    if (!onBind) {
+                        statSelectedPosition = getAdapterPosition();
+                        notifyItemRangeChanged(0, stats.size());
+                    }
                 }
             });
             itemView.setOnClickListener(new View.OnClickListener() {
