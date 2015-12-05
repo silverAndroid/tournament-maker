@@ -42,6 +42,14 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
         phoneNumber = (EditText) findViewById(R.id.edit_phone);
         email = (EditText) findViewById(R.id.edit_email);
         teamLogo = (ImageButton) findViewById(R.id.btn_teamlogo);
+
+        if (getIntent().hasExtra("name")) {
+            Team team = TeamDataSource.getInstance().getTeam(getIntent().getStringExtra("name"));
+            name.setText(team.getName());
+            captainName.setText(team.getCaptainName());
+            email.setText(team.getCaptainEmail());
+            phoneNumber.setText(team.getPhoneNumber());
+        }
     }
 
     @Override

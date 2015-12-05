@@ -1,6 +1,7 @@
 package kroam.tournamentmaker.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.activities.TeamCreateActivity;
 import kroam.tournamentmaker.database.TeamDataSource;
 
 /**
@@ -78,11 +80,9 @@ public class TeamFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-//            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
+        Intent intent = new Intent(getContext(), TeamCreateActivity.class);
+        intent.putExtra("name", TeamDataSource.getInstance().getTeams().get(position).getName());
+        startActivity(intent);
     }
 
     /**
