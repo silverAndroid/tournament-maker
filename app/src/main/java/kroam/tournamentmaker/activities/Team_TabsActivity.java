@@ -23,6 +23,7 @@ import kroam.tournamentmaker.fragments.ResultFragment;
 import kroam.tournamentmaker.fragments.ScheduleFragment;
 import kroam.tournamentmaker.fragments.TeamFragment;
 import kroam.tournamentmaker.fragments.TeamInfoFragment;
+import kroam.tournamentmaker.fragments.TeamTournamentRankingFragment;
 import kroam.tournamentmaker.fragments.TournamentFragment;
 
 /**
@@ -48,8 +49,8 @@ public class Team_TabsActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(TeamInfoFragment.newInstance(), "Info");
-        adapter.addFragment(ResultFragment.newInstance(), "Results");
-        adapter.addFragment(RankingFragment.newInstance(), "Rankings");
+        adapter.addFragment(TeamTournamentRankingFragment.newInstance(), "Ranking");
+        //need stats to work
         viewPager.setAdapter(adapter);
     }
     class ViewPagerAdapter extends FragmentPagerAdapter {
