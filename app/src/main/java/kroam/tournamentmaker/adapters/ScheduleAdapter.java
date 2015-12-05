@@ -35,7 +35,8 @@ public class ScheduleAdapter extends ArrayAdapter<Match> {
         MatchViewHolder holder = new MatchViewHolder(convertView);
         Match match = matches.get(position);
         holder.team1.setText(match.getHomeTeam().getName());
-        holder.team2.setText(match.getAwayTeam().getName());
+        holder.team2.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
+
         return convertView;
     }
 
