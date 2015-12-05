@@ -1,18 +1,30 @@
 package kroam.tournamentmaker.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import org.solovyev.android.views.llm.LinearLayoutManager;
+
+import java.util.ArrayList;
+
+import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.dummy.DummyContent;
+import kroam.tournamentmaker.adapters.EnterStatsAdapter;
+import kroam.tournamentmaker.adapters.ScheduleAdapter;
+import kroam.tournamentmaker.database.MatchDataSource;
+import kroam.tournamentmaker.database.StatsDataSource;
 
 /**
  * A fragment representing a list of Items.
@@ -23,13 +35,19 @@ import kroam.tournamentmaker.dummy.DummyContent;
  */
 public class ScheduleFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "tournament_name";
 
     private String tournamentName;
+    private ArrayList<Match> matches;
 
     private OnFragmentInteractionListener mListener;
+
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public ScheduleFragment() {
+    }
 
     public static ScheduleFragment newInstance(String tournamentName) {
         ScheduleFragment fragment = new ScheduleFragment();
@@ -39,13 +57,6 @@ public class ScheduleFragment extends ListFragment {
         return fragment;
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public ScheduleFragment() {
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +64,8 @@ public class ScheduleFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            // TODO: Change Adapter to display your content
-            setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                    android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+            setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
+                    .getInstance().getMatches()));
         }
     }
 
@@ -94,14 +104,41 @@ public class ScheduleFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(ListView l, View v, final int position, long id) {
         super.onListItemClick(l, v, position, id);
-
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
+        final EnterStatsAdapter[] adapter = new EnterStatsAdapter[1];
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setTitle("Enter Stats")
+                .setView(R.layout.game_stats)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        StatsDataSource.getInstance().updateStats(adapter[0].getStats());
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                Dialog view = (Dialog) dialog;
+                TextView homeTeam = (TextView) view.findViewById(R.id.home_team);
+                TextView awayTeam = (TextView) view.findViewById(R.id.away_team);
+                Match currentMatch = matches.get(position);
+                homeTeam.setText(currentMatch.getHomeTeam().getName());
+                awayTeam.setText(currentMatch.getAwayTeam().getName());
+                RecyclerView statsList = (RecyclerView) view.findViewById(R.id.stats_list);
+                statsList.setLayoutManager(new LinearLayoutManager(getContext()));
+                statsList.setAdapter(adapter[0] = new EnterStatsAdapter(StatsDataSource.getInstance().getTournamentStats
+                        (tournamentName), matches.get(position)));
+            }
+        });
+        dialog.show();
     }
 
     /**
