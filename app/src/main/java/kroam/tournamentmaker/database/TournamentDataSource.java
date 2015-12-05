@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,32 +28,41 @@ public class TournamentDataSource {
     private TournamentDataSource() {
     }
 
-    public static TournamentDataSource getInstance() {
+    public synchronized static TournamentDataSource getInstance() {
         return instance;
     }
 
     public Tournament createTournament(Tournament tournament) throws SQLiteConstraintException {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
-        String query = "INSERT INTO " + DatabaseSingleton.TOURNAMENTS_TABLE + " VALUES(?, ?, ?, ?, ?, ?)";
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "createTournament: open");
+        try {
+            String query = "INSERT INTO " + DatabaseSingleton.TOURNAMENTS_TABLE + " VALUES(?, ?, ?, ?, ?, ?, ?)";
 
-        SQLiteStatement statement = database.compileStatement(query);
-        database.beginTransaction();
-        statement.bindString(1, tournament.getName());
-        statement.bindString(2, tournament.getType());
-        statement.bindString(3, Util.convertArrayToString(tournament.getTeams().toArray()));
-        statement.bindLong(4, tournament.getMaxSize());
-        statement.bindLong(5, tournament.isCompleted() ? 1 : 0);
-        statement.bindLong(6, tournament.isRegistrationClosed() ? 1 : 0);
-        statement.executeInsert();
+            SQLiteStatement statement = database.compileStatement(query);
+            database.beginTransaction();
+            statement.bindString(1, tournament.getName());
+            statement.bindString(2, tournament.getType());
+            statement.bindString(3, Util.convertArrayToString(tournament.getTeams().toArray()));
+            statement.bindLong(4, tournament.getMaxSize());
+            statement.bindLong(5, tournament.isCompleted() ? 1 : 0);
+            statement.bindLong(6, tournament.isRegistrationClosed() ? 1 : 0);
+            statement.bindString(7, tournament.getWinningStat() == null ? "" : tournament.getWinningStat().getKey());
+            statement.executeInsert();
 
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        close();
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            close();
+        } catch (SQLiteConstraintException e) {
+            database.endTransaction();
+            close();
+            updateTournament(tournament);
+        }
         return tournament;
     }
 
     public Tournament updateTournament(Tournament tournament) {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "updateTournament: open");
         String query = "UPDATE " + DatabaseSingleton.TOURNAMENTS_TABLE + " SET " + columns[1] + "=?, " + columns[2] +
                 "=?, " + columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=?, " + columns[6] + "=? WHERE " +
                 columns[0] + "=?";
@@ -73,6 +83,7 @@ public class TournamentDataSource {
         database.setTransactionSuccessful();
         database.endTransaction();
         close();
+        Log.i(TAG, "updateTournament: close");
         return tournament;
     }
 
@@ -85,7 +96,6 @@ public class TournamentDataSource {
             Tournament tournament = Util.cursorToTournament(cursor);
             teams.addAll(tournament.getTeams());
         }
-        close();
         return teams;
     }
 
@@ -99,12 +109,11 @@ public class TournamentDataSource {
                 tournaments.add(tournament);
             } while (cursor.moveToNext());
         }
-        close();
         return tournaments;
     }
 
     private void close() {
-        database.close();
+        DatabaseSingleton.getInstance().closeDatabase();
     }
 
     public Tournament getTournament(String name) {
@@ -115,7 +124,6 @@ public class TournamentDataSource {
         if (cursor.moveToFirst()) {
             tournament = Util.cursorToTournament(cursor);
         }
-        close();
         return tournament;
     }
 }

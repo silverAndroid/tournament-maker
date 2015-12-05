@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ import kroam.tournamentmaker.Util;
  */
 public class TeamDataSource {
 
+    private static final String TAG = "TeamDataSource";
     private static TeamDataSource instance = new TeamDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TEAMS_NAME, DatabaseSingleton.TEAMS_CAPTAIN_NAME,
@@ -24,12 +26,13 @@ public class TeamDataSource {
     private TeamDataSource() {
     }
 
-    public static TeamDataSource getInstance() {
+    public synchronized static TeamDataSource getInstance() {
         return instance;
     }
 
     public Team createTeam(Team team) {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "createTeam: open");
         String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?)";
         database.beginTransaction();
 
@@ -43,6 +46,7 @@ public class TeamDataSource {
         database.setTransactionSuccessful();
         database.endTransaction();
         close();
+        Log.i(TAG, "createTeam: close");
         return team;
     }
 
@@ -56,7 +60,6 @@ public class TeamDataSource {
                 teams.add(team);
             } while (cursor.moveToNext());
         }
-        close();
         return teams;
     }
 
@@ -72,12 +75,11 @@ public class TeamDataSource {
             Tournament tournament = Util.cursorToTournament(cursor);
             teams.addAll(tournament.getTeams());
         }
-        close();
         return teams;
     }
 
     private void close() {
-        database.close();
+        DatabaseSingleton.getInstance().closeDatabase();
     }
 
     public Team getTeam(String teamName) {
@@ -89,12 +91,12 @@ public class TeamDataSource {
             team = Util.cursorToTeam(cursor);
             return team;
         }
-        close();
         return null;
     }
 
     public Team updateTeam(Team team) {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "updateTeam: open");
         String query = "UPDATE " + DatabaseSingleton.TEAMS_TABLE + " SET " + columns[1] + "=?, " + columns[2] + "=?, " +
                 "" + columns[3] + "=? WHERE " + columns[0] + "=?";
 
@@ -110,6 +112,7 @@ public class TeamDataSource {
         database.setTransactionSuccessful();
         database.endTransaction();
         close();
+        Log.i(TAG, "updateTeam: close");
         return team;
     }
 }

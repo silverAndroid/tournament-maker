@@ -3,6 +3,7 @@ package kroam.tournamentmaker.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by Rushil Perera on 11/20/2015.
@@ -37,26 +38,24 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
     private static final int VERSION = 7;
-
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
             TEAMS_PHONE_NUMBER + " TEXT, UNIQUE (" + TEAMS_NAME + "));";
-
     private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
             TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
             TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, " + TOURNAMENTS_CLOSED + " INT, " +
             TOURNAMENTS_WIN_STAT + " TEXT, UNIQUE(" + TOURNAMENTS_NAME + "));";
-
     private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
             STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, UNIQUE(" + STATS_KEY + "));";
-
     private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
             "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TOURNAMENT_NAME + " TEXT, " +
             "FOREIGN KEY(" + MATCHES_TEAM_1 + ", " + MATCHES_TEAM_2 + ") REFERENCES " + TEAMS_TABLE + "(" +
             TEAMS_NAME + ", " + TEAMS_NAME + "), FOREIGN KEY(" + MATCHES_TOURNAMENT_NAME + ") REFERENCES " +
             TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
-
+    private static final String TAG = "DatabaseSingleton";
     private static DatabaseSingleton instance;
+    private int activeDatabaseCount = 0;
+    private SQLiteDatabase connection; // always returns the same connection instance
 
     private DatabaseSingleton(Context context) {
         this(context, NAME, null, VERSION);
@@ -79,11 +78,11 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
         super(context, name, factory, version);
     }
 
-    public static DatabaseSingleton getInstance() {
+    public static synchronized DatabaseSingleton getInstance() {
         return instance;
     }
 
-    public static void createInstance(Context context) {
+    public static synchronized void createInstance(Context context) {
         if (instance == null)
             instance = new DatabaseSingleton(context);
     }
@@ -103,5 +102,24 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + MATCHES_TABLE);
         onCreate(db);
+    }
+
+    public synchronized SQLiteDatabase openDatabase() {
+        activeDatabaseCount++;
+        Log.i(TAG, "openDatabase: " + activeDatabaseCount);
+        if (activeDatabaseCount == 1) {
+            // Opening new database
+            connection = instance.getWritableDatabase();
+        }
+        return connection;
+    }
+
+    public synchronized void closeDatabase() {
+        activeDatabaseCount--;
+        Log.i(TAG, "openDatabase: " + activeDatabaseCount);
+        if (activeDatabaseCount == 0) {
+            // Closing database
+            connection.close();
+        }
     }
 }

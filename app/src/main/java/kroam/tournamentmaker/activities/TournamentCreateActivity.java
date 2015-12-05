@@ -241,11 +241,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         Tournament tournament = new Tournament(tournamentName, tournamentType, viewTeamsAdapter[0] != null ?
                 viewTeamsAdapter[0].getSelectedTeams() : new ArrayList<Team>(), sizePicker.getValue());
         tournament.setRegistrationClosed(registrationCompleted);
-        try {
-            TournamentDataSource.getInstance().createTournament(tournament);
-        } catch (SQLiteConstraintException e) {
-            TournamentDataSource.getInstance().updateTournament(tournament);
-        }
+        TournamentDataSource.getInstance().createTournament(tournament);
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
     }

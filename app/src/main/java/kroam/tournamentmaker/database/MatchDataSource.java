@@ -3,6 +3,7 @@ package kroam.tournamentmaker.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ import kroam.tournamentmaker.Util;
  * Singleton class for the Match Section of the Database
  */
 public class MatchDataSource {
+    private static final String TAG = "MatchDataSource";
     private static MatchDataSource ourInstance = new MatchDataSource();
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.MATCHES_TEAM_1, DatabaseSingleton.MATCHES_TEAM_2, DatabaseSingleton
@@ -23,18 +25,20 @@ public class MatchDataSource {
     private MatchDataSource() {
     }
 
-    public static MatchDataSource getInstance() {
+    public synchronized static MatchDataSource getInstance() {
         return ourInstance;
     }
 
     public void createMatch(Match match) {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "createMatch: open");
         ContentValues values = new ContentValues();
         values.put(columns[0], match.getHomeTeam().getName());
         values.put(columns[1], match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
         values.put(columns[2], match.isCompleted() ? 1 : 0);
         values.put(columns[3], match.getAssociatedTournament().getName());
         database.insertOrThrow(DatabaseSingleton.MATCHES_TABLE, null, values);
+        close();
     }
 
     public ArrayList<Match> getMatches() {
@@ -47,6 +51,7 @@ public class MatchDataSource {
                 matches.add(match);
             } while (cursor.moveToNext());
         }
+        close();
         return matches;
     }
 
@@ -76,5 +81,9 @@ public class MatchDataSource {
             } while (cursor.moveToNext());
         }
         return finishedMatches;
+    }
+
+    private void close() {
+        DatabaseSingleton.getInstance().closeDatabase();
     }
 }
