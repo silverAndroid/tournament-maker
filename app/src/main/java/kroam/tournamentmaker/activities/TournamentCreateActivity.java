@@ -3,7 +3,6 @@ package kroam.tournamentmaker.activities;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -238,9 +237,13 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         int selectedRadioButtonID = typeGroup.getCheckedRadioButtonId();
         String tournamentType = selectedRadioButtonID == R.id.radio_round_robin ? ROUND_ROBIN :
                 selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
-        Tournament tournament = new Tournament(tournamentName, tournamentType, viewTeamsAdapter[0] != null ?
-                viewTeamsAdapter[0].getSelectedTeams() : new ArrayList<Team>(), sizePicker.getValue());
+        ArrayList<Team> selectedTeams = new ArrayList<>();
+        if (viewTeamsAdapter[0] != null)
+            selectedTeams.addAll(viewTeamsAdapter[0].getSelectedTeams());
+        Tournament tournament = new Tournament(tournamentName, tournamentType, selectedTeams, sizePicker.getValue());
         tournament.setRegistrationClosed(registrationCompleted);
+        for (Team team : selectedTeams)
+            team.addTournament(tournament);
         TournamentDataSource.getInstance().createTournament(tournament);
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);

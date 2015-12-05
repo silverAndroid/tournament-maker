@@ -1,7 +1,6 @@
 package kroam.tournamentmaker;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
-import kroam.tournamentmaker.database.DatabaseSingleton;
 import kroam.tournamentmaker.database.MatchDataSource;
 import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.database.TeamDataSource;
@@ -29,23 +27,24 @@ public class Util {
         return Arrays.toString(array).replace("[", "").replace("]", "");
     }
 
-    public static ArrayList<Team> convertStringtoTeamArray(String teamArrayString) {
-        SQLiteDatabase database = DatabaseSingleton.getInstance().getReadableDatabase();
+    public static ArrayList<Team> convertStringToTeamArraylist(String teamArrayString) {
         String names[] = Util.convertStringToArray(teamArrayString);
         ArrayList<Team> teams = new ArrayList<>();
 
-        String columns[] = {DatabaseSingleton.TEAMS_NAME, DatabaseSingleton.TEAMS_CAPTAIN_NAME, DatabaseSingleton
-                .TEAMS_EMAIL, DatabaseSingleton.TEAMS_PHONE_NUMBER};
-
         for (String name : names) {
-            Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, columns[0] + "=?", new
-                    String[]{name}, null, null, null);
-            if (cursor.moveToFirst())
-                teams.add(cursorToTeam(cursor));
+            teams.add(TeamDataSource.getInstance().getTeam(name));
         }
-        database.close();
         return teams;
+    }
 
+    public static ArrayList<Tournament> convertStringToTournamentArraylist(String arrayString) {
+        String[] tournamentNames = Util.convertStringToArray(arrayString);
+        ArrayList<Tournament> tournaments = new ArrayList<>();
+
+        for (String name : tournamentNames) {
+            tournaments.add(TournamentDataSource.getInstance().getTournament(name));
+        }
+        return tournaments;
     }
 
     public static String[] convertStringToArray(String arrayString) {
@@ -54,7 +53,7 @@ public class Util {
 
     public static Tournament cursorToTournament(Cursor cursor) {
         Tournament tournament = new Tournament(cursor.getString(0), cursor.getString(1), Util
-                .convertStringtoTeamArray(cursor.getString(2)), cursor.getInt(3));
+                .convertStringToTeamArraylist(cursor.getString(2)), cursor.getInt(3));
         tournament.setCompleted(cursor.getInt(4) == 1);
         tournament.setRegistrationClosed(cursor.getInt(5) == 1);
         tournament.setWinningStat(StatsDataSource.getInstance().getStat(cursor.getString(6)));
@@ -63,11 +62,13 @@ public class Util {
 
     public static Stat cursorToStat(Cursor cursor) {
         return new Stat(cursor.getString(0), new ArrayList<>(Arrays.asList(Util.convertStringToArray(cursor
-                .getString(1)))), convertStatValuesToMap(cursor.getString(2)));
+                .getString(1)))), Util.convertStatValuesToMap(cursor.getString(2)));
     }
 
     public static Team cursorToTeam(Cursor cursor) {
-        return new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        Team team = new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        team.addTournaments(Util.convertStringToTournamentArraylist(cursor.getString(4)));
+        return team;
     }
 
     public static Match cursorToMatch(Cursor cursor) {
@@ -118,7 +119,7 @@ public class Util {
     *
     */
     public static ArrayList<Match> generateMatches(Tournament tournament) {
-        ArrayList<Team> teams = TeamDataSource.getInstance().getTeamsFromTournament(tournament.getName());
+        ArrayList<Team> teams = TournamentDataSource.getInstance().getTeamsFromTournament(tournament.getName());
         Collections.shuffle(teams);
         Iterator<Team> teamIterator = teams.listIterator();
         ArrayList<Match> matches = new ArrayList<>();
@@ -169,7 +170,7 @@ public class Util {
 
         switch (tournament.getType()) {
             case TournamentCreateActivity.ROUND_ROBIN:
-                System.out.print("Exceptional case. Round Robin only has 1 round of matches\n");
+                System.out.println("Exceptional case. Round Robin only has 1 round of matches\n");
                 return generateMatches(tournament);
             default:
                 Iterator<Team> teamIterator = qualifyingTeams.listIterator();
