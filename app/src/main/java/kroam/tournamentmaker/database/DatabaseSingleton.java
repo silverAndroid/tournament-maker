@@ -38,6 +38,12 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
     private static final int VERSION = 7;
+
+    private static final String TAG = "DatabaseSingleton";
+    private static DatabaseSingleton instance;
+    private int activeDatabaseCount = 0;
+    private SQLiteDatabase connection; // always returns the same connection instance
+
     private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
             TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
             TEAMS_PHONE_NUMBER + " TEXT, UNIQUE (" + TEAMS_NAME + "));";
@@ -52,10 +58,6 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
             "FOREIGN KEY(" + MATCHES_TEAM_1 + ", " + MATCHES_TEAM_2 + ") REFERENCES " + TEAMS_TABLE + "(" +
             TEAMS_NAME + ", " + TEAMS_NAME + "), FOREIGN KEY(" + MATCHES_TOURNAMENT_NAME + ") REFERENCES " +
             TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
-    private static final String TAG = "DatabaseSingleton";
-    private static DatabaseSingleton instance;
-    private int activeDatabaseCount = 0;
-    private SQLiteDatabase connection; // always returns the same connection instance
 
     private DatabaseSingleton(Context context) {
         this(context, NAME, null, VERSION);

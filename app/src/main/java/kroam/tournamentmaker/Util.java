@@ -127,8 +127,8 @@ public class Util {
         switch (tournament.getType()) {
             case TournamentCreateActivity.KNOCKOUT:
                 while (teamIterator.hasNext()) {
-                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.hasNext() ? null : teamIterator
-                            .next());
+                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.hasNext() ? teamIterator.next() :
+                            null);
                     matches.add(newMatch);
                     MatchDataSource.getInstance().createMatch(newMatch);
                 }
