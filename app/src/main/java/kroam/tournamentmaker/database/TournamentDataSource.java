@@ -55,6 +55,7 @@ public class TournamentDataSource {
 
         SQLiteStatement statement = database.compileStatement(query);
         database.beginTransaction();
+
         statement.bindString(1, tournament.getType());
         statement.bindString(2, Util.convertArrayToString(tournament.getTeams().toArray()));
         statement.bindLong(3, tournament.getMaxSize());
@@ -63,7 +64,6 @@ public class TournamentDataSource {
         Stat winningStat = tournament.getWinningStat();
         statement.bindString(6, winningStat == null ? "" : tournament.getWinningStat().getKey());
         statement.bindString(7, tournament.getName());
-        Log.i(TAG, "updateTournament: " + statement.toString());
         statement.executeUpdateDelete();
 
         database.setTransactionSuccessful();
