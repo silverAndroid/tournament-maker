@@ -1,6 +1,7 @@
 package kroam.tournamentmaker.activities;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -61,7 +62,11 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             case R.id.btn_confirm:
                 team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText().toString
                         (), phoneNumber.getText().toString());
-                TeamDataSource.getInstance().createTeam(team);
+                try {
+                    TeamDataSource.getInstance().createTeam(team);
+                } catch (SQLiteConstraintException e) {
+                    TeamDataSource.getInstance().updateTeam(team);
+                }
 
                 Intent returnIntent = new Intent();
                 setResult(RESULT_OK, returnIntent);

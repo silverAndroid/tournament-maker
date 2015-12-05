@@ -3,6 +3,7 @@ package kroam.tournamentmaker.database;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 
 import java.util.ArrayList;
 
@@ -84,5 +85,25 @@ public class TeamDataSource {
         }
         close();
         return null;
+    }
+
+    public Team updateTeam(Team team) {
+        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        String query = "UPDATE " + DatabaseSingleton.TEAMS_TABLE + " SET " + columns[1] + "=?, " + columns[2] + "=?, " +
+                "" + columns[3] + "=? WHERE " + columns[0] + "=?";
+
+        SQLiteStatement statement = database.compileStatement(query);
+        database.beginTransaction();
+
+        statement.bindString(1, team.getCaptainName());
+        statement.bindString(2, team.getCaptainEmail());
+        statement.bindString(3, team.getPhoneNumber());
+        statement.bindString(4, team.getName());
+        statement.executeUpdateDelete();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close();
+        return team;
     }
 }
