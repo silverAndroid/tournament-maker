@@ -12,7 +12,7 @@
         android:layout_weight="0.47"
         android:textSize="30dp"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="black" />
+        android:textColor="#000" />
 
     <GridLayout
         android:layout_width="wrap_content"
