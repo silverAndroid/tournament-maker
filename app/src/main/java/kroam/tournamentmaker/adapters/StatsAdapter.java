@@ -50,20 +50,6 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
     public void onBindViewHolder(StatsViewHolder holder, final int position) {
         final Stat stat = stats.get(position);
         holder.stat.setText(stat.getKey());
-        holder.stat.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable newText) {
-                stats.set(position, new Stat(newText.toString()));
-            }
-        });
     }
 
     public void setTournamentName(String name) {
@@ -114,6 +100,20 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
                 @Override
                 public void onClick(View v) {
                     deleteItem(getAdapterPosition());
+                }
+            });
+            stat.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable newText) {
+                    stats.set(getAdapterPosition(), new Stat(newText.toString()));
                 }
             });
         }
