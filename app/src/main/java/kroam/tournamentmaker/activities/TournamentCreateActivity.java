@@ -21,16 +21,16 @@ import android.widget.RadioGroup;
 import java.util.ArrayList;
 
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Team;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.Util;
 import kroam.tournamentmaker.adapters.SelectTeamsAdapter;
 import kroam.tournamentmaker.adapters.StatsAdapter;
-import kroam.tournamentmaker.database.StatsDataSource;
-import kroam.tournamentmaker.Team;
-import kroam.tournamentmaker.database.TeamDataSource;
-import kroam.tournamentmaker.Tournament;
-import kroam.tournamentmaker.database.TournamentDataSource;
-import kroam.tournamentmaker.Util;
 import kroam.tournamentmaker.adapters.ViewTeamsAdapter;
 import kroam.tournamentmaker.adapters.WinningStatAdapter;
+import kroam.tournamentmaker.database.StatsDataSource;
+import kroam.tournamentmaker.database.TeamDataSource;
+import kroam.tournamentmaker.database.TournamentDataSource;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -38,6 +38,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
     public static final String KNOCKOUT = "Knockout";
     public static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
+    private final SelectTeamsAdapter[] selectTeamsAdapter = new SelectTeamsAdapter[1];
 
     StatsAdapter adapter;
     NumberPicker sizePicker;
@@ -87,6 +88,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
             String name = getIntent().getStringExtra("name");
             Tournament tournament = TournamentDataSource.getInstance().getTournament(name);
             this.name.setText(tournament.getName());
+            this.name.setEnabled(false);
             sizePicker.setValue(tournament.getMaxSize());
             String type = tournament.getType();
             switch (type) {
@@ -175,14 +177,13 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                selectedTeams.setAdapter(new SelectTeamsAdapter(TeamDataSource.getInstance().getTeams(),
-                        viewTeamsAdapter[0] == null ? new ArrayList<Team>() : viewTeamsAdapter[0].getSelectedTeams()));
+                selectTeamsAdapter[0].addTeam((Team) data.getSerializableExtra("team"));
+                selectedTeams.setAdapter(selectTeamsAdapter[0]);
             }
         }
     }
 
     private void selectTeams() {
-        final SelectTeamsAdapter[] selectTeamsAdapter = new SelectTeamsAdapter[1];
         selectDialog = new AlertDialog.Builder(TournamentCreateActivity.this, R.style.DialogTheme)
                 .setView(R.layout.select_team_panel)
                 .setTitle("Select Teams")
