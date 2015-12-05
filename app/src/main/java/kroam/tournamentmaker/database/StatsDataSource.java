@@ -33,7 +33,7 @@ public class StatsDataSource {
         ContentValues values = new ContentValues(3);
         values.put(columns[0], stat.getKey());
         values.put(columns[1], Util.convertArrayToString(stat.getTournamentNames().toArray()));
-        values.put(columns[2], Util.convertArrayToString(stat.getValues().toArray()));
+        values.put(columns[2], Util.convertHashMapToString(stat.getValues()));
         database.insert(DatabaseSingleton.STATS_TABLE, null, values);
         close();
     }
@@ -48,7 +48,7 @@ public class StatsDataSource {
         for (Stat stat : stats) {
             statement.bindString(1, stat.getKey());
             statement.bindString(2, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(3, Util.convertArrayToString(stat.getValues().toArray()));
+            statement.bindString(3, Util.convertHashMapToString(stat.getValues()));
             Cursor cursor = database.query(DatabaseSingleton.STATS_TABLE, columns, DatabaseSingleton.STATS_KEY
                     + " = ?", new String[]{stat.getKey()}, null, null, null);
             if (cursor.moveToFirst()) {
@@ -57,8 +57,8 @@ public class StatsDataSource {
                 query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=\'" + newTournamentNames
                         + ", " + Util.convertArrayToString(stat.getTournamentNames().toArray()) + "\', " + columns[2]
                         + "=\'" + newValues + (newValues.isEmpty() || stat.getValues().isEmpty() ? "" : ", ") + Util
-                        .convertArrayToString(stat.getValues().toArray()) + "\' WHERE " + DatabaseSingleton.STATS_KEY +
-                        "=\'" + stat.getKey() + "\';";
+                        .convertHashMapToString(stat.getValues()) + "\' WHERE " + DatabaseSingleton.STATS_KEY + "=\'"
+                        + stat.getKey() + "\';";
                 Log.i(TAG, "addStats: " + query);
                 database.execSQL(query);
             } else {
@@ -98,7 +98,7 @@ public class StatsDataSource {
             SQLiteStatement statement = database.compileStatement(query);
             database.beginTransaction();
             statement.bindString(1, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(2, Util.convertArrayToString(stat.getValues().toArray()));
+            statement.bindString(2, Util.convertHashMapToString(stat.getValues()));
             statement.bindString(3, stat.getKey());
             statement.executeUpdateDelete();
             database.setTransactionSuccessful();
