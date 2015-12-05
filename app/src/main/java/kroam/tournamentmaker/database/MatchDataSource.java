@@ -37,6 +37,19 @@ public class MatchDataSource {
         database.insertOrThrow(DatabaseSingleton.MATCHES_TABLE, null, values);
     }
 
+    public ArrayList<Match> getMatches() {
+        ArrayList<Match> matches = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Match match = Util.cursorToMatch(cursor);
+                matches.add(match);
+            } while (cursor.moveToNext());
+        }
+        return matches;
+    }
+
     public ArrayList<Match> getFinishedMatches() {
         ArrayList<Match> finishedMatches = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();

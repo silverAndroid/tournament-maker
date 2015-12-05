@@ -22,12 +22,13 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedules_results_tabs);
-        String name = getIntent().getStringExtra("name");
+        name = getIntent().getStringExtra("name");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
@@ -41,7 +42,7 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(ScheduleFragment.newInstance("Schedule"), "Schedule");
+        adapter.addFragment(ScheduleFragment.newInstance(name), "Schedule");
         adapter.addFragment(ResultFragment.newInstance(), "Results");
         adapter.addFragment(RankingFragment.newInstance(), "Rankings");
         viewPager.setAdapter(adapter);
