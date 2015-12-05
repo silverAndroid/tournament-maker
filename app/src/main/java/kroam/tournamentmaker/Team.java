@@ -1,9 +1,11 @@
 package kroam.tournamentmaker;
 
+import java.io.Serializable;
+
 /**
  * Created by Kyle on 2015-11-28.
  */
-public class Team {
+public class Team implements Serializable {
     private String name;
     private String captainName;
     private String captainEmail;

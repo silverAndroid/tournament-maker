@@ -47,6 +47,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
         if (getIntent().hasExtra("name")) {
             Team team = TeamDataSource.getInstance().getTeam(getIntent().getStringExtra("name"));
             name.setText(team.getName());
+            name.setEnabled(false);
             captainName.setText(team.getCaptainName());
             email.setText(team.getCaptainEmail());
             phoneNumber.setText(team.getPhoneNumber());
@@ -69,6 +70,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 Intent returnIntent = new Intent();
+                returnIntent.putExtra("team", team);
                 setResult(RESULT_OK, returnIntent);
                 finish();
                 break;
