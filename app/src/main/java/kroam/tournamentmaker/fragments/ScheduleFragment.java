@@ -40,8 +40,6 @@ public class ScheduleFragment extends ListFragment {
     private String tournamentName;
     private ArrayList<Match> matches;
 
-    private OnFragmentInteractionListener mListener;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -65,19 +63,7 @@ public class ScheduleFragment extends ListFragment {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
             setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
-                    .getInstance().getMatches()));
-        }
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mListener = (OnFragmentInteractionListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    .getInstance().getMatchesForTournament(tournamentName)));
         }
     }
 
@@ -100,7 +86,6 @@ public class ScheduleFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     @Override
