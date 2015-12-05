@@ -275,6 +275,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                         .getTournamentStats(tournamentName)));
             }
         });
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
         dialog.show();
     }
 }
