@@ -31,7 +31,7 @@ public class MatchDataSource {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(columns[0], match.getHomeTeam().getName());
-        values.put(columns[1], match.getAwayTeam().getName());
+        values.put(columns[1], match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
         values.put(columns[2], match.isCompleted() ? 1 : 0);
         values.put(columns[3], match.getAssociatedTournament().getName());
         database.insertOrThrow(DatabaseSingleton.MATCHES_TABLE, null, values);
@@ -41,6 +41,20 @@ public class MatchDataSource {
         ArrayList<Match> matches = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
         Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, null, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Match match = Util.cursorToMatch(cursor);
+                matches.add(match);
+            } while (cursor.moveToNext());
+        }
+        return matches;
+    }
+
+    public ArrayList<Match> getMatchesForTournament(String tournamentName) {
+        ArrayList<Match> matches = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, columns[3] + "=?", new
+                String[]{tournamentName}, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Match match = Util.cursorToMatch(cursor);
