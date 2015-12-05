@@ -95,6 +95,7 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.StatsViewHol
         public StatsViewHolder(View view) {
             super(view);
             stat = (EditText) view.findViewById(R.id.stat);
+            stat.requestFocus();
             delete = (ImageButton) view.findViewById(R.id.delete);
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override
