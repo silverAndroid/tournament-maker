@@ -58,6 +58,11 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         return selectedTeams;
     }
 
+    public void addTeam(Team team) {
+        teams.add(team);
+        notifyItemInserted(teams.size());
+    }
+
     class TeamViewHolder extends RecyclerView.ViewHolder {
 
         CheckBox chkTeam;
