@@ -30,12 +30,18 @@ public class TeamDataSource {
 
     public Team createTeam(Team team) {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(columns[0], team.getName());
-        values.put(columns[1], team.getCaptainName());
-        values.put(columns[2], team.getCaptainEmail());
-        values.put(columns[3], team.getPhoneNumber());
-        database.insertOrThrow(DatabaseSingleton.TEAMS_TABLE, null, values);
+        String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?)";
+        database.beginTransaction();
+
+        SQLiteStatement statement = database.compileStatement(query);
+        statement.bindString(1, team.getName());
+        statement.bindString(2, team.getCaptainName());
+        statement.bindString(3, team.getCaptainEmail());
+        statement.bindString(4, team.getPhoneNumber());
+        statement.executeInsert();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
         close();
         return team;
     }

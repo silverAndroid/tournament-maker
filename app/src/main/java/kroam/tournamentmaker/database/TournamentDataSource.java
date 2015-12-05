@@ -1,11 +1,9 @@
 package kroam.tournamentmaker.database;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -35,14 +33,20 @@ public class TournamentDataSource {
 
     public Tournament createTournament(Tournament tournament) throws SQLiteConstraintException {
         database = DatabaseSingleton.getInstance().getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(columns[0], tournament.getName());
-        values.put(columns[1], tournament.getType());
-        values.put(columns[2], Util.convertArrayToString(tournament.getTeams().toArray()));
-        values.put(columns[3], tournament.getMaxSize());
-        values.put(columns[4], tournament.isCompleted() ? 1 : 0);
-        values.put(columns[5], tournament.isRegistrationClosed() ? 1 : 0);
-        database.insertOrThrow(DatabaseSingleton.TOURNAMENTS_TABLE, null, values);
+        String query = "INSERT INTO " + DatabaseSingleton.TOURNAMENTS_TABLE + " VALUES(?, ?, ?, ?, ?, ?)";
+
+        SQLiteStatement statement = database.compileStatement(query);
+        database.beginTransaction();
+        statement.bindString(1, tournament.getName());
+        statement.bindString(2, tournament.getType());
+        statement.bindString(3, Util.convertArrayToString(tournament.getTeams().toArray()));
+        statement.bindLong(4, tournament.getMaxSize());
+        statement.bindLong(5, tournament.isCompleted() ? 1 : 0);
+        statement.bindLong(6, tournament.isRegistrationClosed() ? 1 : 0);
+        statement.executeInsert();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
         close();
         return tournament;
     }
