@@ -56,7 +56,10 @@ public class TeamDataSource {
     public ArrayList<Team> getTeamsFromTournament(String tournamentName) {
         ArrayList<Team> teams = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
-        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[2] + "=?", new
+        String[] columns = {DatabaseSingleton.TOURNAMENTS_NAME, DatabaseSingleton.TOURNAMENTS_TYPE,
+                DatabaseSingleton.TOURNAMENTS_TEAMS, DatabaseSingleton.TOURNAMENTS_MAX_SIZE, DatabaseSingleton
+                .TOURNAMENTS_COMPLETED, DatabaseSingleton.TOURNAMENTS_CLOSED, DatabaseSingleton.TOURNAMENTS_WIN_STAT};
+        Cursor cursor = database.query(DatabaseSingleton.TOURNAMENTS_TABLE, columns, columns[0] + "=?", new
                 String[]{tournamentName}, null, null, null);
         if (cursor.moveToFirst()) {
             Tournament tournament = Util.cursorToTournament(cursor);
