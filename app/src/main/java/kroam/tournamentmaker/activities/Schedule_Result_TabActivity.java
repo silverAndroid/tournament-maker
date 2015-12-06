@@ -18,7 +18,7 @@ import kroam.tournamentmaker.fragments.ResultFragment;
 import kroam.tournamentmaker.fragments.ScheduleFragment;
 
 
-public class Schedule_Result_TabActivity extends AppCompatActivity implements ResultFragment.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener {
+public class Schedule_Result_TabActivity extends AppCompatActivity implements RankingFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -43,7 +43,7 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(ScheduleFragment.newInstance(name), "Schedule");
-        adapter.addFragment(ResultFragment.newInstance(), "Results");
+        adapter.addFragment(ResultFragment.newInstance(name), "Results");
         adapter.addFragment(RankingFragment.newInstance(), "Rankings");
         viewPager.setAdapter(adapter);
     }
