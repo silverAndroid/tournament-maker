@@ -44,7 +44,7 @@ public class Match {
 
     public void setWinner() {
         if (homeScore < awayScore) {
-            winner = awayTeam;          //Exception: Ties not handled
+            winner = awayTeam;
         }
         else{                            //Ties go to home team
             winner = homeTeam;
@@ -58,6 +58,10 @@ public class Match {
     public Tournament getAssociatedTournament() {
         return associatedTournament;
     }
+
+    public void setHomeScore(int score){ homeScore = score;}
+
+    public void setAwayScore(int score){ awayScore = score;}
 
     public void setAssociatedTournament(Tournament associatedTournament) {
         this.associatedTournament = associatedTournament;
