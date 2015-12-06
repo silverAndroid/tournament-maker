@@ -1,0 +1,70 @@
+package kroam.tournamentmaker;
+
+/**
+ * Created by Rushil Perera on 12/1/2015.
+ */
+public class Match {
+    private final Team homeTeam;
+    private final Team awayTeam;
+    private boolean completed;
+    private Team winner;
+    private int homeScore, awayScore;
+    private Tournament associatedTournament;
+
+    public Match(Tournament tournament, Team team1, Team team2) {
+        associatedTournament = tournament;
+        homeTeam = team1;
+        awayTeam = team2;
+        if (team2 == null)       //Ocean:    Implementation added for the creation of Matches (see Util::generateMatches(Tournament))
+            completed = true;   //          homeTeam should not be given a win in this case
+    }
+
+    public Match(Team team1, Team team2) {
+        homeTeam = team1;
+        awayTeam = team2;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+        if (completed)
+            setWinner();
+    }
+
+    public Team getHomeTeam() {
+        return homeTeam;
+    }
+
+    public Team getAwayTeam() {
+        return awayTeam;
+    }
+
+    public void setWinner() {
+        if (homeScore < awayScore) {
+            winner = awayTeam;
+        }
+        else{                            //Ties go to home team
+            winner = homeTeam;
+        }
+    }
+
+    public Team getWinner() {
+        return winner;
+    }
+
+    public Tournament getAssociatedTournament() {
+        return associatedTournament;
+    }
+
+    public void setHomeScore(int score){ homeScore = score;}
+
+    public void setAwayScore(int score){ awayScore = score;}
+
+    public void setAssociatedTournament(Tournament associatedTournament) {
+        this.associatedTournament = associatedTournament;
+    }
+}
+

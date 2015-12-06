@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="?android:attr/actionBarSize">
+    android:layout_height="match_parent">
 
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true"
+        android:layout_height="match_parent"
         android:layout_above="@+id/buttonPanel">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
@@ -28,164 +27,147 @@
                     android:id="@+id/txt_team_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="30dp"
                     android:text="Name : "
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <EditText
                     android:id="@+id/edit_team_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_toEndOf="@+id/textView6"
-                    android:layout_toRightOf="@+id/textView6"
                     android:ems="10"
                     android:hint="Enter Team Name"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"/>
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp">
+                android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/txt_teamlogo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Team Logo (optional) : "
-                    android:id="@+id/txt_teamlogo"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="Team Logo (optional) : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <ImageButton
+                    android:id="@+id/btn_teamlogo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_teamlogo"
                     android:background="#fff"
                     android:src="@drawable/default_team_logo"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                >
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Team Captain : "
                     android:id="@+id/txt_captain_name"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
-
-                <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:layout_marginLeft="30dp"
+                    android:text="Team Captain : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:id="@+id/edit_captain_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
                     android:hint="Enter Captain Name"
-                    android:ems="10"
-                    android:id="@+id/edit_captain_name" />
+                    android:inputType="textPersonName"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email : "
                     android:id="@+id/txt_email"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
-
-                <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"
-                    android:hint="Enter Captain Email"
+                    android:layout_marginLeft="30dp"
+                    android:text="Email : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <EditText
+                    android:id="@+id/edit_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:ems="10"
-                    android:id="@+id/edit_email" />
+                    android:hint="Enter Captain Email"
+                    android:inputType="textEmailAddress"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp">
+                android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/txt_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone # : "
-                    android:id="@+id/txt_phone"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="Phone # : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <EditText
+                    android:id="@+id/edit_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:hint="Enter Contact Number"
                     android:ems="10"
-                    android:id="@+id/edit_phone" />
+                    android:hint="Enter Contact Number"
+                    android:inputType="phone"/>
 
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="7"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_cancel"
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="Cancel"/>
 
         <Button
             android:id="@+id/btn_confirm"
+            style="?attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Confirm" />
+            android:text="Confirm"/>
     </LinearLayout>
 </RelativeLayout>

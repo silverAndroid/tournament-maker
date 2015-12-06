@@ -1,50 +1,54 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.activities;
 
 import android.os.Bundle;
-import android.service.notification.NotificationListenerService;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.fragments.RankingFragment;
+import kroam.tournamentmaker.fragments.ResultFragment;
+import kroam.tournamentmaker.fragments.ScheduleFragment;
 
 
 public class Schedule_Result_TabActivity extends AppCompatActivity implements ResultFragment.OnFragmentInteractionListener, ScheduleFragment.OnFragmentInteractionListener, RankingFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.schedules_results_tabs);
+        name = getIntent().getStringExtra("name");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(name);
         setSupportActionBar(toolbar);
         //COPY PASTA
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ScheduleFragment(), "Schedule");
-        adapter.addFragment(new ResultFragment(), "Results");
-        adapter.addFragment(new RankingFragment(), "Rankings");
+        adapter.addFragment(ScheduleFragment.newInstance(name), "Schedule");
+        adapter.addFragment(ResultFragment.newInstance(), "Results");
+        adapter.addFragment(RankingFragment.newInstance(), "Rankings");
         viewPager.setAdapter(adapter);
     }
 
-    @Override
+    @Override   //Unused method
     public void onFragmentInteraction(String id) {
 
     }
@@ -77,4 +81,5 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Re
             return mFragmentTitleList.get(position);
         }
 
-    }}
+    }
+}

@@ -1,15 +1,20 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.fragments;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 
-import kroam.tournamentmaker.dummy.DummyContent;
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.activities.Schedule_Result_TabActivity;
+import kroam.tournamentmaker.activities.TournamentCreateActivity;
 
 /**
  * A fragment representing a list of Items.
@@ -24,28 +29,28 @@ public class TournamentFragment extends ListFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static TournamentFragment instance;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
-    // TODO: Rename and change types of parameters
-    public static TournamentFragment newInstance(String param1, String param2) {
-        TournamentFragment fragment = new TournamentFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public TournamentFragment() {
+    }
+
+    // TODO: Rename and change types of parameters
+    public static TournamentFragment newInstance() {
+        TournamentFragment fragment = new TournamentFragment();
+        instance = fragment;
+        return fragment;
+    }
+
+    public static TournamentFragment getInstance() {
+        return instance;
     }
 
     @Override
@@ -57,19 +62,18 @@ public class TournamentFragment extends ListFragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
+                TournamentDataSource.getInstance().getTournaments()));
     }
 
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            mListener = (OnFragmentInteractionListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }
@@ -91,11 +95,14 @@ public class TournamentFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
+        Intent intent;
+        Tournament tournament = TournamentDataSource.getInstance().getTournaments().get(position);
+        if (tournament.isRegistrationClosed())
+            intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
+        else
+            intent = new Intent(getContext(), TournamentCreateActivity.class);
+        intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position).getName());
+        startActivity(intent);
     }
 
     /**

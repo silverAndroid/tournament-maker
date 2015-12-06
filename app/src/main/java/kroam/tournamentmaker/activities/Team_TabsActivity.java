@@ -1,32 +1,41 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Util;
+import kroam.tournamentmaker.database.DatabaseSingleton;
+import kroam.tournamentmaker.fragments.RankingFragment;
+import kroam.tournamentmaker.fragments.ResultFragment;
+import kroam.tournamentmaker.fragments.ScheduleFragment;
+import kroam.tournamentmaker.fragments.TeamFragment;
+import kroam.tournamentmaker.fragments.TeamInfoFragment;
+import kroam.tournamentmaker.fragments.TournamentFragment;
 
-
-public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment
-        .OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
+/**
+ * Created by Kyle on 2015-12-04.
+ */
+public class Team_TabsActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tournaments_teams_tabs);
+        setContentView(R.layout.team_tabs);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //COPY PASTA
@@ -34,31 +43,17 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setCurrentItem(getIntent().getIntExtra("tabNumber", 0));
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new TournamentFragment(), "Tournaments");
-        adapter.addFragment(new TeamFragment(), "Teams");
+        adapter.addFragment(TeamInfoFragment.newInstance(), "Info");
+        adapter.addFragment(ResultFragment.newInstance(), "Results");
+        adapter.addFragment(RankingFragment.newInstance(), "Rankings");
         viewPager.setAdapter(adapter);
     }
-
-    @Override
-    public void onFragmentInteraction(String id) {
-
-    }
-
     class ViewPagerAdapter extends FragmentPagerAdapter {
+
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -86,4 +81,5 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
             return mFragmentTitleList.get(position);
         }
 
-    }}
+    }
+}

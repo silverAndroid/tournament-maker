@@ -1,24 +1,28 @@
-package kroam.tournamentmaker;
+package kroam.tournamentmaker.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
 
+import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.dummy.DummyContent;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
  * <p/>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class RankingFragment extends ListFragment {
+public class ResultFragment extends ListFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -32,11 +36,11 @@ public class RankingFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
     // TODO: Rename and change types of parameters
-    public static RankingFragment newInstance(String param1, String param2) {
-        RankingFragment fragment = new RankingFragment();
+    public static ResultFragment newInstance(/*String param1, String param2*/) {
+        ResultFragment fragment = new ResultFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        /*args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +49,7 @@ public class RankingFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public RankingFragment() {
+    public ResultFragment() {
     }
 
     @Override
@@ -78,7 +82,16 @@ public class RankingFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.ranking_fragment, container, false);
+        View view = inflater.inflate(R.layout.schedule_fragment, container, false);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+        return view;
     }
 
     @Override
