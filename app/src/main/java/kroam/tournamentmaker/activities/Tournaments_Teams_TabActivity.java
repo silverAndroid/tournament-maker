@@ -25,7 +25,7 @@ import kroam.tournamentmaker.fragments.TournamentFragment;
 import kroam.tournamentmaker.Util;
 
 
-public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TeamFragment.OnFragmentInteractionListener, TournamentFragment.OnFragmentInteractionListener {
+public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TournamentFragment.OnFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -85,8 +85,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
                         .simple_list_item_1, android.R.id.text1, TournamentDataSource.getInstance().getTournaments()));
         } else if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK)
-                TeamFragment.getInstance().setListAdapter(new ArrayAdapter<>(this, android.R.layout
-                        .simple_list_item_1, android.R.id.text1, TeamDataSource.getInstance().getTeams()));
+                TeamFragment.getInstance().refresh();
         }
     }
 
