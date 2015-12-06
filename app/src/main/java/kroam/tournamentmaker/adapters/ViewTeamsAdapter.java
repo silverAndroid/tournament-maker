@@ -21,7 +21,8 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
 
     public ViewTeamsAdapter(ArrayList<Team> teams) {
         this.teams = new ArrayList<>();
-        this.teams.addAll(teams);
+        if (teams.get(0) != null)
+            this.teams.addAll(teams);
     }
 
     @Override
@@ -45,6 +46,11 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
         return teams;
     }
 
+    private void deleteItem(int position) {
+        teams.remove(position);
+        notifyItemRemoved(position);
+    }
+
     class ViewTeamHolder extends RecyclerView.ViewHolder {
 
         TextView teamName;
@@ -61,10 +67,5 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
                 }
             });
         }
-    }
-
-    private void deleteItem(int position) {
-        teams.remove(position);
-        notifyItemRemoved(position);
     }
 }
