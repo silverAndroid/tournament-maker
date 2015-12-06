@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.0'
 }

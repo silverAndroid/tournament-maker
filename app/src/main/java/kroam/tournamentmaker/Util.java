@@ -6,8 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
+import importedLibraries.MultiMap;
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
 import kroam.tournamentmaker.database.MatchDataSource;
 import kroam.tournamentmaker.database.StatsDataSource;
@@ -128,8 +134,8 @@ public class Util {
         switch (tournament.getType()) {
             case TournamentCreateActivity.KNOCKOUT:
                 while (teamIterator.hasNext()) {
-                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.hasNext() ? teamIterator.next() :
-                            null);
+                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.hasNext() ? teamIterator
+                            .next() : null);
                     matches.add(newMatch);
                     MatchDataSource.getInstance().createMatch(newMatch);
                 }
@@ -150,7 +156,7 @@ public class Util {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
                         newMatch = new Match(tournament, teams.get(aTeam), teams.get(otherTeam));
                         matches.add(newMatch);
-                        MatchDataSource.getInstance().createMatch(newMatch);        //Figure this error
+                        MatchDataSource.getInstance().createMatch(newMatch);
                     }
                 }
                 break;
@@ -183,11 +189,76 @@ public class Util {
         }
     }
 
-    public static ArrayList<Team> getListOfWinners(ArrayList<Match> matches) {
+    public static ArrayList<Team> getListOfQualifiers(Tournament tournament, ArrayList<Match> matches, int currentRound) {
         ArrayList<Team> winners = new ArrayList<>();
+
+        //qualifiers of the first round (RoundRobin format) of Combination
+        if(     tournament.getType().equals(TournamentCreateActivity.COMBINATION)
+                && currentRound == 0){
+            //positions in this arrays correspond to respective position in the ArrayList<Team> in tournament
+            int[] amountOfWins = new int[tournament.getTeams().size()];
+            Team[] teamWinInstances = new Team[matches.size()];
+            MultiMap<Integer, Team> mapOfWinsAndTeams = new MultiMap<Integer, Team>();
+
+            for (int matchPos = 0; matchPos < matches.size(); matchPos++){
+                teamWinInstances[matchPos] = matches.get(matchPos).getWinner();
+            }
+
+            for (int i = 0; i < teamWinInstances.length; i++){
+                amountOfWins[ tournament.getTeams().indexOf(teamWinInstances[i]) ]++;
+            }
+
+            for(int k = 0; k < amountOfWins.length; k++){
+                mapOfWinsAndTeams.put(amountOfWins[k], tournament.getTeams().get(k));
+            }
+
+            int swap;
+            for (int c = 0; c < ( amountOfWins.length - 1 ); c++) {
+                for (int d = 0; d < amountOfWins.length - c - 1; d++) {
+                    if (amountOfWins[d] > amountOfWins[d+1]) /* For descending order use < */
+                    {
+                        swap       = amountOfWins[d];
+                        amountOfWins[d]   = amountOfWins[d+1];
+                        amountOfWins[d+1] = swap;
+                    }
+                }
+            }
+
+            //Array that contains the wins of the qualifying teams. Used to get teams that qualify from mapOfWinsAndTeams
+            int[] qualifyingWins = new int[generateNumQualifiers(tournament.getTeams())];
+            for(int i = 0; i < qualifyingWins.length; i++){
+                qualifyingWins[i] = amountOfWins[i];
+            }
+
+            for(int i = 0; i < qualifyingWins.length; i++){
+                if( i > 0 && qualifyingWins[i-1] == qualifyingWins[i]){
+                    continue;
+                }
+                List<Team> qualifiers = mapOfWinsAndTeams.get(qualifyingWins[i]);
+                for(int q = 0; q <qualifiers.size(); q++){
+                    winners.add(qualifiers.get(q));
+                }
+            }
+
+            return winners;
+        }
+
         for (int aWinner = 0; aWinner < matches.size(); aWinner++) {
             winners.add(matches.get(aWinner).getWinner());
         }
         return winners;
+    }
+
+    public static int generateNumQualifiers(ArrayList<Team> roundOfRR){
+        int sizeExponent = 0;
+        while(Math.pow(2, sizeExponent) < roundOfRR.size()){
+            sizeExponent++;
+        }
+        sizeExponent--;
+        return (int)Math.pow(2, sizeExponent);
+    }
+
+    public static int getRankingOf(Team team){
+        return 0;
     }
 }

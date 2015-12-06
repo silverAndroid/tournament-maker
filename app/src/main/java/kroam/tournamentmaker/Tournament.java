@@ -74,7 +74,8 @@ public class Tournament {
         if (currentRound == -1)
             roundsOfMatches.add(Util.generateMatches(this));
         else {
-            Util.generateMatches(this, Util.getListOfWinners(roundsOfMatches.get(currentRound))); //index to keep track of current round
+            //getListOfQualifiers currently only works properly for KnockOut format
+            Util.generateMatches(this, Util.getListOfQualifiers(this, roundsOfMatches.get(currentRound), currentRound) );
         }
         currentRound++;
     }
