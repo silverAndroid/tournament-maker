@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.database.TournamentDataSource;
@@ -101,7 +103,7 @@ public class TournamentFragment extends ListFragment {
             intent = new Intent(getContext(), Schedule_Result_TabActivity.class);
         else
             intent = new Intent(getContext(), TournamentCreateActivity.class);
-        intent.putExtra("name", TournamentDataSource.getInstance().getTournaments().get(position).getName());
+        intent.putExtra("name", tournament.getName());
         startActivity(intent);
     }
 
