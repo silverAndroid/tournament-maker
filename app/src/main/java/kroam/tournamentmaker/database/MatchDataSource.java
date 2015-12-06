@@ -1,8 +1,8 @@
 package kroam.tournamentmaker.database;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -32,12 +32,20 @@ public class MatchDataSource {
     public void createMatch(Match match) {
         database = DatabaseSingleton.getInstance().openDatabase();
         Log.i(TAG, "createMatch: open");
-        ContentValues values = new ContentValues();
-        values.put(columns[0], match.getHomeTeam().getName());
-        values.put(columns[1], match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
-        values.put(columns[2], match.isCompleted() ? 1 : 0);
-        values.put(columns[3], match.getAssociatedTournament().getName());
-        database.insertOrThrow(DatabaseSingleton.MATCHES_TABLE, null, values);
+
+        String query = "INSERT INTO " + DatabaseSingleton.MATCHES_TABLE + " VALUES(?,?,?,?)";
+
+        SQLiteStatement statement = database.compileStatement(query);
+        database.beginTransaction();
+
+        statement.bindString(1, match.getHomeTeam().getName());
+        statement.bindString(2, match.getAwayTeam().getName());
+        statement.bindLong(3, match.isCompleted() ? 1 : 0);
+        statement.bindString(4, match.getAssociatedTournament().getName());
+        statement.executeInsert();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
         close();
     }
 
@@ -69,11 +77,11 @@ public class MatchDataSource {
         return matches;
     }
 
-    public ArrayList<Match> getFinishedMatches() {
+    public ArrayList<Match> getFinishedMatches(String tournamentName) {
         ArrayList<Match> finishedMatches = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
-        Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, columns[2] + "=?", new
-                String[]{"1"}, null, null, null);
+        Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, columns[2] + "=? AND " + columns[3]
+                + "=?", new String[]{"1", tournamentName}, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Match match = Util.cursorToMatch(cursor);
@@ -85,5 +93,41 @@ public class MatchDataSource {
 
     private void close() {
         DatabaseSingleton.getInstance().closeDatabase();
+    }
+
+    public Match endMatch(Match match) {
+        database = DatabaseSingleton.getInstance().openDatabase();
+        Log.i(TAG, "endMatch: open");
+
+        String query = "UPDATE " + DatabaseSingleton.MATCHES_TABLE + " SET " + columns[2] + "=? WHERE " + columns[3]
+                + "=? AND " + columns[0] + "=? AND " + columns[1] + "=?";
+
+        SQLiteStatement statement = database.compileStatement(query);
+        database.beginTransaction();
+        statement.bindLong(1, 1);
+        statement.bindString(2, match.getAssociatedTournament().getName());
+        statement.bindString(3, match.getHomeTeam().getName());
+        statement.bindString(4, match.getAwayTeam().getName());
+        statement.executeUpdateDelete();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        close();
+        Log.i(TAG, "endMatch: close");
+        return match;
+    }
+
+    public ArrayList<Match> getUnfinishedMatches(String tournamentName) {
+        ArrayList<Match> unfinishedMatches = new ArrayList<>();
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Cursor cursor = database.query(DatabaseSingleton.MATCHES_TABLE, columns, columns[2] + "=? AND " + columns[3]
+                + "=?", new String[]{"0", tournamentName}, null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Match match = Util.cursorToMatch(cursor);
+                unfinishedMatches.add(match);
+            } while (cursor.moveToNext());
+        }
+        return unfinishedMatches;
     }
 }
