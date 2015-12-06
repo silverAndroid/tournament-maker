@@ -1,7 +1,6 @@
 package kroam.tournamentmaker.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -63,7 +62,7 @@ public class ScheduleFragment extends ListFragment {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
             setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
-                    .getInstance().getMatchesForTournament(tournamentName)));
+                    .getInstance().getUnfinishedMatches(tournamentName)));
         }
     }
 
@@ -98,7 +97,11 @@ public class ScheduleFragment extends ListFragment {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        MatchDataSource.getInstance().endMatch(matches.get(position));
                         StatsDataSource.getInstance().updateStats(adapter[0].getStats());
+                        refresh();
+                        ResultFragment.getInstance().refresh();
+                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -126,19 +129,8 @@ public class ScheduleFragment extends ListFragment {
         dialog.show();
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+    public void refresh() {
+        setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
+                .getInstance().getUnfinishedMatches(tournamentName)));
     }
-
 }
