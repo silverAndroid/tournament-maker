@@ -33,21 +33,27 @@ public class TeamDataSource {
     public Team createTeam(Team team) {
         database = DatabaseSingleton.getInstance().openDatabase();
         Log.i(TAG, "createTeam: open");
-        String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?)";
-        database.beginTransaction();
+        try {
+            String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?, ?)";
+            database.beginTransaction();
 
-        SQLiteStatement statement = database.compileStatement(query);
-        statement.bindString(1, team.getName());
-        statement.bindString(2, team.getCaptainName());
-        statement.bindString(3, team.getCaptainEmail());
-        statement.bindString(4, team.getPhoneNumber());
-        statement.bindString(5, Util.convertArrayToString(team.getAssociatedTournaments().toArray()));
-        statement.executeInsert();
+            SQLiteStatement statement = database.compileStatement(query);
+            statement.bindString(1, team.getName());
+            statement.bindString(2, team.getCaptainName());
+            statement.bindString(3, team.getCaptainEmail());
+            statement.bindString(4, team.getPhoneNumber());
+            statement.bindString(5, Util.convertArrayToString(team.getAssociatedTournaments().toArray()));
+            statement.executeInsert();
 
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        close();
-        Log.i(TAG, "createTeam: close");
+            database.setTransactionSuccessful();
+            database.endTransaction();
+            close();
+            Log.i(TAG, "createTeam: close");
+        } finally {
+            database.endTransaction();
+            close();
+            updateTeam(team);
+        }
         return team;
     }
 
