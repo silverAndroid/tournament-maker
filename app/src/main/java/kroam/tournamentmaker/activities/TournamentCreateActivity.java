@@ -30,6 +30,7 @@ import kroam.tournamentmaker.adapters.WinningStatAdapter;
 import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.database.TeamDataSource;
 import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.fragments.TeamFragment;
 
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -133,6 +134,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                             public void onClick(DialogInterface dialog, int which) {
                                 saveTournament(true);
                                 chooseWinningStat(name.getText().toString());
+                                TeamFragment.getInstance().refresh();
                             }
                         })
                         .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -160,9 +162,11 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 break;
             case R.id.btn_confirm:
                 saveTournament();
+                TeamFragment.getInstance().refresh();
                 finish();
                 break;
             case R.id.btn_cancel:
+                TeamFragment.getInstance().refresh();
                 finish();
                 break;
             case R.id.btn_select_teams:
@@ -176,7 +180,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                selectTeamsAdapter[0].addTeam((Team) data.getSerializableExtra("team"));
+                Team newTeam = (Team) data.getSerializableExtra("team");
+                selectTeamsAdapter[0].addTeam(newTeam);
                 selectedTeams.setAdapter(selectTeamsAdapter[0]);
             }
         }
