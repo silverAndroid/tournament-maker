@@ -23,11 +23,14 @@ public class Team_TabsActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String name;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.team_tabs);
+        name = getIntent().getStringExtra("name");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(name);
         setSupportActionBar(toolbar);
         //COPY PASTA
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -39,8 +42,7 @@ public class Team_TabsActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(TeamInfoFragment.newInstance(), "Info");
-        adapter.addFragment(TeamTournamentRankingFragment.newInstance(), "Ranking");
-        //need stats to work
+        adapter.addFragment(TeamTournamentRankingFragment.newInstance(name), "Ranking");
         viewPager.setAdapter(adapter);
     }
     class ViewPagerAdapter extends FragmentPagerAdapter {

@@ -1,6 +1,6 @@
 package kroam.tournamentmaker.fragments;
 
-import android.app.ListFragment;
+import android.support.v4.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
+
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Team;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.adapters.ScheduleAdapter;
+import kroam.tournamentmaker.adapters.TournamentRankingAdapter;
+import kroam.tournamentmaker.database.TeamDataSource;
 import kroam.tournamentmaker.database.TournamentDataSource;
 
 /**
@@ -16,13 +23,13 @@ import kroam.tournamentmaker.database.TournamentDataSource;
  */
 public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "team_name";
+
+    private String teamName;
+    private ArrayList<Tournament> associatedTournaments;
     private static TournamentFragment instance;
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private OnFragmentInteractionListener mListener;
+    private Team team;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -32,8 +39,11 @@ public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename
     }
 
     // TODO: Rename and change types of parameters
-    public static TournamentFragment newInstance() {
+    public static TournamentFragment newInstance(String teamName) {
         TournamentFragment fragment = new TournamentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, teamName);
+        fragment.setArguments(args);
         instance = fragment;
         return fragment;
     }
@@ -47,12 +57,13 @@ public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+            teamName = getArguments().getString(ARG_PARAM1);
 
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TournamentDataSource.getInstance().getTournaments()));
+            team = TeamDataSource.getInstance().getTeam(teamName);
+            associatedTournaments = new ArrayList<>();
+            associatedTournaments.addAll(team.getAssociatedTournaments());
+            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.team_ranking_row, associatedTournaments,team));
+        }
     }
 
 
