@@ -12,6 +12,7 @@ import java.util.List;
 
 import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.Tournament;
 
 /**
@@ -19,9 +20,10 @@ import kroam.tournamentmaker.Tournament;
  */
 public class TournamentRankingAdapter extends ArrayAdapter<Tournament> {
     private ArrayList<Tournament> tournaments;
-
-    public TournamentRankingAdapter(Context context, int resource, List<Tournament> matchList){
+    private Team team;
+    public TournamentRankingAdapter(Context context, int resource, List<Tournament> matchList, Team team){
         super(context, resource, matchList);
+        this.team = team;
         tournaments = new ArrayList<>();
         tournaments.addAll(matchList);
     }
@@ -35,7 +37,7 @@ public class TournamentRankingAdapter extends ArrayAdapter<Tournament> {
         TournamentViewHolder holder = new TournamentViewHolder(convertView);
         Tournament tournament = tournaments.get(position);
         holder.tournament.setText(tournament.getName());
-        holder.ranking.setText("Ranking");//waiting for ocean's getranking
+        holder.ranking.setText(tournament.getRankingOf(team));//waiting for ocean's getranking
         return convertView;
     }
 
