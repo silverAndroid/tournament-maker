@@ -3,14 +3,13 @@ package kroam.tournamentmaker.fragments;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,34 +19,30 @@ import java.util.ArrayList;
 
 import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.adapters.EnterStatsAdapter;
 import kroam.tournamentmaker.adapters.ScheduleAdapter;
 import kroam.tournamentmaker.database.MatchDataSource;
 import kroam.tournamentmaker.database.StatsDataSource;
+import kroam.tournamentmaker.database.TournamentDataSource;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-public class ScheduleFragment extends ListFragment {
+public class UpcomingFragment extends ListFragment {
 
     private static final String ARG_PARAM1 = "tournament_name";
 
     private String tournamentName;
-    private ArrayList<Match> matches;
+    private ArrayList<Match> upcomingMatches;
+    private Tournament tournament;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public ScheduleFragment() {
+    public UpcomingFragment() {
     }
 
-    public static ScheduleFragment newInstance(String tournamentName) {
-        ScheduleFragment fragment = new ScheduleFragment();
+    public static UpcomingFragment newInstance(String tournamentName) {
+        UpcomingFragment fragment = new UpcomingFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, tournamentName);
         fragment.setArguments(args);
@@ -61,8 +56,10 @@ public class ScheduleFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
-                    .getInstance().getUnfinishedMatches(tournamentName)));
+            tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+            upcomingMatches = new ArrayList<>();
+            upcomingMatches.addAll(tournament.getCurrentRoundOfActiveMatches());
+            setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches));
         }
     }
 
@@ -70,16 +67,7 @@ public class ScheduleFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.schedule_fragment, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        return view;
+        return inflater.inflate(R.layout.upcoming_fragment, container, false);
     }
 
     @Override
@@ -97,10 +85,18 @@ public class ScheduleFragment extends ListFragment {
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MatchDataSource.getInstance().endMatch(matches.get(position));
+                        Match match = upcomingMatches.get(position);
+                        int[] scores = adapter[0].getScores();
+                        match.setHomeScore(scores[0]);
+                        match.setAwayScore(scores[1]);
+                        match.setWinner();
+                        MatchDataSource.getInstance().endMatch(upcomingMatches.get(position));
                         StatsDataSource.getInstance().updateStats(adapter[0].getStats());
+                        TournamentDataSource.getInstance().getTournamentFromMatch(match.getId()).updateRankOf(match
+                                .getWinner()); //updated Dec 6 by Ocean
                         refresh();
                         ResultFragment.getInstance().refresh();
+                        RankingFragment.getInstance().updateRankings(tournamentName);
                         dialog.dismiss();
                     }
                 })
@@ -111,26 +107,33 @@ public class ScheduleFragment extends ListFragment {
                     }
                 })
                 .create();
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams
+                .FLAG_ALT_FOCUSABLE_IM);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 Dialog view = (Dialog) dialog;
                 TextView homeTeam = (TextView) view.findViewById(R.id.home_team);
                 TextView awayTeam = (TextView) view.findViewById(R.id.away_team);
-                Match currentMatch = matches.get(position);
+                Match currentMatch = upcomingMatches.get(position);
                 homeTeam.setText(currentMatch.getHomeTeam().getName());
                 awayTeam.setText(currentMatch.getAwayTeam().getName());
                 RecyclerView statsList = (RecyclerView) view.findViewById(R.id.stats_list);
                 statsList.setLayoutManager(new LinearLayoutManager(getContext()));
                 statsList.setAdapter(adapter[0] = new EnterStatsAdapter(StatsDataSource.getInstance().getTournamentStats
-                        (tournamentName), matches.get(position)));
+                        (tournamentName), currentMatch, tournament));
             }
         });
         dialog.show();
     }
 
     public void refresh() {
-        setListAdapter(new ScheduleAdapter(getContext(), R.layout.schedule_match_row, matches = MatchDataSource
-                .getInstance().getUnfinishedMatches(tournamentName)));
+        Tournament currentTournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+        upcomingMatches = currentTournament.getCurrentRoundOfActiveMatches();
+        if (upcomingMatches.size() == 0) {
+            currentTournament.generateNextRoundOfMatches();
+        }
+        setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches =
+                currentTournament.getCurrentRoundOfActiveMatches()));
     }
 }

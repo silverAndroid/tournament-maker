@@ -1,33 +1,29 @@
 package kroam.tournamentmaker.fragments;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.database.TeamDataSource;
-import kroam.tournamentmaker.dummy.DummyContent;
 
 /**
  * Created by Kyle on 2015-12-04.
  */
 public class TeamInfoFragment extends Fragment {
     private static TeamInfoFragment instance;
-    private OnFragmentInteractionListener mListener;
     TextView name;
     TextView captainName;
     TextView phoneNumber;
     TextView email;
     ImageButton teamLogo;
+    private OnFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -54,7 +50,7 @@ public class TeamInfoFragment extends Fragment {
         captainName = (TextView) getView().findViewById(R.id.edit_captain_name);
         phoneNumber = (TextView) getView().findViewById(R.id.edit_phone);
         email = (TextView) getView().findViewById(R.id.edit_email);
-        teamLogo = (ImageButton) getView().findViewById(R.id.btn_teamlogo);
+        teamLogo = (ImageButton) getView().findViewById(R.id.btn_team_logo);
 
         Team team = TeamDataSource.getInstance().getTeam(savedInstanceState.getString("name"));
         name.setText(team.getName());
@@ -87,6 +83,7 @@ public class TeamInfoFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
     public interface OnFragmentInteractionListener {
         public void onFragmentInteraction(String id);
     }

@@ -1,24 +1,27 @@
 package kroam.tournamentmaker;
 
+import android.content.ContentResolver;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.widget.ImageView;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.UUID;
 
-import importedLibraries.MultiMap;
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
 import kroam.tournamentmaker.database.MatchDataSource;
 import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.database.TeamDataSource;
 import kroam.tournamentmaker.database.TournamentDataSource;
+import libraries.guava.MultiMap;
 
 /**
  * Created by Rushil Perera on 11/24/2015.
@@ -27,6 +30,8 @@ public class Util {
 
     public static final int TOURNAMENT_REQUEST_CODE = 0;
     public static final int TEAM_REQUEST_CODE = 1;
+    public static final int IMAGE_LOCAL_CODE = 2;
+    public static final int PERMISSION_MANAGE_DOCUMENTS = 3;
     private static final String TAG = "Util";
 
     public static String convertArrayToString(Object[] array) {
@@ -59,10 +64,13 @@ public class Util {
 
     public static Tournament cursorToTournament(Cursor cursor) {
         Tournament tournament = new Tournament(cursor.getString(0), cursor.getString(1), Util
-                .convertStringToTeamArraylist(cursor.getString(2)), cursor.getInt(3));
+                .convertStringToTeamArraylist(cursor.getString(2)), cursor.getInt(3), cursor.getInt(7));
         tournament.setCompleted(cursor.getInt(4) == 1);
         tournament.setRegistrationClosed(cursor.getInt(5) == 1);
         tournament.setWinningStat(StatsDataSource.getInstance().getStat(cursor.getString(6)));
+        tournament.addRoundsOfMatches(Util.convertStringTo2DList(cursor.getString(8)));
+        tournament.setRankings(Util.convertStatValuesToMap(cursor.getString(9)));
+        tournament.setWins(Util.convertStatValuesToMap(cursor.getString(10)));
         return tournament;
     }
 
@@ -74,16 +82,18 @@ public class Util {
     public static Team cursorToTeam(Cursor cursor) {
         Team team = new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
         team.addTournaments(Util.convertStringToTournamentArraylist(cursor.getString(4)));
+        team.setLogoPath(cursor.getString(5));
         return team;
     }
 
     public static Match cursorToMatch(Cursor cursor) {
         TeamDataSource teamDatabase = TeamDataSource.getInstance();
-        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam
-                (cursor.getString(1)));
+        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)),
+                cursor.getString(5));
         match.setCompleted(cursor.getInt(2) == 1);
-        match.setAssociatedTournament(TournamentDataSource.getInstance().getTournament(cursor
-                .getString(3)));
+        match.setHomeScore(cursor.getInt(3));
+        match.setAwayScore(cursor.getInt(4));
+        match.setWinner();
         return match;
     }
 
@@ -103,7 +113,7 @@ public class Util {
         return valuesMap;
     }
 
-    public static String convertHashMapToString(HashMap<String, StatValue> stats) {
+    public static String convertStatValueHashMapToString(HashMap<String, StatValue> stats) {
         String statString = "";
         ArrayList<StatValue> values = new ArrayList<>(stats.values());
         if (values.size() != 0) {
@@ -117,6 +127,46 @@ public class Util {
             }
         }
         return statString;
+    }
+
+    public static Bitmap loadImage(ImageView imageView, Uri uri, ContentResolver contentResolver) {
+        Bitmap bitmap;
+        try {
+            imageView.setImageBitmap(bitmap = decodeUri(uri, contentResolver));
+            return bitmap;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //Copied directly from Android Developer website with a few modifications to fit required parameters
+    private static Bitmap decodeUri(Uri selectedImage, ContentResolver contentResolver) throws FileNotFoundException {
+        // Decode image size
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage), null, o);
+
+        // The new size we want to scale to
+        final int REQUIRED_SIZE = 140;
+
+        // Find the correct scale value. It should be the power of 2.
+        int width_tmp = o.outWidth, height_tmp = o.outHeight;
+        int scale = 1;
+        while (true) {
+            if (width_tmp / 2 < REQUIRED_SIZE
+                    || height_tmp / 2 < REQUIRED_SIZE) {
+                break;
+            }
+            width_tmp /= 2;
+            height_tmp /= 2;
+            scale *= 2;
+        }
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = scale;
+        return BitmapFactory.decodeStream(contentResolver.openInputStream(selectedImage), null, o2);
     }
 
     /*
@@ -134,8 +184,8 @@ public class Util {
         switch (tournament.getType()) {
             case TournamentCreateActivity.KNOCKOUT:
                 while (teamIterator.hasNext()) {
-                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.hasNext() ? teamIterator
-                            .next() : null);
+                    newMatch = new Match(teamIterator.next(), !teamIterator.hasNext() ? null : teamIterator.next(),
+                            UUID.randomUUID().toString());
                     matches.add(newMatch);
                     MatchDataSource.getInstance().createMatch(newMatch);
                 }
@@ -144,7 +194,7 @@ public class Util {
             case TournamentCreateActivity.ROUND_ROBIN:
                 for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
-                        newMatch = new Match(tournament, teams.get(aTeam), teams.get(otherTeam));
+                        newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
                         matches.add(newMatch);
                         MatchDataSource.getInstance().createMatch(newMatch);
                     }
@@ -154,7 +204,7 @@ public class Util {
             case TournamentCreateActivity.COMBINATION:
                 for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
-                        newMatch = new Match(tournament, teams.get(aTeam), teams.get(otherTeam));
+                        newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
                         matches.add(newMatch);
                         MatchDataSource.getInstance().createMatch(newMatch);
                     }
@@ -179,63 +229,69 @@ public class Util {
                 System.out.println("Exceptional case. Round Robin only has 1 round of matches\n");
                 return generateMatches(tournament);
             default:
-                Iterator<Team> teamIterator = qualifyingTeams.listIterator();
-                while (teamIterator.hasNext()) {
-                    newMatch = new Match(tournament, teamIterator.next(), teamIterator.next());
-                    matches.add(newMatch);
-                    MatchDataSource.getInstance().createMatch(newMatch);
+                if (qualifyingTeams.size() >= 2) {
+                    Iterator<Team> teamIterator = qualifyingTeams.listIterator();
+                    while (teamIterator.hasNext()) {
+                        newMatch = new Match(teamIterator.next(), teamIterator.hasNext() ? teamIterator.next() :
+                                null, UUID.randomUUID().toString());
+                        matches.add(newMatch);
+                        MatchDataSource.getInstance().createMatch(newMatch);
+                    }
                 }
                 return matches;
         }
     }
 
-    public static ArrayList<Team> getListOfQualifiers(Tournament tournament, ArrayList<Match> matches, int currentRound) {
+    public static ArrayList<Team> getListOfQualifiers(Tournament tournament, ArrayList<Match> matches, int
+            currentRound) {
         ArrayList<Team> winners = new ArrayList<>();
 
         //qualifiers of the first round (RoundRobin format) of Combination
-        if(     tournament.getType().equals(TournamentCreateActivity.COMBINATION)
-                && currentRound == 0){
+        if (tournament.getType().equals(TournamentCreateActivity.COMBINATION) && currentRound == 0) {
+            ArrayList<Team> teams = tournament.getTeams();
             //positions in this arrays correspond to respective position in the ArrayList<Team> in tournament
-            int[] amountOfWins = new int[tournament.getTeams().size()];
+            int[] amountOfWins = new int[teams.size()];
             Team[] teamWinInstances = new Team[matches.size()];
-            MultiMap<Integer, Team> mapOfWinsAndTeams = new MultiMap<Integer, Team>();
+            MultiMap<Integer, Team> mapOfWinsAndTeams = new MultiMap<>();
 
-            for (int matchPos = 0; matchPos < matches.size(); matchPos++){
+            for (int matchPos = 0; matchPos < matches.size(); matchPos++) {
                 teamWinInstances[matchPos] = matches.get(matchPos).getWinner();
             }
 
-            for (int i = 0; i < teamWinInstances.length; i++){
-                amountOfWins[ tournament.getTeams().indexOf(teamWinInstances[i]) ]++;
+            for (Team teamWinInstance : teamWinInstances) {
+                for (int i = 0; i < amountOfWins.length; i++) {
+                    if (teams.get(i).getName().equals(teamWinInstance.getName())) {
+                        amountOfWins[i]++;
+                        break;
+                    }
+                }
             }
 
-            for(int k = 0; k < amountOfWins.length; k++){
+            for (int k = 0; k < amountOfWins.length; k++) {
                 mapOfWinsAndTeams.put(amountOfWins[k], tournament.getTeams().get(k));
             }
 
             int swap;
-            for (int c = 0; c < ( amountOfWins.length - 1 ); c++) {
+            for (int c = 0; c < (amountOfWins.length - 1); c++) {
                 for (int d = 0; d < amountOfWins.length - c - 1; d++) {
-                    if (amountOfWins[d] > amountOfWins[d+1]) /* For descending order use < */
-                    {
-                        swap       = amountOfWins[d];
-                        amountOfWins[d]   = amountOfWins[d+1];
-                        amountOfWins[d+1] = swap;
+                    if (amountOfWins[d] > amountOfWins[d + 1]) /* For descending order use < */ {
+                        swap = amountOfWins[d];
+                        amountOfWins[d] = amountOfWins[d + 1];
+                        amountOfWins[d + 1] = swap;
                     }
                 }
             }
 
             //Array that contains the wins of the qualifying teams. Used to get teams that qualify from mapOfWinsAndTeams
             int[] qualifyingWins = new int[generateNumQualifiers(tournament.getTeams())];
-            for(int i = 0; i < qualifyingWins.length; i++){
-                qualifyingWins[i] = amountOfWins[i];
-            }
+            System.arraycopy(amountOfWins, 0, qualifyingWins, 0, qualifyingWins.length);
 
-            for(int i = 0; i < qualifyingWins.length; i++){
-                if( i > 0 && qualifyingWins[i-1] == qualifyingWins[i]){
+            for (int i = 0; i < qualifyingWins.length; i++) {
+                if (i > 0 && qualifyingWins[i - 1] == qualifyingWins[i]) {
                     continue;
                 }
                 List<Team> qualifiers = mapOfWinsAndTeams.get(qualifyingWins[i]);
-                for(int q = 0; q <qualifiers.size(); q++){
+                for (int q = 0; q < qualifiers.size(); q++) {
                     winners.add(qualifiers.get(q));
                 }
             }
@@ -249,16 +305,47 @@ public class Util {
         return winners;
     }
 
-    public static int generateNumQualifiers(ArrayList<Team> roundOfRR){
+    public static int generateNumQualifiers(ArrayList<Team> roundOfRR) {
         int sizeExponent = 0;
-        while(Math.pow(2, sizeExponent) < roundOfRR.size()){
+        while (Math.pow(2, sizeExponent) < roundOfRR.size()) {
             sizeExponent++;
         }
         sizeExponent--;
-        return (int)Math.pow(2, sizeExponent);
+        return (int) Math.pow(2, sizeExponent);
     }
 
-    public static int getRankingOf(Team team){
+    public static int getRankingOf(Team team) {
         return 0;
+    }
+
+    public static String convert2DListToString(ArrayList<ArrayList<Match>> rounds) {
+        String res = "";
+        for (int i = 0; i < rounds.size(); i++) {
+            if (rounds.get(i) == null)
+                continue;
+            ArrayList<Match> matches = rounds.get(i);
+            boolean completelyNull = true;
+            for (int j = 0; j < matches.size(); j++)
+                if (matches.get(j) != null) {
+                    res += matches.get(j).getId() + ", ";
+                    completelyNull = false;
+                }
+            if (!completelyNull && i != rounds.size() - 1)
+                res += "\n";
+        }
+        return res;
+    }
+
+    public static ArrayList<ArrayList<Match>> convertStringTo2DList(String res) {
+        String[] rows = res.split("\n");
+        ArrayList<ArrayList<Match>> rounds = new ArrayList<>();
+        for (int i = 0; i < rows.length; i++) {
+            String[] matchIDs = rows[i].split(", ");
+            ArrayList<Match> matches = new ArrayList<>();
+            for (String matchID : matchIDs)
+                matches.add(MatchDataSource.getInstance().getMatch(matchID));
+            rounds.add(matches);
+        }
+        return rounds;
     }
 }

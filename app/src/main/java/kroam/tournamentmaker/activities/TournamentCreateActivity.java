@@ -264,8 +264,8 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                     public void onClick(DialogInterface dialog, int which) {
                         Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
                         tournament.setWinningStat(adapter[0].getWinningStat());
+                        tournament.generateNextRoundOfMatches();
                         TournamentDataSource.getInstance().updateTournament(tournament);
-                        Util.generateMatches(tournament);
                         finish();
                     }
                 }).create();

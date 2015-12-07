@@ -1,8 +1,6 @@
 package kroam.tournamentmaker.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -10,21 +8,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.Util;
-import kroam.tournamentmaker.database.DatabaseSingleton;
-import kroam.tournamentmaker.fragments.RankingFragment;
-import kroam.tournamentmaker.fragments.ResultFragment;
-import kroam.tournamentmaker.fragments.ScheduleFragment;
-import kroam.tournamentmaker.fragments.TeamFragment;
 import kroam.tournamentmaker.fragments.TeamInfoFragment;
 import kroam.tournamentmaker.fragments.TeamTournamentRankingFragment;
-import kroam.tournamentmaker.fragments.TournamentFragment;
 
 /**
  * Created by Kyle on 2015-12-04.

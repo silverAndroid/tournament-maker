@@ -1,6 +1,7 @@
 package kroam.tournamentmaker.database;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -21,7 +22,7 @@ public class TeamDataSource {
     private SQLiteDatabase database;
     private String[] columns = {DatabaseSingleton.TEAMS_NAME, DatabaseSingleton.TEAMS_CAPTAIN_NAME,
             DatabaseSingleton.TEAMS_EMAIL, DatabaseSingleton.TEAMS_PHONE_NUMBER, DatabaseSingleton
-            .TEAMS_ASSOCIATED_TOURNAMENTS};
+            .TEAMS_ASSOCIATED_TOURNAMENTS, DatabaseSingleton.TEAMS_LOGO_PATH};
 
     private TeamDataSource() {
     }
@@ -34,7 +35,7 @@ public class TeamDataSource {
         database = DatabaseSingleton.getInstance().openDatabase();
         Log.i(TAG, "createTeam: open");
         try {
-            String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?, ?)";
+            String query = "INSERT INTO " + DatabaseSingleton.TEAMS_TABLE + " VALUES(?, ?, ?, ?, ?, ?)";
             database.beginTransaction();
 
             SQLiteStatement statement = database.compileStatement(query);
@@ -43,13 +44,14 @@ public class TeamDataSource {
             statement.bindString(3, team.getCaptainEmail());
             statement.bindString(4, team.getPhoneNumber());
             statement.bindString(5, Util.convertArrayToString(team.getAssociatedTournaments().toArray()));
+            statement.bindString(6, team.getLogoPath());
             statement.executeInsert();
 
             database.setTransactionSuccessful();
             database.endTransaction();
             close();
             Log.i(TAG, "createTeam: close");
-        } finally {
+        } catch (SQLiteConstraintException e) {
             database.endTransaction();
             close();
             updateTeam(team);
@@ -87,13 +89,11 @@ public class TeamDataSource {
     }
 
     public Team getTeam(String teamName) {
-        Team team;
         database = DatabaseSingleton.getInstance().getReadableDatabase();
         Cursor cursor = database.query(DatabaseSingleton.TEAMS_TABLE, columns, columns[0] + "=?", new
                 String[]{teamName}, null, null, null);
         if (cursor.moveToFirst()) {
-            team = Util.cursorToTeam(cursor);
-            return team;
+            return Util.cursorToTeam(cursor);
         }
         return null;
     }
@@ -102,7 +102,7 @@ public class TeamDataSource {
         database = DatabaseSingleton.getInstance().openDatabase();
         Log.i(TAG, "updateTeam: open");
         String query = "UPDATE " + DatabaseSingleton.TEAMS_TABLE + " SET " + columns[1] + "=?, " + columns[2] + "=?, " +
-                columns[3] + "=?, " + columns[4] + "=? WHERE " + columns[0] + "=?";
+                columns[3] + "=?, " + columns[4] + "=?, " + columns[5] + "=? WHERE " + columns[0] + "=?";
 
         SQLiteStatement statement = database.compileStatement(query);
         database.beginTransaction();
@@ -111,7 +111,8 @@ public class TeamDataSource {
         statement.bindString(2, team.getCaptainEmail());
         statement.bindString(3, team.getPhoneNumber());
         statement.bindString(4, Util.convertArrayToString(team.getAssociatedTournaments().toArray()));
-        statement.bindString(5, team.getName());
+        statement.bindString(5, team.getLogoPath());
+        statement.bindString(6, team.getName());
         statement.executeUpdateDelete();
 
         database.setTransactionSuccessful();

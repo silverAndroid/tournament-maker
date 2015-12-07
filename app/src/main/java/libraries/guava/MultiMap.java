@@ -15,9 +15,8 @@
  */
 //MultiMap class fetched from com.android.tradefed.util;
 
-package importedLibraries;
+package libraries.guava;
 
-import importedLibraries.Objects;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

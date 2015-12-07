@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-package importedLibraries;
-
-import static importedLibraries.Preconditions.*;
-
-import importedLibraries.GwtCompatible;
+package libraries.guava;
 
 import java.util.Arrays;
 
@@ -158,7 +154,7 @@ public final class Objects {
    * @since 3
    */
   public static <T> T firstNonNull(@Nullable T first, @Nullable T second) {
-    return first != null ? first : checkNotNull(second);
+    return first != null ? first : Preconditions.checkNotNull(second);
   }
 
   /**
@@ -176,7 +172,7 @@ public final class Objects {
      */
     private ToStringHelper(String className) {
       this.builder = new StringBuilder(32)
-          .append(checkNotNull(className))
+          .append(Preconditions.checkNotNull(className))
           .append('{');
     }
 
@@ -187,7 +183,7 @@ public final class Objects {
      */
     public ToStringHelper add(String name, @Nullable Object value) {
       builder.append(separator)
-          .append(checkNotNull(name))
+          .append(Preconditions.checkNotNull(name))
           .append('=')
           .append(value);
       separator = ", ";

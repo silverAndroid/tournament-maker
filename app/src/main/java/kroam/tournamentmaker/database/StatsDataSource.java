@@ -33,7 +33,7 @@ public class StatsDataSource {
         ContentValues values = new ContentValues(3);
         values.put(columns[0], stat.getKey());
         values.put(columns[1], Util.convertArrayToString(stat.getTournamentNames().toArray()));
-        values.put(columns[2], Util.convertHashMapToString(stat.getValues()));
+        values.put(columns[2], Util.convertStatValueHashMapToString(stat.getValues()));
         database.insert(DatabaseSingleton.STATS_TABLE, null, values);
         close();
     }
@@ -49,7 +49,7 @@ public class StatsDataSource {
         for (Stat stat : stats) {
             statement.bindString(1, stat.getKey());
             statement.bindString(2, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(3, Util.convertHashMapToString(stat.getValues()));
+            statement.bindString(3, Util.convertStatValueHashMapToString(stat.getValues()));
             Cursor cursor = database.query(DatabaseSingleton.STATS_TABLE, columns, DatabaseSingleton.STATS_KEY
                     + "=?", new String[]{stat.getKey()}, null, null, null);
             if (cursor.moveToFirst()) {
@@ -61,7 +61,7 @@ public class StatsDataSource {
                 updateStatement.bindString(1, newTournamentNames + ", " + Util.convertArrayToString(stat
                         .getTournamentNames().toArray()));
                 updateStatement.bindString(2, newValues + (newValues.isEmpty() || stat.getValues().isEmpty() ? "" :
-                        ", ") + Util.convertHashMapToString(stat.getValues()));
+                        ", ") + Util.convertStatValueHashMapToString(stat.getValues()));
                 updateStatement.bindString(3, stat.getKey());
                 updateStatement.executeUpdateDelete();
             } else {
@@ -96,11 +96,10 @@ public class StatsDataSource {
             String query = "UPDATE " + DatabaseSingleton.STATS_TABLE + " SET " + columns[1] + "=?, " + columns[2] +
                     "=? WHERE " + DatabaseSingleton.STATS_KEY + "=?;";
 
-            Log.i(TAG, "updateStats: " + query);
             SQLiteStatement statement = database.compileStatement(query);
             database.beginTransaction();
             statement.bindString(1, Util.convertArrayToString(stat.getTournamentNames().toArray()));
-            statement.bindString(2, Util.convertHashMapToString(stat.getValues()));
+            statement.bindString(2, Util.convertStatValueHashMapToString(stat.getValues()));
             statement.bindString(3, stat.getKey());
             statement.executeUpdateDelete();
             database.setTransactionSuccessful();

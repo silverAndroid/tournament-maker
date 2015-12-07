@@ -10,10 +10,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="8"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="10dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:text="Brazil"
-        android:textSize="20sp"
         android:textColor="#000"
-        android:padding="10dp"/>
+        android:textSize="20sp"/>
 
     <ImageButton
         android:id="@+id/delete"

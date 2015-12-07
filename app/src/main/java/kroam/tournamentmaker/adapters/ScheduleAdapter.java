@@ -29,7 +29,7 @@ public class ScheduleAdapter extends ArrayAdapter<Match> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule_match_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.upcoming_match_row, parent, false);
         }
 
         MatchViewHolder holder = new MatchViewHolder(convertView);

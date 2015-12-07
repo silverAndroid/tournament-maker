@@ -10,17 +10,22 @@ import android.util.Log;
  */
 public class DatabaseSingleton extends SQLiteOpenHelper {
 
+    public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
     public static final String TOURNAMENTS_NAME = "NAME";
     public static final String TOURNAMENTS_TYPE = "TYPE";
     public static final String TOURNAMENTS_TEAMS = "TEAMS";
-    public static final String TOURNAMENTS_MAX_SIZE = "SIZE";
+    public static final String TOURNAMENTS_MAX_SIZE = "MAX_SIZE";
     public static final String TOURNAMENTS_COMPLETED = "FINISHED";
     public static final String TOURNAMENTS_CLOSED = "REGISTRATION_CLOSED";
-    public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
     public static final String TOURNAMENTS_WIN_STAT = "STAT_WIN";
+    public static final String TOURNAMENTS_CURRENT_ROUND = "CURRENT_ROUND";
+    public static final String TOURNAMENTS_MATCHES = "MATCHES";
+    public static final String TOURNAMENTS_RANKINGS = "RANKINGS";
+    public static final String TOURNAMENTS_WINS = "WINS";
 
     public static final String TEAMS_TABLE = "TEAMS";
     public static final String TEAMS_NAME = "NAME";
+    public static final String TEAMS_LOGO_PATH = "LOGO_PATH";
     public static final String TEAMS_CAPTAIN_NAME = "CAPTAIN_NAME";
     public static final String TEAMS_EMAIL = "CAPTAIN_EMAIL";
     public static final String TEAMS_PHONE_NUMBER = "PHONE_NUMBER";
@@ -32,33 +37,35 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
     public static final String STATS_VALUES = "KEY_VALUES";
 
     public static final String MATCHES_TABLE = "SCHEDULE";
+    public static final String MATCHES_ID = "ID";
     public static final String MATCHES_TEAM_1 = "TEAM_1";
     public static final String MATCHES_TEAM_2 = "TEAM_2";
-    public static final String MATCHES_TOURNAMENT_NAME = "TOURNAMENT";
     public static final String MATCHES_COMPLETED = "COMPLETED";
+    public static final String MATCHES_TEAM_1_SCORE = "TEAM_1_SCORE";
+    public static final String MATCHES_TEAM_2_SCORE = "TEAM_2_SCORE";
 
     private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 8;
-
+    private static final int VERSION = 15;
     private static final String TAG = "DatabaseSingleton";
+    private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" + TEAMS_NAME + " TEXT NOT " +
+            "NULL, " + TEAMS_CAPTAIN_NAME + " TEXT NOT NULL, " + TEAMS_EMAIL + " TEXT NOT NULL, " +
+            TEAMS_PHONE_NUMBER + " TEXT NOT NULL, " + TEAMS_ASSOCIATED_TOURNAMENTS + " TEXT, " + TEAMS_LOGO_PATH +
+            " TEXT, UNIQUE (" + TEAMS_NAME + "));";
+    private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
+            TOURNAMENTS_NAME + " TEXT NOT NULL, " + TOURNAMENTS_TYPE + " TEXT NOT NULL, " + TOURNAMENTS_TEAMS + " " +
+            "TEXT, " + TOURNAMENTS_MAX_SIZE + " INT NOT NULL, " + TOURNAMENTS_COMPLETED + " INT, " +
+            TOURNAMENTS_CLOSED + " INT, " + TOURNAMENTS_WIN_STAT + " TEXT," + TOURNAMENTS_CURRENT_ROUND + " INT, " +
+            TOURNAMENTS_MATCHES + " TEXT, " + TOURNAMENTS_RANKINGS + " TEXT, " + TOURNAMENTS_WINS + " TEXT, UNIQUE(" +
+            TOURNAMENTS_NAME + "));";
+    private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT NOT " +
+            "NULL, " + STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, UNIQUE(" + STATS_KEY + "));";
+    private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
+            "TEXT NOT NULL, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TEAM_1_SCORE + " " +
+            "INT, " + MATCHES_TEAM_2_SCORE + " INT, " + MATCHES_ID + " TEXT, UNIQUE(" + MATCHES_ID + "));";
+
     private static DatabaseSingleton instance;
     private int activeDatabaseCount = 0;
     private SQLiteDatabase connection; // always returns the same connection instance
-
-    private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" +
-            TEAMS_NAME + " TEXT, " + TEAMS_CAPTAIN_NAME + " TEXT, " + TEAMS_EMAIL + " TEXT, " +
-            TEAMS_PHONE_NUMBER + " TEXT, " + TEAMS_ASSOCIATED_TOURNAMENTS + " TEXT, UNIQUE (" + TEAMS_NAME + "));";
-    private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
-            TOURNAMENTS_NAME + " TEXT, " + TOURNAMENTS_TYPE + " TEXT, " + TOURNAMENTS_TEAMS + " TEXT, " +
-            TOURNAMENTS_MAX_SIZE + " INT, " + TOURNAMENTS_COMPLETED + " INT, " + TOURNAMENTS_CLOSED + " INT, " +
-            TOURNAMENTS_WIN_STAT + " TEXT, UNIQUE(" + TOURNAMENTS_NAME + "));";
-    private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT, " +
-            STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, UNIQUE(" + STATS_KEY + "));";
-    private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
-            "TEXT, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TOURNAMENT_NAME + " TEXT, " +
-            "FOREIGN KEY(" + MATCHES_TEAM_1 + ", " + MATCHES_TEAM_2 + ") REFERENCES " + TEAMS_TABLE + "(" +
-            TEAMS_NAME + ", " + TEAMS_NAME + "), FOREIGN KEY(" + MATCHES_TOURNAMENT_NAME + ") REFERENCES " +
-            TOURNAMENTS_TABLE + "(" + TOURNAMENTS_NAME + "));";
 
     private DatabaseSingleton(Context context) {
         this(context, NAME, null, VERSION);
@@ -92,6 +99,10 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_STATS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_TEAMS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_MATCHES_TABLE);
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_STATS_TABLE);
         db.execSQL(CREATE_TEAMS_TABLE);
@@ -119,7 +130,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     public synchronized void closeDatabase() {
         activeDatabaseCount--;
-        Log.i(TAG, "openDatabase: " + activeDatabaseCount);
+        Log.i(TAG, "closeDatabase: " + activeDatabaseCount);
         if (activeDatabaseCount == 0) {
             // Closing database
             connection.close();

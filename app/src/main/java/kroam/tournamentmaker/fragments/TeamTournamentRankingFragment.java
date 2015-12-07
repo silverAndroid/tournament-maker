@@ -2,19 +2,13 @@ package kroam.tournamentmaker.fragments;
 
 import android.app.ListFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.Tournament;
-import kroam.tournamentmaker.activities.Schedule_Result_TabActivity;
-import kroam.tournamentmaker.activities.TournamentCreateActivity;
-import kroam.tournamentmaker.database.TeamDataSource;
 import kroam.tournamentmaker.database.TournamentDataSource;
 
 /**

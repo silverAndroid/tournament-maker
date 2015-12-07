@@ -25,7 +25,7 @@ import kroam.tournamentmaker.fragments.TournamentFragment;
 import kroam.tournamentmaker.Util;
 
 
-public class Tournaments_Teams_TabActivity extends AppCompatActivity implements TournamentFragment.OnFragmentInteractionListener {
+public class Tournaments_Teams_TabActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -70,11 +70,6 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity implements 
         adapter.addFragment(TournamentFragment.newInstance(), "Tournaments");
         adapter.addFragment(TeamFragment.newInstance(), "Teams");
         viewPager.setAdapter(adapter);
-    }
-
-    @Override
-    public void onFragmentInteraction(String id) {
-
     }
 
     @Override

@@ -15,10 +15,10 @@ import java.util.List;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.fragments.RankingFragment;
 import kroam.tournamentmaker.fragments.ResultFragment;
-import kroam.tournamentmaker.fragments.ScheduleFragment;
+import kroam.tournamentmaker.fragments.UpcomingFragment;
 
 
-public class Schedule_Result_TabActivity extends AppCompatActivity implements RankingFragment.OnFragmentInteractionListener {
+public class Upcoming_Result_Ranking_TabActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -27,7 +27,7 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Ra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.schedules_results_tabs);
+        setContentView(R.layout.upcoming_results_ranking_tabs);
         name = getIntent().getStringExtra("name");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(name);
@@ -42,15 +42,10 @@ public class Schedule_Result_TabActivity extends AppCompatActivity implements Ra
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(ScheduleFragment.newInstance(name), "Schedule");
+        adapter.addFragment(UpcomingFragment.newInstance(name), "Upcoming");
         adapter.addFragment(ResultFragment.newInstance(name), "Results");
-        adapter.addFragment(RankingFragment.newInstance(), "Rankings");
+        adapter.addFragment(RankingFragment.newInstance(name), "Rankings");
         viewPager.setAdapter(adapter);
-    }
-
-    @Override   //Unused method
-    public void onFragmentInteraction(String id) {
-
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {

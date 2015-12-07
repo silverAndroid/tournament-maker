@@ -27,7 +27,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
 
     @Override
     public ViewTeamHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.team_view_row, parent,
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_team_row, parent,
                 false);
         return new ViewTeamHolder(v);
     }
@@ -59,6 +59,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
         public ViewTeamHolder(View itemView) {
             super(itemView);
             teamName = (TextView) itemView.findViewById(R.id.txt_team_name);
+            teamName.setSelected(true);
             delete = (ImageButton) itemView.findViewById(R.id.delete);
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package importedLibraries;
+package libraries.guava;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

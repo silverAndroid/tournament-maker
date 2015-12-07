@@ -12,8 +12,6 @@ import java.util.List;
 
 import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.Team;
-import kroam.tournamentmaker.Tournament;
 
 /**
  * Created by Rushil Perera on 12/5/2015.
@@ -37,14 +35,9 @@ public class ResultsAdapter extends ArrayAdapter<Match> {
         ResultViewHolder holder = new ResultViewHolder(convertView);
         Match match = matches.get(position);
         holder.homeTeam.setText(match.getHomeTeam().getName());
-        holder.awayTeam.setText(match.getAwayTeam().getName());
-        Tournament tournament = match.getAssociatedTournament();
-        Team homeTeam = match.getHomeTeam();
-        Team awayTeam = match.getAwayTeam();
-        holder.homeTeamWinStat.setText(String.format("%d", tournament.getWinningStat().getValue(tournament.getName()
-                + ": " + homeTeam.getName()).getValue()));
-        holder.awayTeamWinStat.setText(String.format("%d", tournament.getWinningStat().getValue(tournament.getName()
-                + ": " + awayTeam.getName()).getValue()));
+        holder.awayTeam.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
+        holder.homeTeamWinStat.setText(String.format("%d", match.getHomeScore()));
+        holder.awayTeamWinStat.setText(String.format("%d", match.getAwayScore()));
 
         return convertView;
     }

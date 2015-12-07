@@ -13,6 +13,7 @@ public class Team implements Serializable {
     private String phoneNumber;
     private int selected;
     private ArrayList<Tournament> associatedTournaments;
+    private String logoPath;
 
     public Team(String name, String captainName, String captainEmail, String phoneNumber) {
         this.name = name;
@@ -78,5 +79,13 @@ public class Team implements Serializable {
 
     public void addTournaments(ArrayList<Tournament> tournaments) {
         associatedTournaments.addAll(tournaments);
+    }
+
+    public String getLogoPath() {
+        return logoPath;
+    }
+
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
     }
 }

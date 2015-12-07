@@ -1,5 +1,7 @@
 package kroam.tournamentmaker;
 
+import kroam.tournamentmaker.database.TournamentDataSource;
+
 /**
  * Created by Rushil Perera on 12/1/2015.
  */
@@ -9,19 +11,16 @@ public class Match {
     private boolean completed;
     private Team winner;
     private int homeScore, awayScore;
-    private Tournament associatedTournament;
+    private final String id;
 
-    public Match(Tournament tournament, Team team1, Team team2) {
-        associatedTournament = tournament;
+    public Match(Team team1, Team team2, String id) {
         homeTeam = team1;
         awayTeam = team2;
+        this.id = id;
         if (team2 == null)       //Ocean:    Implementation added for the creation of Matches (see Util::generateMatches(Tournament))
             completed = true;   //          homeTeam should not be given a win in this case
-    }
-
-    public Match(Team team1, Team team2) {
-        homeTeam = team1;
-        awayTeam = team2;
+        homeScore = -1;
+        awayScore = -1;
     }
 
     public boolean isCompleted() {
@@ -30,8 +29,9 @@ public class Match {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-        if (completed)
+        if (completed) {
             setWinner();
+        }
     }
 
     public Team getHomeTeam() {
@@ -45,8 +45,7 @@ public class Match {
     public void setWinner() {
         if (homeScore < awayScore) {
             winner = awayTeam;
-        }
-        else{                            //Ties go to home team
+        } else {                            //Ties go to home team
             winner = homeTeam;
         }
     }
@@ -55,16 +54,29 @@ public class Match {
         return winner;
     }
 
-    public Tournament getAssociatedTournament() {
-        return associatedTournament;
+    public int getHomeScore() {
+        return homeScore;
     }
 
-    public void setHomeScore(int score){ homeScore = score;}
+    public void setHomeScore(int score) {
+        homeScore = score;
+    }
 
-    public void setAwayScore(int score){ awayScore = score;}
+    public int getAwayScore() {
+        return awayScore;
+    }
 
-    public void setAssociatedTournament(Tournament associatedTournament) {
-        this.associatedTournament = associatedTournament;
+    public void setAwayScore(int score) {
+        awayScore = score;
+    }
+
+    @Override
+    public String toString() {
+        return id;
+    }
+
+    public String getId() {
+        return id;
     }
 }
 

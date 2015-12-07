@@ -10,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.adapters.ResultsAdapter;
 import kroam.tournamentmaker.database.MatchDataSource;
+import kroam.tournamentmaker.database.TournamentDataSource;
 
 public class ResultFragment extends ListFragment {
 
@@ -47,8 +49,8 @@ public class ResultFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, MatchDataSource.getInstance()
-                    .getFinishedMatches(tournamentName)));
+            Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+            setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, tournament.getInactiveMatches()));
         }
     }
 
@@ -56,16 +58,7 @@ public class ResultFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.schedule_fragment, container, false);
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        return view;
+        return inflater.inflate(R.layout.upcoming_fragment, container, false);
     }
 
     @Override
@@ -74,7 +67,7 @@ public class ResultFragment extends ListFragment {
     }
 
     public void refresh() {
-        setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, MatchDataSource.getInstance()
-                .getFinishedMatches(tournamentName)));
+        Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+        setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, tournament.getInactiveMatches()));
     }
 }

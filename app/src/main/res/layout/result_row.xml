@@ -60,6 +60,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
+        android:gravity="right"
+        android:layout_toRightOf="@+id/away_team_win_stat"
         android:text="Germany"
         android:textColor="#000"
         android:textSize="16sp"/>

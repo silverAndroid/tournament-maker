@@ -12,7 +12,7 @@
  * the License.
  */
 
-package importedLibraries;
+package libraries.guava;
 
 import javax.annotation.Nullable;
 

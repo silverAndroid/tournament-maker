@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scrollView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="true">
+<ScrollView android:id="@+id/scrollView"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginTop="?android:attr/actionBarSize">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize">
 
 
         <LinearLayout
+            android:id="@+id/teaminfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/teaminfo">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/name_layout"
@@ -35,7 +35,7 @@
                     android:layout_marginLeft="30dp"
                     android:text="Name : "
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/display_team_name"
@@ -47,155 +47,161 @@
                     android:layout_marginLeft="30dp"
                     android:text="DISPLAY TEAM NAME"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/teamlogo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/teamlogo">
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
 
 
                 <TextView
+                    android:id="@+id/txt_teamlogo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/team_logo_prompt"
-                    android:id="@+id/txt_teamlogo"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="@string/team_logo_prompt"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/display_teamlogo"
-                    android:background="#fff"
-                    android:src="@drawable/default_team_logo"/>
+                    android:id="@+id/display_team_logo"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:maxHeight="300dp"
+                    android:maxWidth="300dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/default_icon"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/teamcaptain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/teamcaptain"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
                 >
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Team Captain : "
                     android:id="@+id/txt_captain_name"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
-
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="DISPLAY CAPTAIN"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="30dp"
+                    android:text="Team Captain : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
                     android:id="@+id/display_captain_name"
-                    android:layout_alignParentTop="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="DISPLAY CAPTAIN"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/email">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email : "
                     android:id="@+id/txt_email"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
-
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="DISPLAY EMAIL"
-                    android:id="@+id/display_email"
-                    android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="Email : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/display_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="30dp"
+                    android:text="DISPLAY EMAIL"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/phone">
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone # : "
                     android:id="@+id/txt_phone"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
-
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="DISPLAY PHONE"
-                    android:id="@+id/display_phone"
-                    android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
                     android:layout_marginLeft="30dp"
-                    android:textStyle="bold"
-                    android:textSize="20sp" />
+                    android:text="Phone # : "
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/display_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="30dp"
+                    android:text="DISPLAY PHONE"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/teaminfo">
-
-        <ListView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/teaminfo"
+            android:orientation="vertical">
 
-        </ListView>
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    </LinearLayout>
-</RelativeLayout>
+            </ListView>
 
-    </ScrollView>
+        </LinearLayout>
+    </RelativeLayout>
+
+</ScrollView>
 
