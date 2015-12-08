@@ -112,43 +112,6 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.create_tournament, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.menu_close_registration:
-                new AlertDialog.Builder(TournamentCreateActivity.this)
-                        .setTitle("Closing Registration")
-                        //TODO: Get someone to check message
-                        .setMessage("Are you sure you want to close registration?\nIf you do, you" +
-                                " will not be able to edit this tournament again.")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                saveTournament(true);
-                                chooseWinningStat(name.getText().toString());
-                                TeamFragment.getInstance().refresh();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Called when a view has been clicked.
      *
@@ -161,9 +124,40 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 adapter.addItem();
                 break;
             case R.id.btn_confirm:
-                saveTournament();
-                TeamFragment.getInstance().refresh();
-                finish();
+                new AlertDialog.Builder(TournamentCreateActivity.this)
+                        .setTitle("End Registration")
+                        .setMessage("Would you like to close registration or leave it open?")
+                        .setPositiveButton("Close registration!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                new AlertDialog.Builder(TournamentCreateActivity.this)
+                                        .setTitle("Closing Registration")
+                                        //TODO: Get someone to check message
+                                        .setMessage("Are you sure you want to close registration?\nIf you do," +
+                                                " you will not be able to edit this tournament again.")
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                closeRegistration();
+                                            }
+                                        })
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        })
+                                        .show();
+                            }
+                        })
+                        .setNegativeButton("Leave registration open!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                saveTournament();
+                                TeamFragment.getInstance().refresh();
+                                finish();
+                            }
+                        }).show();
                 break;
             case R.id.btn_cancel:
                 TeamFragment.getInstance().refresh();
@@ -283,5 +277,11 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+
+    private void closeRegistration() {
+        saveTournament(true);
+        chooseWinningStat(name.getText().toString());
+        TeamFragment.getInstance().refresh();
     }
 }

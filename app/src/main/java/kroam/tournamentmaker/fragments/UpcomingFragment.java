@@ -1,6 +1,7 @@
 package kroam.tournamentmaker.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -33,6 +34,8 @@ public class UpcomingFragment extends ListFragment {
     private String tournamentName;
     private ArrayList<Match> upcomingMatches;
     private Tournament tournament;
+    private FinishListener listener;
+    private TextView round;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -67,12 +70,16 @@ public class UpcomingFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.upcoming_fragment, container, false);
+        View v = inflater.inflate(R.layout.upcoming_fragment, container, false);
+        round = (TextView) v.findViewById(R.id.round_name);
+        round.setText(String.format("Round %d", tournament.getCurrentRound() + 1));
+        return v;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        listener = null;
     }
 
     @Override
@@ -95,8 +102,10 @@ public class UpcomingFragment extends ListFragment {
                         TournamentDataSource.getInstance().getTournamentFromMatch(match.getId()).updateRankOf(match
                                 .getWinner()); //updated Dec 6 by Ocean
                         refresh();
-                        ResultFragment.getInstance().refresh();
-                        RankingFragment.getInstance().updateRankings(tournamentName);
+                        if (ResultFragment.getInstance() != null)
+                            ResultFragment.getInstance().refresh();
+                        if (RankingFragment.getInstance() != null)
+                            RankingFragment.getInstance().updateRankings(tournamentName);
                         dialog.dismiss();
                     }
                 })
@@ -107,12 +116,13 @@ public class UpcomingFragment extends ListFragment {
                     }
                 })
                 .create();
-        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams
-                .FLAG_ALT_FOCUSABLE_IM);
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
                 Dialog view = (Dialog) dialog;
+                view.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams
+                        .FLAG_ALT_FOCUSABLE_IM);
+                view.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 TextView homeTeam = (TextView) view.findViewById(R.id.home_team);
                 TextView awayTeam = (TextView) view.findViewById(R.id.away_team);
                 Match currentMatch = upcomingMatches.get(position);
@@ -132,8 +142,27 @@ public class UpcomingFragment extends ListFragment {
         upcomingMatches = currentTournament.getCurrentRoundOfActiveMatches();
         if (upcomingMatches.size() == 0) {
             currentTournament.generateNextRoundOfMatches();
+        } else {
+            setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches =
+                    currentTournament.getCurrentRoundOfActiveMatches()));
+            round.setText(String.format("Round %d", tournament.getCurrentRound() + 1));
         }
-        setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches =
-                currentTournament.getCurrentRoundOfActiveMatches()));
+        if (currentTournament.isCompleted())
+            listener.endTournament();
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            listener = (FinishListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnHeadlineSelectedListener");
+        }
+    }
+
+    public interface FinishListener {
+        void endTournament();
     }
 }

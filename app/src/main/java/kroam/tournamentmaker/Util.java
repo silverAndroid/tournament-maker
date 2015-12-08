@@ -226,8 +226,8 @@ public class Util {
 
         switch (tournament.getType()) {
             case TournamentCreateActivity.ROUND_ROBIN:
-                System.out.println("Exceptional case. Round Robin only has 1 round of matches\n");
-                return generateMatches(tournament);
+                tournament.setCompleted(true);
+                TournamentDataSource.getInstance().updateTournament(tournament);
             default:
                 if (qualifyingTeams.size() >= 2) {
                     Iterator<Team> teamIterator = qualifyingTeams.listIterator();
@@ -237,6 +237,9 @@ public class Util {
                         matches.add(newMatch);
                         MatchDataSource.getInstance().createMatch(newMatch);
                     }
+                } else {
+                    tournament.setCompleted(true);
+                    TournamentDataSource.getInstance().updateTournament(tournament);
                 }
                 return matches;
         }

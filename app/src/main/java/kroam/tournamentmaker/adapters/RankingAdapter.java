@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import kroam.tournamentmaker.R;
@@ -22,10 +24,16 @@ public class RankingAdapter extends ArrayAdapter<Team> {
     private final Tournament tournament;
     private ArrayList<Team> teams;
 
-    public RankingAdapter(Context context, int resource, List<Team> objects, Tournament tournament) {
+    public RankingAdapter(Context context, int resource, List<Team> objects, final Tournament tournament) {
         super(context, resource, objects);
         this.tournament = tournament;
         teams = new ArrayList<>();
+        Collections.sort(objects, new Comparator<Team>() {
+            @Override
+            public int compare(Team lhs, Team rhs) {
+                return tournament.getRankingOf(lhs) - tournament.getRankingOf(rhs);
+            }
+        });
         teams.addAll(objects);
     }
 

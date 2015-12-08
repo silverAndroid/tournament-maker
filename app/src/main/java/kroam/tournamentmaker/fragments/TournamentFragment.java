@@ -57,11 +57,15 @@ public class TournamentFragment extends ListFragment {
 
         Intent intent;
         Tournament tournament = TournamentDataSource.getInstance().getTournaments().get(position);
-        if (tournament.isRegistrationClosed())
-            intent = new Intent(getContext(), Upcoming_Result_Ranking_TabActivity.class);
-        else
-            intent = new Intent(getContext(), TournamentCreateActivity.class);
-        intent.putExtra("name", tournament.getName());
-        startActivity(intent);
+        if (tournament.isCompleted()) {
+
+        } else {
+            if (tournament.isRegistrationClosed())
+                intent = new Intent(getContext(), Upcoming_Result_Ranking_TabActivity.class);
+            else
+                intent = new Intent(getContext(), TournamentCreateActivity.class);
+            intent.putExtra("name", tournament.getName());
+            startActivity(intent);
+        }
     }
 }

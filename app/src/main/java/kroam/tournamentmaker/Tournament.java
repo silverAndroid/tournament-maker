@@ -43,8 +43,8 @@ public class Tournament {
         winsOfTeams = new HashMap<>(teams.size());
         for (Team team : teams) {
             // 0 means that there is no (int)rank assigned yet
-            rankOfTeams.put(team.getName(), new StatValue(name, team.getName(), 0));
-            winsOfTeams.put(team.getName(), new StatValue(name, team.getName(), 0));
+            rankOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), 0));
+            winsOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), 0));
         }
     }
 
@@ -157,8 +157,8 @@ public class Tournament {
 
     //updated Dec 6 by Ocean
     public void updateRankOf(Team team) {
-        winsOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), winsOfTeams.get(team.getName
-                ()).getValue() + 1)); //updates the amount of wins that team has
+        winsOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), winsOfTeams.get(name + ": " +
+                team.getName()).getValue() + 1)); //updates the amount of wins that team has
         updateRanksOfAll();
     }
 

@@ -36,9 +36,16 @@ public class ResultsAdapter extends ArrayAdapter<Match> {
         Match match = matches.get(position);
         holder.homeTeam.setText(match.getHomeTeam().getName());
         holder.awayTeam.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
-        holder.homeTeamWinStat.setText(String.format("%d", match.getHomeScore()));
-        holder.awayTeamWinStat.setText(String.format("%d", match.getAwayScore()));
+        if (match.getAwayTeam() == null) {
+            holder.awayTeam.setText("won by default since there was no one to pair this team with!");
+            holder.dash.setVisibility(View.GONE);
+            holder.homeTeamWinStat.setVisibility(View.GONE);
+            holder.awayTeamWinStat.setText("");
 
+        } else {
+            holder.homeTeamWinStat.setText(String.format("%d", match.getHomeScore()));
+            holder.awayTeamWinStat.setText(String.format("%d", match.getAwayScore()));
+        }
         return convertView;
     }
 
@@ -47,12 +54,17 @@ public class ResultsAdapter extends ArrayAdapter<Match> {
         TextView homeTeamWinStat;
         TextView awayTeam;
         TextView awayTeamWinStat;
+        TextView dash;
 
         public ResultViewHolder(View view) {
             homeTeam = (TextView) view.findViewById(R.id.home_team);
             awayTeam = (TextView) view.findViewById(R.id.away_team);
             homeTeamWinStat = (TextView) view.findViewById(R.id.home_team_win_stat);
             awayTeamWinStat = (TextView) view.findViewById(R.id.away_team_win_stat);
+            dash = (TextView) view.findViewById(R.id.dash);
+            dash.setVisibility(View.VISIBLE);
+            homeTeamWinStat.setVisibility(View.VISIBLE);
+            awayTeamWinStat.setVisibility(View.VISIBLE);
         }
     }
 }
