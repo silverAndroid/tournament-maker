@@ -1,12 +1,13 @@
 package kroam.tournamentmaker.activities;
 
-import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -55,7 +56,14 @@ public class Upcoming_Result_Ranking_TabActivity extends AppCompatActivity imple
         if (item.getItemId() == R.id.instructions) {
             new AlertDialog.Builder(Upcoming_Result_Ranking_TabActivity.this)
                     .setTitle("Instructions")
-                    .setView(R.layout)
+                    .setView(R.layout.instructions)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
         return super.onOptionsItemSelected(item);
     }

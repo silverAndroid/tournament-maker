@@ -1,5 +1,6 @@
 package kroam.tournamentmaker.activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,21 +9,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import kroam.tournamentmaker.database.DatabaseSingleton;
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.database.TeamDataSource;
-import kroam.tournamentmaker.fragments.TeamFragment;
-import kroam.tournamentmaker.database.TournamentDataSource;
-import kroam.tournamentmaker.fragments.TournamentFragment;
 import kroam.tournamentmaker.Util;
+import kroam.tournamentmaker.database.DatabaseSingleton;
+import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.fragments.TeamFragment;
+import kroam.tournamentmaker.fragments.TournamentFragment;
 
 
 public class Tournaments_Teams_TabActivity extends AppCompatActivity {
@@ -63,6 +66,29 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.instructions, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.instructions) {
+            new AlertDialog.Builder(Tournaments_Teams_TabActivity.this)
+                    .setTitle("Instructions")
+                    .setView(R.layout.instructions)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupViewPager(ViewPager viewPager) {
