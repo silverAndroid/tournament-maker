@@ -1,21 +1,29 @@
 package kroam.tournamentmaker.fragments;
 
-import android.app.ListFragment;
 import android.os.Bundle;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.Team;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.adapters.TournamentRankingAdapter;
+import kroam.tournamentmaker.database.TeamDataSource;
 
 /**
  * Created by Kyle on 2015-12-05.
  */
-public class TeamTournamentRankingFragment extends ListFragment {
-
+public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "team_name";
     private static TournamentFragment instance;
+    private String teamName;
+    private ArrayList<Tournament> associatedTournaments;
+    private Team team;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -24,8 +32,11 @@ public class TeamTournamentRankingFragment extends ListFragment {
     public TeamTournamentRankingFragment() {
     }
 
-    public static TournamentFragment newInstance() {
+    public static TournamentFragment newInstance(String teamName) {
         TournamentFragment fragment = new TournamentFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, teamName);
+        fragment.setArguments(args);
         instance = fragment;
         return fragment;
     }
@@ -38,8 +49,14 @@ public class TeamTournamentRankingFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TournamentDataSource.getInstance().getTournaments()));
+        if (getArguments() != null) {
+            teamName = getArguments().getString(ARG_PARAM1);
+
+            team = TeamDataSource.getInstance().getTeam(teamName);
+            associatedTournaments = new ArrayList<>();
+            associatedTournaments.addAll(team.getAssociatedTournaments());
+            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.team_ranking_row, associatedTournaments, team));
+        }
     }
 
     @Override
