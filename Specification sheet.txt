@@ -1,0 +1,47 @@
+=============================
+	Requirements
+=============================
+-Notification system for teams
+-Real time score editor
+-User Table:
+	>"Team" Users
+	>"Organizer" Users
+	>"Score-Keeper" Users
+	>"Anonymous" User
+-Abstraction:	Participant
+		    +----Team
+		    |
+		    +----Player
+-Match takes Participants, no longer Team
+
+=============================
+	  Detailing
+=============================
+-Add a activity to each tournament type that shows description
+
+-Failing Use Cases of adding Participants to Tournament
+Player p; Team t1, t2; Tournament tourney:
+	>Case 1
+		p -> t1: Succeed;
+		p -> t2: Succeed;
+		t1 -> tourney: Suceed;
+		t2 -> tourney: Fail, Raise Exception;
+
+	>Case 2
+		p -> t1: Succeed;
+		t1 -> tourney: Succeed;
+		t2 -> tourney: Suceed;
+		p -> t2: Fail, Raise Exception;
+
+	>Case 3
+		p -> tourney: Succeed;
+		p -> tourney: Fail, Raise Exception;
+
+	>Case 4
+		t1 -> tourney: Succeed;
+		t1 -> tourney: Fail, Raise Exception;
+
+=============================
+	  Discuss
+=============================
+-Track Players that are present at the Match???

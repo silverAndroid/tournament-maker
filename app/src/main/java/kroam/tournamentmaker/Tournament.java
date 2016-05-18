@@ -17,7 +17,7 @@ public class Tournament {
     private static final String TAG = "Tournament";
     private final String name;
     private final String type;
-    private final ArrayList<Team> teams;
+    private final ArrayList<Participant> participants;
     private final int maxSize;
     private boolean registrationClosed;
     private boolean completed;
@@ -27,24 +27,24 @@ public class Tournament {
     private HashMap<String, StatValue> rankOfTeams;            //updated Dec 6 by Ocean
     private HashMap<String, StatValue> winsOfTeams;            //updated Dec 6 by Ocean
 
-    public Tournament(String name, String type, ArrayList<Team> teams, int maxSize) {
-        this(name, type, teams, maxSize, -1);
+    public Tournament(String name, String type, ArrayList<Participant> participants, int maxSize) {
+        this(name, type, participants, maxSize, -1);
     }
 
-    public Tournament(String name, String type, ArrayList<Team> teams, int maxSize, int currentRound) {
+    public Tournament(String name, String type, ArrayList<Participant> participants, int maxSize, int currentRound) {
         this.name = name;
         this.type = type;
-        this.teams = new ArrayList<>(teams.size());
-        this.teams.addAll(teams);
+        this.participants = new ArrayList<>(participants.size());
+        this.participants.addAll(participants);
         this.maxSize = maxSize;
         roundsOfMatches = new ArrayList<>();
         this.currentRound = currentRound;
-        rankOfTeams = new HashMap<>(teams.size());
-        winsOfTeams = new HashMap<>(teams.size());
-        for (Team team : teams) {
+        rankOfTeams = new HashMap<>(participants.size());
+        winsOfTeams = new HashMap<>(participants.size());
+        for (Participant participant : participants) {
             // 0 means that there is no (int)rank assigned yet
-            rankOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), 0));
-            winsOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), 0));
+            rankOfTeams.put(name + ": " + participant.getName(), new StatValue(name, participant.getName(), 0));
+            winsOfTeams.put(name + ": " + participant.getName(), new StatValue(name, participant.getName(), 0));
         }
     }
 
@@ -60,8 +60,8 @@ public class Tournament {
         return maxSize;
     }
 
-    public ArrayList<Team> getTeams() {
-        return teams;
+    public ArrayList<Participant> getTeams() {
+        return participants;
     }
 
     public boolean isCompleted() {
@@ -164,13 +164,13 @@ public class Tournament {
 
     //updated Dec 6 by Ocean
     public void updateRanksOfAll() {
-        MultiMap<Integer, Team> teamsScores = new MultiMap<>();
-        int[] wins = new int[teams.size()];
-        List<Team> listFromTeamsScores;
+        MultiMap<Integer, Participant> teamsScores = new MultiMap<>();
+        int[] wins = new int[participants.size()];
+        List<Participant> listFromTeamsScores;
 
-        for (Team currentTeam : teams) {
-            teamsScores.put(winsOfTeams.get(name + ": " + currentTeam.getName()).getValue(), currentTeam);
-            wins[teams.indexOf(currentTeam)] = winsOfTeams.get(name + ": " + currentTeam.getName()).getValue();
+        for (Participant currentParticipant: participants) {
+            teamsScores.put(winsOfTeams.get(name + ": " + currentParticipant.getName()).getValue(), currentParticipant);
+            wins[participants.indexOf(currentParticipant)] = winsOfTeams.get(name + ": " + currentParticipant.getName()).getValue();
         }
 
         int swap;

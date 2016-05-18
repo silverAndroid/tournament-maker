@@ -1,0 +1,7 @@
+>Create Util Method(s):
+	-inSameTournament(Team,Team): returns true if both teams are in the same tournament
+	-printTournamentList(ArrayList<Tournament>): gives the name of the tournaments in given ArrayList of Tournaments
+
+>Fix:
+	-Player::addTournaments(ArrayList<Tournament>): figure out how to give output of tournaments which could not be added
+	-Team::addTournaments(ArrayList<Tournament>): Same as Player.
