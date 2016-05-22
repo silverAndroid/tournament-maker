@@ -24,13 +24,13 @@ Player p; Team t1, t2; Tournament tourney:
 	>Case 1
 		p -> t1: Succeed;
 		p -> t2: Succeed;
-		t1 -> tourney: Suceed;
+		t1 -> tourney: Succeed;
 		t2 -> tourney: Fail, Raise Exception;
 
 	>Case 2
 		p -> t1: Succeed;
 		t1 -> tourney: Succeed;
-		t2 -> tourney: Suceed;
+		t2 -> tourney: Succeed;
 		p -> t2: Fail, Raise Exception;
 
 	>Case 3
