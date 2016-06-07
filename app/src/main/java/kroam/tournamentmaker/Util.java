@@ -41,7 +41,7 @@ public class Util {
     }
 
     public static AlertDialog.Builder generateDialog(Context context, String title, String message) {
-        return new AlertDialog.Builder(context, R.style.DialogTheme)
+        return new AlertDialog.Builder(context/*, R.style.DialogTheme)*/) //Removed use of DialogTheme by Ocean 07/June/2016
                 .setTitle(title)
                 .setMessage(message);
     }
