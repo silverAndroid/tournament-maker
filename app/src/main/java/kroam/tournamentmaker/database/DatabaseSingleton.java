@@ -10,65 +10,74 @@ import android.util.Log;
  */
 public class DatabaseSingleton extends SQLiteOpenHelper {
 
-    public static final String TOURNAMENTS_TABLE = "TOURNAMENTS";
-    public static final String TOURNAMENTS_NAME = "NAME";
-    public static final String TOURNAMENTS_TYPE = "TYPE";
-    public static final String TOURNAMENTS_TEAMS = "TEAMS";
-    public static final String TOURNAMENTS_MAX_SIZE = "MAX_SIZE";
-    public static final String TOURNAMENTS_COMPLETED = "FINISHED";
-    public static final String TOURNAMENTS_CLOSED = "REGISTRATION_CLOSED";
-    public static final String TOURNAMENTS_WIN_STAT = "STAT_WIN";
-    public static final String TOURNAMENTS_CURRENT_ROUND = "CURRENT_ROUND";
-    public static final String TOURNAMENTS_MATCHES = "MATCHES";
-    public static final String TOURNAMENTS_RANKINGS = "RANKINGS";
-    public static final String TOURNAMENTS_WINS = "WINS";
-
-    public static final String TEAMS_TABLE = "TEAMS";
-    public static final String TEAMS_NAME = "NAME";
-    public static final String TEAMS_LOGO_PATH = "LOGO_PATH";
-    public static final String TEAMS_CAPTAIN_NAME = "CAPTAIN_NAME";
-    public static final String TEAMS_EMAIL = "CAPTAIN_EMAIL";
-    public static final String TEAMS_PHONE_NUMBER = "PHONE_NUMBER";
-    public static final String TEAMS_ASSOCIATED_TOURNAMENTS = "TOURNAMENTS";
-
-    public static final String STATS_TABLE = "STATS";
-    public static final String STATS_KEY = "KEY";
-    public static final String STATS_TOURNAMENT_NAMES = "TOURNAMENT_NAMES";
-    public static final String STATS_VALUES = "KEY_VALUES";
-
-    public static final String MATCHES_TABLE = "SCHEDULE";
-    public static final String MATCHES_ID = "ID";
-    public static final String MATCHES_TEAM_1 = "TEAM_1";
-    public static final String MATCHES_TEAM_2 = "TEAM_2";
-    public static final String MATCHES_COMPLETED = "COMPLETED";
-    public static final String MATCHES_TEAM_1_SCORE = "TEAM_1_SCORE";
-    public static final String MATCHES_TEAM_2_SCORE = "TEAM_2_SCORE";
-
-    private static final String NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 15;
+    private static final String DB_NAME = "TOURNAMENT_MAKER_DB";
+    private static final int VERSION = 1;
     private static final String TAG = "DatabaseSingleton";
-    private static final String CREATE_TEAMS_TABLE = "CREATE TABLE " + TEAMS_TABLE + "(" + TEAMS_NAME + " TEXT NOT " +
-            "NULL, " + TEAMS_CAPTAIN_NAME + " TEXT NOT NULL, " + TEAMS_EMAIL + " TEXT NOT NULL, " +
-            TEAMS_PHONE_NUMBER + " TEXT NOT NULL, " + TEAMS_ASSOCIATED_TOURNAMENTS + " TEXT, " + TEAMS_LOGO_PATH +
-            " TEXT, UNIQUE (" + TEAMS_NAME + "));";
-    private static final String CREATE_TOURNAMENTS_TABLE = "CREATE TABLE " + TOURNAMENTS_TABLE + "(" +
-            TOURNAMENTS_NAME + " TEXT NOT NULL, " + TOURNAMENTS_TYPE + " TEXT NOT NULL, " + TOURNAMENTS_TEAMS + " " +
-            "TEXT, " + TOURNAMENTS_MAX_SIZE + " INT NOT NULL, " + TOURNAMENTS_COMPLETED + " INT, " +
-            TOURNAMENTS_CLOSED + " INT, " + TOURNAMENTS_WIN_STAT + " TEXT," + TOURNAMENTS_CURRENT_ROUND + " INT, " +
-            TOURNAMENTS_MATCHES + " TEXT, " + TOURNAMENTS_RANKINGS + " TEXT, " + TOURNAMENTS_WINS + " TEXT, UNIQUE(" +
-            TOURNAMENTS_NAME + "));";
-    private static final String CREATE_STATS_TABLE = "CREATE TABLE " + STATS_TABLE + "(" + STATS_KEY + " TEXT NOT " +
-            "NULL, " + STATS_VALUES + " TEXT, " + STATS_TOURNAMENT_NAMES + " TEXT, UNIQUE(" + STATS_KEY + "));";
-    private static final String CREATE_MATCHES_TABLE = "CREATE TABLE " + MATCHES_TABLE + "(" + MATCHES_TEAM_1 + " " +
-            "TEXT NOT NULL, " + MATCHES_TEAM_2 + " TEXT, " + MATCHES_COMPLETED + " INT, " + MATCHES_TEAM_1_SCORE + " " +
-            "INT, " + MATCHES_TEAM_2_SCORE + " INT, " + MATCHES_ID + " TEXT, UNIQUE(" + MATCHES_ID + "));";
+
+    private static final String CREATE_TOURNAMENTS_TABLE = String.format("CREATE TABLE %s (%s TEXT PRIMARY " +
+                    "KEY, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL DEFAULT 0, %s INTEGER " +
+                    "NOT NULL DEFAULT 0, %s INTEGER NOT NULL DEFAULT 1);", DBTables.TOURNAMENTS_TABLE,
+            DBColumns.NAME, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
+                    .REGISTRATION_CLOSED, DBColumns.CURRENT_ROUND);
+    private static final String CREATE_STATS_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY" +
+            " AUTOINCREMENT, %s TEXT NOT NULL UNIQUE);", DBTables.STATS_TABLE, DBColumns.ID, DBColumns.KEY);
+    private static final String CREATE_PARTICIPANTS_TABLE = String.format("CREATE TABLE %s (%s INTEGER " +
+            "PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s TEXT NOT NULL);", DBTables
+            .PARTICIPANTS_TABLE, DBColumns.ID, DBColumns.NAME, DBColumns.TYPE);
+    private static final String CREATE_MATCHES_TABLE = String.format("CREATE TABLE %s (%s TEXT, %s INTEGER," +
+                    " %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(%s, %s) FOREIGN KEY (%s) REFERENCES %s " +
+                    "(%s));", DBTables.MATCHES_TABLE, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns
+                    .MATCH_COMPLETED, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID,
+            DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
+    private static final String CREATE_TOURNAMENTS_PARTICIPANTS_TABLE = String.format("CREATE TABLE %s (%s " +
+                    "TEXT, %s INTEGER, %s INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s " +
+                    "(%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_PARTICIPANTS_TABLE,
+            DBColumns.TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID, DBColumns.RANKING, DBColumns
+                    .TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID, DBColumns.TOURNAMENT_NAME, DBTables
+                    .TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.PARTICIPANT_ID, DBTables
+                    .PARTICIPANTS_TABLE, DBColumns.ID);
+    private static final String CREATE_TOURNAMENTS_STATS_TABLE = String.format("CREATE TABLE %s (%s TEXT, " +
+                    "%s INTEGER, %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) " +
+                    "REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+                    .TOURNAMENTS_STATS_TABLE, DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns
+                    .WINNING_STAT, DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns.TOURNAMENT_NAME,
+            DBTables.TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.STAT_ID, DBTables.STATS_TABLE, DBColumns
+                    .ID);
+    private static final String CREATE_TOURNAMENTS_MATCHES_TABLE = String.format("CREATE TABLE %s (%s TEXT," +
+                    " %s INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY " +
+                    "(%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_MATCHES_TABLE, DBColumns
+                    .TOURNAMENT_NAME, DBColumns.MATCH_ID, DBColumns.TOURNAMENT_NAME, DBColumns.MATCH_ID,
+            DBColumns.TOURNAMENT_NAME, DBTables.TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.MATCH_ID,
+            DBTables.MATCHES_TABLE, DBColumns.ID);
+    private static final String CREATE_PARTICIPANTS_TEAMS_TABLE = String.format("CREATE TABLE %s (%s " +
+            "INTEGER PRIMARY KEY, %s TEXT NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+            .PARTICIPANTS_TEAMS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.LOGO_PATH, DBColumns
+            .PARTICIPANT_ID, DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
+    private static final String CREATE_PARTICIPANTS_PEOPLE_TABLE = String.format("CREATE TABLE %s (%s " +
+                    "INTEGER, %s TEXT, %s TEXT, %s INTEGER, PRIMARY KEY (%s, %s, %s, %s), FOREIGN KEY (%s) " +
+                    "REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+                    .PARTICIPANTS_PEOPLE_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns
+                    .PHONE_NUMBER, DBColumns.TEAM_ID, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns
+                    .PHONE_NUMBER, DBColumns.TEAM_ID, DBColumns.PARTICIPANT_ID, DBTables
+                    .PARTICIPANTS_TABLE, DBColumns.ID, DBColumns.TEAM_ID, DBTables.PARTICIPANTS_TABLE,
+            DBColumns.ID);
+    private static final String CREATE_PARTICIPANTS_CAPTAINS_TABLE = String.format("CREATE TABLE %s (%s " +
+                    "INTEGER PRIMARY KEY, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+                    .PARTICIPANTS_CAPTAINS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID,
+            DBTables.PARTICIPANTS_PEOPLE_TABLE, DBColumns.PARTICIPANT_ID);
+    private static final String CREATE_PARTICIPANTS_STATS_TABLE = String.format("CREATE TABLE %s (%s " +
+            "INTEGER, %s TEXT, %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) " +
+            "REFERENCES %s (%s));", DBTables.PARTICIPANTS_STATS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns
+            .STAT_KEY, DBColumns.STAT_VALUE, DBColumns.PARTICIPANT_ID, DBColumns.STAT_KEY, DBColumns
+            .PARTICIPANT_ID, DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
 
     private static DatabaseSingleton instance;
     private int activeDatabaseCount = 0;
     private SQLiteDatabase connection; // always returns the same connection instance
+    private static Context context;
 
     private DatabaseSingleton(Context context) {
-        this(context, NAME, null, VERSION);
+        this(context, DB_NAME, null, VERSION);
     }
 
     /**
@@ -84,37 +93,63 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
      *                {@link #onUpgrade} will be used to upgrade the database; if the database is
      *                newer, {@link #onDowngrade} will be used to downgrade the database
      */
-    private DatabaseSingleton(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    private DatabaseSingleton(Context context, String name, SQLiteDatabase.CursorFactory factory, int
+            version) {
         super(context, name, factory, version);
     }
 
     public static synchronized DatabaseSingleton getInstance() {
+        if (instance == null)
+            instance = new DatabaseSingleton(context);
         return instance;
     }
 
     public static synchronized void createInstance(Context context) {
         if (instance == null)
             instance = new DatabaseSingleton(context);
+        DatabaseSingleton.context = context;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_TABLE);
         Log.d(TAG, "onCreate: " + CREATE_STATS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_TEAMS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_MATCHES_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_PARTICIPANTS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_STATS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_MATCHES_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_TEAMS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_PEOPLE_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_CAPTAINS_TABLE);
+        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_STATS_TABLE);
         Log.d(TAG, "onCreate: " + CREATE_MATCHES_TABLE);
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_STATS_TABLE);
-        db.execSQL(CREATE_TEAMS_TABLE);
+        db.execSQL(CREATE_PARTICIPANTS_TABLE);
         db.execSQL(CREATE_MATCHES_TABLE);
+        db.execSQL(CREATE_TOURNAMENTS_PARTICIPANTS_TABLE);
+        db.execSQL(CREATE_TOURNAMENTS_STATS_TABLE);
+        db.execSQL(CREATE_TOURNAMENTS_MATCHES_TABLE);
+        db.execSQL(CREATE_PARTICIPANTS_TEAMS_TABLE);
+        db.execSQL(CREATE_PARTICIPANTS_PEOPLE_TABLE);
+        db.execSQL(CREATE_PARTICIPANTS_CAPTAINS_TABLE);
+        db.execSQL(CREATE_PARTICIPANTS_STATS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TOURNAMENTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + STATS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + TEAMS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + MATCHES_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.STATS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.MATCHES_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_PARTICIPANTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_STATS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_MATCHES_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_TEAMS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_PEOPLE_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_CAPTAINS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_STATS_TABLE);
         onCreate(db);
     }
 
@@ -128,7 +163,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
         return connection;
     }
 
-    public synchronized void closeDatabase() {
+    synchronized void closeDatabase() {
         activeDatabaseCount--;
         Log.i(TAG, "closeDatabase: " + activeDatabaseCount);
         if (activeDatabaseCount == 0) {
