@@ -1,27 +1,14 @@
 package kroam.tournamentmaker;
 
 import android.content.ContentResolver;
-import android.database.Cursor;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-
-import kroam.tournamentmaker.activities.TournamentCreateActivity;
-import kroam.tournamentmaker.database.MatchDataSource;
-import kroam.tournamentmaker.database.StatsDataSource;
-import kroam.tournamentmaker.database.TeamDataSource;
-import kroam.tournamentmaker.database.TournamentDataSource;
-import libraries.guava.MultiMap;
 
 /**
  * Created by Rushil Perera on 11/24/2015.
@@ -34,99 +21,8 @@ public class Util {
     public static final int PERMISSION_MANAGE_DOCUMENTS = 3;
     private static final String TAG = "Util";
 
-    public static String convertArrayToString(Object[] array) {
-        return Arrays.toString(array).replace("[", "").replace("]", "");
-    }
-
-    public static ArrayList<Team> convertStringToTeamArraylist(String teamArrayString) {
-        String names[] = Util.convertStringToArray(teamArrayString);
-        ArrayList<Team> teams = new ArrayList<>();
-
-        for (String name : names) {
-            teams.add(TeamDataSource.getInstance().getTeam(name));
-        }
-        return teams;
-    }
-
-    public static ArrayList<Tournament> convertStringToTournamentArraylist(String arrayString) {
-        String[] tournamentNames = Util.convertStringToArray(arrayString);
-        ArrayList<Tournament> tournaments = new ArrayList<>();
-
-        for (String name : tournamentNames) {
-            tournaments.add(TournamentDataSource.getInstance().getTournament(name));
-        }
-        return tournaments;
-    }
-
-    public static String[] convertStringToArray(String arrayString) {
-        return arrayString.split(", ");
-    }
-
-    public static Tournament cursorToTournament(Cursor cursor) {
-        Tournament tournament = new Tournament(cursor.getString(0), cursor.getString(1), Util
-                .convertStringToTeamArraylist(cursor.getString(2)), cursor.getInt(3), cursor.getInt(7));
-        tournament.setCompleted(cursor.getInt(4) == 1);
-        tournament.setRegistrationClosed(cursor.getInt(5) == 1);
-        tournament.setWinningStat(StatsDataSource.getInstance().getStat(cursor.getString(6)));
-        tournament.addRoundsOfMatches(Util.convertStringTo2DList(cursor.getString(8)));
-        tournament.setRankings(Util.convertStatValuesToMap(cursor.getString(9)));
-        tournament.setWins(Util.convertStatValuesToMap(cursor.getString(10)));
-        return tournament;
-    }
-
-    public static Stat cursorToStat(Cursor cursor) {
-        return new Stat(cursor.getString(0), new ArrayList<>(Arrays.asList(Util.convertStringToArray(cursor
-                .getString(1)))), Util.convertStatValuesToMap(cursor.getString(2)));
-    }
-
-    public static Team cursorToTeam(Cursor cursor) {
-        Team team = new Team(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
-        team.addTournaments(Util.convertStringToTournamentArraylist(cursor.getString(4)));
-        team.setLogoPath(cursor.getString(5));
-        return team;
-    }
-
-    public static Match cursorToMatch(Cursor cursor) {
-        TeamDataSource teamDatabase = TeamDataSource.getInstance();
-        Match match = new Match(teamDatabase.getTeam(cursor.getString(0)), teamDatabase.getTeam(cursor.getString(1)),
-                cursor.getString(5));
-        match.setCompleted(cursor.getInt(2) == 1);
-        match.setHomeScore(cursor.getInt(3));
-        match.setAwayScore(cursor.getInt(4));
-        match.setWinner();
-        return match;
-    }
-
-    private static HashMap<String, StatValue> convertStatValuesToMap(String values) {
-        HashMap<String, StatValue> valuesMap = new HashMap<>();
-        String[] valuesSplit = values.split(", ");
-        if (valuesSplit.length != 1) {
-            for (String value : valuesSplit) {
-                String[] statsValues = value.split(": ");
-                if (statsValues.length != 1) {
-                    StatValue statValue = new StatValue(statsValues[0], statsValues[1], Integer.parseInt
-                            (statsValues[2]));
-                    valuesMap.put(statValue.toString(), statValue);
-                }
-            }
-        }
-        return valuesMap;
-    }
-
-    public static String convertStatValueHashMapToString(HashMap<String, StatValue> stats) {
-        String statString = "";
-        ArrayList<StatValue> values = new ArrayList<>(stats.values());
-        if (values.size() != 0) {
-            statString += values.get(0).getTournamentName() + ": " + values.get(0).getTeamName() + ": " + values.get(0)
-                    .getValue();
-            for (int i = 1; i < values.size(); i++) {
-                statString += ", ";
-                StatValue statValue = values.get(i);
-                statString += statValue.getTournamentName() + ": " + statValue.getTeamName() + ": " + statValue
-                        .getValue();
-            }
-        }
-        return statString;
+    public static boolean validateColumn(String column) {
+        return !(column == null || column.equals(""));
     }
 
     public static Bitmap loadImage(ImageView imageView, Uri uri, ContentResolver contentResolver) {
@@ -138,6 +34,16 @@ public class Util {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static AlertDialog.Builder generateDialog(Context context, String title) {
+        return generateDialog(context, title, "");
+    }
+
+    public static AlertDialog.Builder generateDialog(Context context, String title, String message) {
+        return new AlertDialog.Builder(context, R.style.DialogTheme)
+                .setTitle(title)
+                .setMessage(message);
     }
 
     //Copied directly from Android Developer website with a few modifications to fit required parameters
@@ -174,8 +80,8 @@ public class Util {
     * Method currently only does Knockout Format(still requires Round Robin and Combinations)
     *
     */
-    public static ArrayList<Match> generateMatches(Tournament tournament) {
-        ArrayList<Team> teams = TournamentDataSource.getInstance().getTeamsFromTournament(tournament.getName());
+    /*public static ArrayList<Match> generateMatches(Tournament tournament) {
+        ArrayList<Team> teams = TournamentsDataSource.getInstance().getTeamsFromTournament(tournament.getName());
         Collections.shuffle(teams);
         Iterator<Team> teamIterator = teams.listIterator();
         ArrayList<Match> matches = new ArrayList<>();
@@ -187,7 +93,7 @@ public class Util {
                     newMatch = new Match(teamIterator.next(), !teamIterator.hasNext() ? null : teamIterator.next(),
                             UUID.randomUUID().toString());
                     matches.add(newMatch);
-                    MatchDataSource.getInstance().createMatch(newMatch);
+                    MatchesDataSource.getInstance().createMatch(newMatch);
                 }
                 break;  //this is used to generate the first round of matches
 
@@ -196,7 +102,7 @@ public class Util {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
                         newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
                         matches.add(newMatch);
-                        MatchDataSource.getInstance().createMatch(newMatch);
+                        MatchesDataSource.getInstance().createMatch(newMatch);
                     }
                 }
                 break;
@@ -206,7 +112,7 @@ public class Util {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
                         newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
                         matches.add(newMatch);
-                        MatchDataSource.getInstance().createMatch(newMatch);
+                        MatchesDataSource.getInstance().createMatch(newMatch);
                     }
                 }
                 break;
@@ -217,9 +123,9 @@ public class Util {
 
     }
 
-    /*
+    *//*
     * Method utilized to generate 2nd+ round of a tournament with Knockout or Combination format
-    * */
+    * *//*
     public static ArrayList<Match> generateMatches(Tournament tournament, ArrayList<Team> qualifyingTeams) {
         Match newMatch;
         ArrayList<Match> matches = new ArrayList<>();
@@ -227,7 +133,7 @@ public class Util {
         switch (tournament.getType()) {
             case TournamentCreateActivity.ROUND_ROBIN:
                 tournament.setCompleted(true);
-                TournamentDataSource.getInstance().updateTournament(tournament);
+                TournamentsDataSource.getInstance().updateTournament(tournament);
             default:
                 if (qualifyingTeams.size() >= 2) {
                     Iterator<Team> teamIterator = qualifyingTeams.listIterator();
@@ -235,11 +141,11 @@ public class Util {
                         newMatch = new Match(teamIterator.next(), teamIterator.hasNext() ? teamIterator.next() :
                                 null, UUID.randomUUID().toString());
                         matches.add(newMatch);
-                        MatchDataSource.getInstance().createMatch(newMatch);
+                        MatchesDataSource.getInstance().createMatch(newMatch);
                     }
                 } else {
                     tournament.setCompleted(true);
-                    TournamentDataSource.getInstance().updateTournament(tournament);
+                    TournamentsDataSource.getInstance().updateTournament(tournament);
                 }
                 return matches;
         }
@@ -277,7 +183,7 @@ public class Util {
             int swap;
             for (int c = 0; c < (amountOfWins.length - 1); c++) {
                 for (int d = 0; d < amountOfWins.length - c - 1; d++) {
-                    if (amountOfWins[d] > amountOfWins[d + 1]) /* For descending order use < */ {
+                    if (amountOfWins[d] > amountOfWins[d + 1]) *//* For descending order use < *//* {
                         swap = amountOfWins[d];
                         amountOfWins[d] = amountOfWins[d + 1];
                         amountOfWins[d + 1] = swap;
@@ -319,36 +225,5 @@ public class Util {
 
     public static int getRankingOf(Team team) {
         return 0;
-    }
-
-    public static String convert2DListToString(ArrayList<ArrayList<Match>> rounds) {
-        String res = "";
-        for (int i = 0; i < rounds.size(); i++) {
-            if (rounds.get(i) == null)
-                continue;
-            ArrayList<Match> matches = rounds.get(i);
-            boolean completelyNull = true;
-            for (int j = 0; j < matches.size(); j++)
-                if (matches.get(j) != null) {
-                    res += matches.get(j).getId() + ", ";
-                    completelyNull = false;
-                }
-            if (!completelyNull && i != rounds.size() - 1)
-                res += "\n";
-        }
-        return res;
-    }
-
-    public static ArrayList<ArrayList<Match>> convertStringTo2DList(String res) {
-        String[] rows = res.split("\n");
-        ArrayList<ArrayList<Match>> rounds = new ArrayList<>();
-        for (int i = 0; i < rows.length; i++) {
-            String[] matchIDs = rows[i].split(", ");
-            ArrayList<Match> matches = new ArrayList<>();
-            for (String matchID : matchIDs)
-                matches.add(MatchDataSource.getInstance().getMatch(matchID));
-            rounds.add(matches);
-        }
-        return rounds;
-    }
+    }*/
 }
