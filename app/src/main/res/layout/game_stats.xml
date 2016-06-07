@@ -30,7 +30,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
             android:layout_marginLeft="8dp"
-            android:text="Away Team fhweufhweui"
+            android:text="Away Team"
             android:layout_alignParentRight="true"
             android:maxWidth="150dp"
             android:gravity="right"
@@ -38,9 +38,8 @@
             android:textSize="20sp"/>
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/stats_list"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <include
+        layout="@layout/layout_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>
