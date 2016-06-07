@@ -9,15 +9,18 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.activities.TournamentCreateActivity;
-import kroam.tournamentmaker.activities.Upcoming_Result_Ranking_TabActivity;
-import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.activities.UpcomingResultRankingTabActivity;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 
 public class TournamentFragment extends ListFragment {
 
     private static TournamentFragment instance;
+    private ArrayList<Tournament> tournaments;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -40,15 +43,15 @@ public class TournamentFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TournamentDataSource.getInstance().getTournaments()));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id
+                .text1, tournaments = TournamentsDataSource.getInstance().getTournaments()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.tournament_fragment, container, false);
+        return inflater.inflate(R.layout.layout_listview, container, false);
     }
 
     @Override
@@ -56,12 +59,12 @@ public class TournamentFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
         Intent intent;
-        Tournament tournament = TournamentDataSource.getInstance().getTournaments().get(position);
+        Tournament tournament = tournaments.get(position);
         if (tournament.isCompleted()) {
-
+            //TODO: Show results in UpcomingResultRankingTabActivity.class
         } else {
             if (tournament.isRegistrationClosed())
-                intent = new Intent(getContext(), Upcoming_Result_Ranking_TabActivity.class);
+                intent = new Intent(getContext(), UpcomingResultRankingTabActivity.class);
             else
                 intent = new Intent(getContext(), TournamentCreateActivity.class);
             intent.putExtra("name", tournament.getName());
