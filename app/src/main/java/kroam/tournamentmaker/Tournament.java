@@ -1,13 +1,10 @@
 package kroam.tournamentmaker;
 
-import android.util.Log;
+import android.database.Cursor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-import kroam.tournamentmaker.database.TournamentDataSource;
-import libraries.guava.MultiMap;
+import kroam.tournamentmaker.database.DBColumns;
 
 /**
  * Created by Rushil Perera on 11/21/2015.
@@ -15,37 +12,35 @@ import libraries.guava.MultiMap;
 public class Tournament {
 
     private static final String TAG = "Tournament";
-    private final String name;
-    private final String type;
-    private final ArrayList<Participant> participants;
-    private final int maxSize;
+    private String name;
+    private String type;
+    private int maxSize;
+    private boolean finished;
     private boolean registrationClosed;
-    private boolean completed;
     private int currentRound;
-    private ArrayList<ArrayList<Match>> roundsOfMatches;        //ArrayLists within roundOfMatches represent a round
-    private Stat winningStat;
-    private HashMap<String, StatValue> rankOfTeams;            //updated Dec 6 by Ocean
-    private HashMap<String, StatValue> winsOfTeams;            //updated Dec 6 by Ocean
+    private ArrayList<Participant> teams;
+    private ArrayList<Stat> stats;
+    private long winningStatID;
+    private boolean completed;
 
-    public Tournament(String name, String type, ArrayList<Participant> participants, int maxSize) {
-        this(name, type, participants, maxSize, -1);
-    }
-
-    public Tournament(String name, String type, ArrayList<Participant> participants, int maxSize, int currentRound) {
+    public Tournament(String name, String type, int maxSize) {
         this.name = name;
         this.type = type;
-        this.participants = new ArrayList<>(participants.size());
-        this.participants.addAll(participants);
         this.maxSize = maxSize;
-        roundsOfMatches = new ArrayList<>();
-        this.currentRound = currentRound;
-        rankOfTeams = new HashMap<>(participants.size());
-        winsOfTeams = new HashMap<>(participants.size());
-        for (Participant participant : participants) {
-            // 0 means that there is no (int)rank assigned yet
-            rankOfTeams.put(name + ": " + participant.getName(), new StatValue(name, participant.getName(), 0));
-            winsOfTeams.put(name + ": " + participant.getName(), new StatValue(name, participant.getName(), 0));
-        }
+        teams = new ArrayList<>(maxSize);
+        stats = new ArrayList<>();
+        currentRound = 1;
+    }
+
+    public Tournament(Cursor cursor) {
+        name = cursor.getString(cursor.getColumnIndex(DBColumns.NAME));
+        type = cursor.getString(cursor.getColumnIndex(DBColumns.TYPE));
+        maxSize = cursor.getInt(cursor.getColumnIndex(DBColumns.MAX_SIZE));
+        teams = new ArrayList<>(maxSize);
+        stats = new ArrayList<>();
+        currentRound = cursor.getInt(cursor.getColumnIndex(DBColumns.CURRENT_ROUND));
+        finished = cursor.getInt(cursor.getColumnIndex(DBColumns.FINISHED)) == 1;
+        registrationClosed = cursor.getInt(cursor.getColumnIndex(DBColumns.REGISTRATION_CLOSED)) == 1;
     }
 
     public String getName() {
@@ -61,155 +56,70 @@ public class Tournament {
     }
 
     public ArrayList<Participant> getTeams() {
-        return participants;
+        return teams;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public void addTeam(Participant participant) {
+        teams.add(participant);
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void addTeams(ArrayList<Participant> participants) {
+        teams.addAll(participants);
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public ArrayList<Stat> getStats() {
+        return stats;
     }
 
-    public boolean isRegistrationClosed() {
-        return registrationClosed;
+    public void addStat(Stat stat, boolean winningStat) {
+        stats.add(stat);
+        if (winningStat) {
+            winningStatID = stat.getID();
+        }
     }
 
-    public void setRegistrationClosed(boolean registrationClosed) {
-        this.registrationClosed = registrationClosed;
+    public void addStats(ArrayList<Stat> stats, int winningStatIndex) {
+        this.stats.addAll(stats);
+        if (winningStatIndex != -1) {
+            winningStatID = stats.get(winningStatIndex).getID();
+        }
+    }
+
+    public long getWinningStatID() {
+        return winningStatID;
     }
 
     public int getCurrentRound() {
         return currentRound;
     }
 
-    /*  !!!
-    * Amount of qualifiers out of the first round of Combination needs to be specified
-    * Need Stat that will define the standings of the first round of Combination
-    */
-    public void generateNextRoundOfMatches() {
-        Log.d(TAG, "generateNextRoundOfMatches: " + currentRound);
-        if (currentRound == -1) {
-            roundsOfMatches.add(Util.generateMatches(this));
-        } else {
-            //getListOfQualifiers currently only works properly for KnockOut format
-            roundsOfMatches.add(Util.generateMatches(this, Util.getListOfQualifiers(this, getCurrentRoundOfMatches(),
-                    currentRound)));
-        }
+    public void nextRound() {
         currentRound++;
-        TournamentDataSource.getInstance().updateTournament(this);
     }
 
-    public ArrayList<Match> getRoundOfMatches(int round) {
-        return roundsOfMatches.get(round);
-    }
-
-    public ArrayList<Match> getCurrentRoundOfMatches() {
-        return roundsOfMatches.get(currentRound);
-    }
-
-    public ArrayList<Match> getCurrentRoundOfActiveMatches() {
-        ArrayList<Match> activeMatches = new ArrayList<>();
-        for (Match match : getCurrentRoundOfMatches()) {
-            if (!match.isCompleted())
-                activeMatches.add(match);
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Tournament) {
+            Tournament tournament = (Tournament) o;
+            return tournament.name.equals(name);
         }
-        return activeMatches;
+        return false;
     }
 
-    public ArrayList<Match> getInactiveMatches() {
-        ArrayList<Match> inactiveMatches = new ArrayList<>();
-        for (ArrayList<Match> matches : getMatches()) {
-            for (Match match : matches) {
-                if (match != null && match.isCompleted())
-                    inactiveMatches.add(match);
-            }
-        }
-        return inactiveMatches;
+    public void closeRegistration(boolean registrationClosed) {
+        this.registrationClosed = registrationClosed;
     }
 
-    public Stat getWinningStat() {
-        return winningStat;
+    public boolean isCompleted() {
+        return completed;
     }
 
-    public void setWinningStat(Stat winningStat) {
-        this.winningStat = winningStat;
+    public boolean isRegistrationClosed() {
+        return registrationClosed;
     }
 
-    public ArrayList<ArrayList<Match>> getMatches() {
-        return roundsOfMatches;
-    }
-
-    public void addRoundsOfMatches(ArrayList<ArrayList<Match>> matches) {
-        roundsOfMatches.addAll(matches);
-    }
-
-    //updated Dec 6 by Ocean
-    public int getRankingOf(Team team) {
-        return rankOfTeams.get(name + ": " + team.getName()).getValue();
-    }
-
-    //updated Dec 6 by Ocean
-    public void updateRankOf(Team team) {
-        winsOfTeams.put(name + ": " + team.getName(), new StatValue(name, team.getName(), winsOfTeams.get(name + ": " +
-                team.getName()).getValue() + 1)); //updates the amount of wins that team has
-        updateRanksOfAll();
-    }
-
-    //updated Dec 6 by Ocean
-    public void updateRanksOfAll() {
-        MultiMap<Integer, Participant> teamsScores = new MultiMap<>();
-        int[] wins = new int[participants.size()];
-        List<Participant> listFromTeamsScores;
-
-        for (Participant currentParticipant: participants) {
-            teamsScores.put(winsOfTeams.get(name + ": " + currentParticipant.getName()).getValue(), currentParticipant);
-            wins[participants.indexOf(currentParticipant)] = winsOfTeams.get(name + ": " + currentParticipant.getName()).getValue();
-        }
-
-        int swap;
-        for (int c = 0; c < (wins.length - 1); c++) {
-            for (int d = 0; d < wins.length - c - 1; d++) {
-                if (wins[d] < wins[d + 1]) /* For descending order use < */ {
-                    swap = wins[d];
-                    wins[d] = wins[d + 1];
-                    wins[d + 1] = swap;
-                }
-            }
-        }
-
-        for (int arbitraryIndex = 0; arbitraryIndex < wins.length; arbitraryIndex++) {
-            if (arbitraryIndex > 0 && wins[arbitraryIndex - 1] == wins[arbitraryIndex]) {
-                continue;
-            }
-            listFromTeamsScores = teamsScores.get(wins[arbitraryIndex]);
-            for (int i = 0; i < listFromTeamsScores.size(); i++) {
-                String teamName = listFromTeamsScores.get(i).getName();
-                rankOfTeams.put(name + ": " + teamName, new StatValue(name, teamName, arbitraryIndex + 1));
-            }
-        }
-        TournamentDataSource.getInstance().updateTournament(this);
-    }
-
-    public HashMap<String, StatValue> getRankings() {
-        return rankOfTeams;
-    }
-
-    public void setRankings(HashMap<String, StatValue> rankings) {
-        rankOfTeams.putAll(rankings);
-    }
-
-    public HashMap<String, StatValue> getWins() {
-        return winsOfTeams;
-    }
-
-    public void setWins(HashMap<String, StatValue> wins) {
-        winsOfTeams.putAll(wins);
+    @Override
+    public String toString() {
+        return name;
     }
 }

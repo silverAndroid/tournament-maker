@@ -1,16 +1,16 @@
 package kroam.tournamentmaker;
 
-import android.widget.ArrayAdapter;
-
 import java.util.ArrayList;
 
 /**
  * Created by Ocean on 5/18/2016.
  */
-public class Player extends Participant{
+public class Player extends Participant {
     /*
    inherited attributes:
-       private String name
+       private int id
+        private String type
+        private String name
        private ArrayList<Tournament> associatedTournaments
     */
     private static final int EMAIL = 1;
@@ -19,19 +19,21 @@ public class Player extends Participant{
     private String phoneNumber;
     private ArrayList<Team> associatedTeams;
 
-    public Player(String name, String email, String phoneNumber){
+    public Player(String name, String email, String phoneNumber) {
+        super(name);
         super.setName(name);
         this.email = email;
         this.phoneNumber = phoneNumber;
     }
 
-    public Player(String name){
+    public Player(String name) {
         this(name, "N/A", "N/A");
     }
 
-    public Player(String name, String emailOrPhone, int mode){
+    public Player(String name, String emailOrPhone, int mode) {
+        super(name);
         super.setName(name);
-        switch(mode){
+        switch (mode) {
             case EMAIL:
                 setEmail(emailOrPhone);
                 break;
@@ -43,30 +45,39 @@ public class Player extends Participant{
         }
     }
 
-    public String getEmail(){return email;}
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email){this.email = email;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getPhoneNumber(){return phoneNumber;}
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public void setPhoneNumber(String phoneNumber){this.phoneNumber = phoneNumber;}
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-    public void addToTeam(Team t){
-        if(associatedTeams == null) {
+    public void addToTeam(Team t) {
+        if (associatedTeams == null) {
             associatedTeams = new ArrayList<>();
         }
         //Create util method to check that two teams are not in the same tournament
-        {associatedTeams.add(t);}
+        {
+            associatedTeams.add(t);
+        }
         //Add warning: "Player cannot join t. Player is already in the tournament where t is participating"
     }
 
     @Override
     public void removeFromTournament(Tournament t) {
-        if(associatedTournaments == null){
+        if (associatedTournaments == null) {
             //Add Warning: "Player is not participating individually in any tournaments!"
             return;
-        }
-        else if(!associatedTournaments.contains(t)){
+        } else if (!associatedTournaments.contains(t)) {
             //Add Warning: "Player is not in tournament 't'"
             return;
         }
@@ -75,8 +86,10 @@ public class Player extends Participant{
 
     @Override
     public void addTournament(Tournament t) {
-        if(associatedTournaments == null){ createTournamentList(); }
-        if(associatedTournaments.contains(t)){
+        if (associatedTournaments == null) {
+            createTournamentList();
+        }
+        if (associatedTournaments.contains(t)) {
             //Add Warning: "Player is already in tournament t"
 
             return;
@@ -86,7 +99,7 @@ public class Player extends Participant{
 
     //Still needs to be changed
     public void addTournaments(ArrayList<Tournament> ts) {
-        for(Tournament t : ts){
+        for (Tournament t : ts) {
             addTournament(t);
         }
     }
