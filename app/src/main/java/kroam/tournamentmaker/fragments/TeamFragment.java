@@ -59,7 +59,7 @@ public class TeamFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
         Intent intent = new Intent(getContext(), TeamCreateActivity.class);
-        intent.putExtra("name", teams.get(position).getName());
+        intent.putExtra("id", teams.get(position).getID());
         startActivity(intent);
     }
 
