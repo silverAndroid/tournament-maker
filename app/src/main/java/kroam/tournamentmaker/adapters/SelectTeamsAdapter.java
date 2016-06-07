@@ -7,8 +7,11 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
+import kroam.tournamentmaker.Participant;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 
@@ -18,23 +21,20 @@ import kroam.tournamentmaker.Team;
 public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.TeamViewHolder> {
 
     private ArrayList<Team> teams;
+    private HashSet<Integer> selectedTeamIDs;
 
-    public SelectTeamsAdapter(ArrayList<Team> teams, ArrayList<Team> selectedTeams) {
+    public SelectTeamsAdapter(ArrayList<Team> teams, ArrayList<Participant> participants) {
         this.teams = new ArrayList<>(teams.size());
-        for (Team selectedTeam : selectedTeams) {
-            for (Team team : teams) {
-                if (team.getName().equals(selectedTeam.getName())) {
-                    team.setSelected(1);
-                    break;
-                }
-            }
+        selectedTeamIDs = new HashSet<>();
+        for (Participant participant: participants) {
+            selectedTeamIDs.add(participant.getID());
         }
         this.teams.addAll(teams);
     }
 
     @Override
     public TeamViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.select_team_row, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_select_team, parent, false);
         return new TeamViewHolder(v);
     }
 
@@ -48,10 +48,10 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         return teams.size();
     }
 
-    public ArrayList<Team> getSelectedTeams() {
-        ArrayList<Team> selectedTeams = new ArrayList<>();
+    public ArrayList<Participant> getSelectedTeams() {
+        ArrayList<Participant> selectedTeams = new ArrayList<>();
         for (Team team : teams) {
-            if (team.isSelected() == 1) {
+            if (selectedTeamIDs.contains(team.getID())) {
                 selectedTeams.add(team);
             }
         }
@@ -80,7 +80,7 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
             chkTeam.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    team.setSelected(isChecked ? 1 : 0);
+                    selectedTeamIDs.add(team.getID());
                 }
             });
         }
@@ -88,7 +88,7 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         public void setTeam(Team team) {
             this.team = team;
             chkTeam.setText(team.getName());
-            chkTeam.setChecked(team.isSelected() == 1);
+            chkTeam.setChecked(selectedTeamIDs.contains(team.getID()));
         }
     }
 }

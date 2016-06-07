@@ -29,13 +29,13 @@ public class ScheduleAdapter extends ArrayAdapter<Match> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.upcoming_match_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_upcoming_match, parent, false);
         }
 
         MatchViewHolder holder = new MatchViewHolder(convertView);
         Match match = matches.get(position);
-        holder.team1.setText(match.getHomeTeam().getName());
-        holder.team2.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
+        /*holder.team1.setText(match.getHomeTeam().getName());
+        holder.team2.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());*/
 
         return convertView;
     }

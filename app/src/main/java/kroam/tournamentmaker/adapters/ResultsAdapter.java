@@ -29,12 +29,12 @@ public class ResultsAdapter extends ArrayAdapter<Match> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.result_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_result, parent, false);
         }
 
         ResultViewHolder holder = new ResultViewHolder(convertView);
         Match match = matches.get(position);
-        holder.homeTeam.setText(match.getHomeTeam().getName());
+        /*holder.homeTeam.setText(match.getHomeTeam().getName());
         holder.awayTeam.setText(match.getAwayTeam() == null ? "" : match.getAwayTeam().getName());
         if (match.getAwayTeam() == null) {
             holder.awayTeam.setText("won by default since there was no one to pair this team with!");
@@ -45,7 +45,7 @@ public class ResultsAdapter extends ArrayAdapter<Match> {
         } else {
             holder.homeTeamWinStat.setText(String.format("%d", match.getHomeScore()));
             holder.awayTeamWinStat.setText(String.format("%d", match.getAwayScore()));
-        }
+        }*/
         return convertView;
     }
 

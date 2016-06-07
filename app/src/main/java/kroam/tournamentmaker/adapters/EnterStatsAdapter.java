@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Stat;
-import kroam.tournamentmaker.StatValue;
 import kroam.tournamentmaker.Tournament;
 
 /**
@@ -32,24 +31,24 @@ public class EnterStatsAdapter extends RecyclerView.Adapter<EnterStatsAdapter.St
         this.tournament = tournament;
         this.stats = new ArrayList<>();
         this.stats.addAll(stats);
-        Stat winningStat = tournament.getWinningStat();
+        /*Stat winningStat = tournament.getWinningStat();
         for (int i = 0; i < stats.size(); i++) {
             if (stats.get(i).getKey().equals(winningStat.getKey())) {
                 winningStatPosition = i;
                 break;
             }
-        }
+        }*/
     }
 
     @Override
     public StatsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.game_stats_row, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_game_stats, parent, false);
         return new StatsViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(StatsViewHolder holder, int position) {
-        holder.stat.setText(stats.get(position).getKey());
+//        holder.stat.setText(stats.get(position).getKey());
     }
 
     @Override
@@ -61,9 +60,9 @@ public class EnterStatsAdapter extends RecyclerView.Adapter<EnterStatsAdapter.St
         return stats;
     }
 
-    public int[] getScores() {
+    /*public int[] getScores() {
         return new int[]{match.getHomeScore(), match.getAwayScore()};
-    }
+    }*/
 
     class StatsViewHolder extends RecyclerView.ViewHolder {
 
@@ -91,10 +90,10 @@ public class EnterStatsAdapter extends RecyclerView.Adapter<EnterStatsAdapter.St
                 @Override
                 public void afterTextChanged(Editable s) {
                     int score;
-                    stats.get(getAdapterPosition()).addValue(new StatValue(tournament.getName(), match.getHomeTeam()
+                    /*stats.get(getAdapterPosition()).addValue(new StatValue(tournament.getName(), match.getHomeTeam()
                             .getName(), score = s.toString().equals("") ? -1 : Integer.parseInt(s.toString())));
                     if (getAdapterPosition() == winningStatPosition)
-                        match.setHomeScore(score);
+                        match.setHomeScore(score);*/
                 }
             });
 
@@ -112,10 +111,10 @@ public class EnterStatsAdapter extends RecyclerView.Adapter<EnterStatsAdapter.St
                 @Override
                 public void afterTextChanged(Editable s) {
                     int score;
-                    stats.get(getAdapterPosition()).addValue(new StatValue(tournament.getName(), match.getAwayTeam()
+                    /*stats.get(getAdapterPosition()).addValue(new StatValue(tournament.getName(), match.getAwayTeam()
                             .getName(), score = s.toString().equals("") ? -1 : Integer.parseInt(s.toString())));
                     if (getAdapterPosition() == winningStatPosition)
-                        match.setAwayScore(score);
+                        match.setAwayScore(score);*/
                 }
             });
         }

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import kroam.tournamentmaker.Participant;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 
@@ -17,18 +18,17 @@ import kroam.tournamentmaker.Team;
  */
 public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.ViewTeamHolder> {
 
-    private ArrayList<Team> teams;
+    private ArrayList<Participant> teams;
 
-    public ViewTeamsAdapter(ArrayList<Team> teams) {
+    public ViewTeamsAdapter(ArrayList<Participant> teams) {
         this.teams = new ArrayList<>();
-        if (teams.get(0) != null)
+        if (teams.size() > 0)
             this.teams.addAll(teams);
     }
 
     @Override
     public ViewTeamHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_team_row, parent,
-                false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_view_team, parent, false);
         return new ViewTeamHolder(v);
     }
 
@@ -42,7 +42,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
         return teams.size();
     }
 
-    public ArrayList<Team> getSelectedTeams() {
+    public ArrayList<Participant> getSelectedTeams() {
         return teams;
     }
 
@@ -59,7 +59,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
         public ViewTeamHolder(View itemView) {
             super(itemView);
             teamName = (TextView) itemView.findViewById(R.id.txt_team_name);
-            teamName.setSelected(true);
+            teamName.setSelected(true); //TODO: Check what this does
             delete = (ImageButton) itemView.findViewById(R.id.delete);
             delete.setOnClickListener(new View.OnClickListener() {
                 @Override

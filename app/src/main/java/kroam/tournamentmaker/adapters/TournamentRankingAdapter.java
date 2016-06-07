@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.Tournament;
@@ -21,7 +20,8 @@ import kroam.tournamentmaker.Tournament;
 public class TournamentRankingAdapter extends ArrayAdapter<Tournament> {
     private ArrayList<Tournament> tournaments;
     private Team team;
-    public TournamentRankingAdapter(Context context, int resource, List<Tournament> matchList, Team team){
+
+    public TournamentRankingAdapter(Context context, int resource, List<Tournament> matchList, Team team) {
         super(context, resource, matchList);
         this.team = team;
         tournaments = new ArrayList<>();
@@ -31,13 +31,13 @@ public class TournamentRankingAdapter extends ArrayAdapter<Tournament> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.team_ranking_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_team_ranking, parent, false);
         }
 
         TournamentViewHolder holder = new TournamentViewHolder(convertView);
         Tournament tournament = tournaments.get(position);
         holder.tournament.setText(tournament.getName());
-        holder.ranking.setText(tournament.getRankingOf(team));//waiting for ocean's getranking
+//        holder.ranking.setText(tournament.getRankingOf(team));//waiting for ocean's getranking
         return convertView;
     }
 
