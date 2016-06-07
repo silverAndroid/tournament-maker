@@ -2,6 +2,8 @@ package kroam.tournamentmaker;
 
 import android.database.Cursor;
 
+import kroam.tournamentmaker.database.DBColumns;
+
 /**
  * Created by Rushil Perera on 11/23/2015.
  * <p>
@@ -22,7 +24,8 @@ public class Stat {
     }
 
     public Stat(Cursor cursor) {
-
+        id = cursor.getInt(cursor.getColumnIndex(DBColumns.ID));
+        key = cursor.getString(cursor.getColumnIndex(DBColumns.KEY));
     }
 
     public long getID() {
