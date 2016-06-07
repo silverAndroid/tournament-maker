@@ -163,7 +163,7 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
         return connection;
     }
 
-    synchronized void closeDatabase() {
+    public synchronized void closeDatabase() {
         activeDatabaseCount--;
         Log.i(TAG, "closeDatabase: " + activeDatabaseCount);
         if (activeDatabaseCount == 0) {
