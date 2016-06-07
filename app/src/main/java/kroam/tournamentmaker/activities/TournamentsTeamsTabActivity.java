@@ -94,8 +94,7 @@ public class TournamentsTeamsTabActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.instructions) {
-            new AlertDialog.Builder(TournamentsTeamsTabActivity.this)
-                    .setTitle("Instructions")
+            Util.generateDialog(TournamentsTeamsTabActivity.this, "Instructions")
                     .setView(R.layout.instructions)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override

@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Util;
 import kroam.tournamentmaker.fragments.RankingFragment;
 import kroam.tournamentmaker.fragments.ResultFragment;
 import kroam.tournamentmaker.fragments.UpcomingFragment;
@@ -54,8 +55,7 @@ public class UpcomingResultRankingTabActivity extends AppCompatActivity implemen
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.instructions) {
-            new AlertDialog.Builder(UpcomingResultRankingTabActivity.this)
-                    .setTitle("Instructions")
+            Util.generateDialog(UpcomingResultRankingTabActivity.this, "Instructions")
                     .setView(R.layout.instructions)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
