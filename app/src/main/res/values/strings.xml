@@ -27,8 +27,8 @@
     <string name="menu_close_registration">Close Registration</string>
     <string name="instructions">Welcome to the Tournament Maker app ! Here is how you can start creating your very
         own tournament: \n\n1. Navigate to the tournament tab and hit the \'+\' button. \n\n2. Here you will prompted
-        to choose a tournament name, type, teams, stats and size. Don\'t worry if you don\'t have any teams yet, we
-        can create them with the select teams button and clicking on the \'+\' button afterwards. \n\n3. Now select the
+        to choose a tournament name, type, participants, stats and size. Don\'t worry if you don\'t have any participants yet, we
+        can create them with the select participants button and clicking on the \'+\' button afterwards. \n\n3. Now select the
         tournament you have created. The matches have been automatically generated for your tournament. \n\n4. Once a
         match is complete, you may enter the stats and results by clicking on the match and editing it. \n\n5. You may
         view the ranking as the tournament is active in the rankings tab. Teams have a ranking of 0 if they have not
