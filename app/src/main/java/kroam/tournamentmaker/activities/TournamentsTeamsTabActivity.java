@@ -74,15 +74,9 @@ public class TournamentsTeamsTabActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        DatabaseSingleton.getInstance().close();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        DatabaseSingleton.getInstance().close();
+        DatabaseSingleton.getInstance().closeDatabase();
     }
 
     @Override
