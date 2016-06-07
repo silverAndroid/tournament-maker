@@ -63,19 +63,22 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             teamLogo.setOnClickListener(this);
         }
 
-       /* if (getIntent().hasExtra("name")) {
-            Team team = ParticipantsDataSource.getInstance().getTeam(getIntent().getStringExtra("name"));
-            name.setText(team.getName());
-            name.setEnabled(false);
-            captainName.setText(team.getCaptainName());
-            email.setText(team.getCaptainEmail());
-            phoneNumber.setText(team.getPhoneNumber());
-            try {
-                Util.loadImage(teamLogo, Uri.parse(path = team.getLogoPath()), getContentResolver());
-            } catch (SecurityException e) {
-                requestPermissionManageDocuments();
+        if (getIntent().hasExtra("id")) {
+            Team team = ParticipantsDataSource.getInstance().getTeam(getIntent().getIntExtra("id", -1));
+            if (team != null) {
+                name.setText(team.getName());
+                name.setEnabled(false);
+                //TODO: Phase this out and use a similar mechanism to StatsAdapter to select the Captain
+                /*captainName.setText(team.getCaptainName());
+                email.setText(team.getCaptainEmail());
+                phoneNumber.setText(team.getPhoneNumber());*/
+                try {
+                    Util.loadImage(teamLogo, Uri.parse(path = team.getLogoPath()), getContentResolver());
+                } catch (SecurityException e) {
+                    requestPermissionManageDocuments();
+                }
             }
-        }*/
+        }
     }
 
     @Override
