@@ -103,7 +103,11 @@
                     android:textSize="20sp"
                     android:textStyle="bold"/>
 
-                <include layout="@layout/stats_creation"/>
+                <android.support.v7.widget.RecyclerView
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/stats_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -131,8 +135,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/select_teams"/>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/selected_teams"
+                <include
+                    layout="@layout/layout_recyclerview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
