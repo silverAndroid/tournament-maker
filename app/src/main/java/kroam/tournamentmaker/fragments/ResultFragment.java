@@ -1,8 +1,6 @@
 package kroam.tournamentmaker.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +8,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import kroam.tournamentmaker.R;
-import kroam.tournamentmaker.Tournament;
-import kroam.tournamentmaker.adapters.ResultsAdapter;
-import kroam.tournamentmaker.database.MatchDataSource;
-import kroam.tournamentmaker.database.TournamentDataSource;
 
 public class ResultFragment extends ListFragment {
 
@@ -49,8 +43,8 @@ public class ResultFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
-            setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, tournament.getInactiveMatches()));
+            /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
+            setListAdapter(new ResultsAdapter(getContext(), R.layout.row_result, tournament.getInactiveMatches()));*/
         }
     }
 
@@ -58,7 +52,7 @@ public class ResultFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.upcoming_fragment, container, false);
+        return inflater.inflate(R.layout.fragment_upcoming, container, false);
     }
 
     @Override
@@ -67,7 +61,7 @@ public class ResultFragment extends ListFragment {
     }
 
     public void refresh() {
-        Tournament tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
-        setListAdapter(new ResultsAdapter(getContext(), R.layout.result_row, tournament.getInactiveMatches()));
+        /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
+        setListAdapter(new ResultsAdapter(getContext(), R.layout.row_result, tournament.getInactiveMatches()));*/
     }
 }

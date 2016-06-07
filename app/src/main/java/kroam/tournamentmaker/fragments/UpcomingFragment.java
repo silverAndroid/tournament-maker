@@ -1,20 +1,13 @@
 package kroam.tournamentmaker.fragments;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 
@@ -23,9 +16,6 @@ import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.adapters.EnterStatsAdapter;
 import kroam.tournamentmaker.adapters.ScheduleAdapter;
-import kroam.tournamentmaker.database.MatchDataSource;
-import kroam.tournamentmaker.database.StatsDataSource;
-import kroam.tournamentmaker.database.TournamentDataSource;
 
 public class UpcomingFragment extends ListFragment {
 
@@ -59,10 +49,10 @@ public class UpcomingFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            tournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+//            tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
             upcomingMatches = new ArrayList<>();
-            upcomingMatches.addAll(tournament.getCurrentRoundOfActiveMatches());
-            setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches));
+//            upcomingMatches.addAll(tournament.getCurrentRoundOfActiveMatches());
+            setListAdapter(new ScheduleAdapter(getContext(), R.layout.row_upcoming_match, upcomingMatches));
         }
     }
 
@@ -70,7 +60,7 @@ public class UpcomingFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.upcoming_fragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_upcoming, container, false);
         round = (TextView) v.findViewById(R.id.round_name);
         round.setText(String.format("Round %d", tournament.getCurrentRound() + 1));
         return v;
@@ -86,7 +76,7 @@ public class UpcomingFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, final int position, long id) {
         super.onListItemClick(l, v, position, id);
         final EnterStatsAdapter[] adapter = new EnterStatsAdapter[1];
-        AlertDialog dialog = new AlertDialog.Builder(getContext())
+        /*AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Enter Stats")
                 .setView(R.layout.game_stats)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -97,9 +87,9 @@ public class UpcomingFragment extends ListFragment {
                         match.setHomeScore(scores[0]);
                         match.setAwayScore(scores[1]);
                         match.setWinner();
-                        MatchDataSource.getInstance().endMatch(upcomingMatches.get(position));
+                        MatchesDataSource.getInstance().endMatch(upcomingMatches.get(position));
                         StatsDataSource.getInstance().updateStats(adapter[0].getStats());
-                        TournamentDataSource.getInstance().getTournamentFromMatch(match.getId()).updateRankOf(match
+                        TournamentsDataSource.getInstance().getTournamentFromMatch(match.getId()).updateRankOf(match
                                 .getWinner()); //updated Dec 6 by Ocean
                         refresh();
                         if (ResultFragment.getInstance() != null)
@@ -134,21 +124,21 @@ public class UpcomingFragment extends ListFragment {
                         (tournamentName), currentMatch, tournament));
             }
         });
-        dialog.show();
+        dialog.show();*/
     }
 
     public void refresh() {
-        Tournament currentTournament = TournamentDataSource.getInstance().getTournament(tournamentName);
+        /*Tournament currentTournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
         upcomingMatches = currentTournament.getCurrentRoundOfActiveMatches();
         if (upcomingMatches.size() == 0) {
             currentTournament.generateNextRoundOfMatches();
         } else {
-            setListAdapter(new ScheduleAdapter(getContext(), R.layout.upcoming_match_row, upcomingMatches =
+            setListAdapter(new ScheduleAdapter(getContext(), R.layout.row_upcoming_match, upcomingMatches =
                     currentTournament.getCurrentRoundOfActiveMatches()));
             round.setText(String.format("Round %d", tournament.getCurrentRound() + 1));
         }
         if (currentTournament.isCompleted())
-            listener.endTournament();
+            listener.endTournament();*/
 
     }
 

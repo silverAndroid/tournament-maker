@@ -1,5 +1,6 @@
 package kroam.tournamentmaker.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -9,13 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.activities.TeamCreateActivity;
-import kroam.tournamentmaker.database.TeamDataSource;
+import kroam.tournamentmaker.database.ParticipantsDataSource;
 
 public class TeamFragment extends ListFragment {
 
     private static TeamFragment instance;
+    private ArrayList<Team> teams;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -38,15 +43,15 @@ public class TeamFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TeamDataSource.getInstance().getTeams()));
+        setListAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, android.R.id
+                .text1, teams = ParticipantsDataSource.getInstance().getTeams()));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.team_fragment, container, false);
+        return inflater.inflate(R.layout.layout_listview, container, false);
     }
 
     @Override
@@ -54,12 +59,14 @@ public class TeamFragment extends ListFragment {
         super.onListItemClick(l, v, position, id);
 
         Intent intent = new Intent(getContext(), TeamCreateActivity.class);
-        intent.putExtra("name", TeamDataSource.getInstance().getTeams().get(position).getName());
+        intent.putExtra("name", teams.get(position).getName());
         startActivity(intent);
     }
 
     public void refresh() {
-        setListAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, android.R.id.text1,
-                TeamDataSource.getInstance().getTeams()));
+        Context context = getContext();
+        if (context != null)
+            setListAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, android.R.id
+                    .text1, teams = ParticipantsDataSource.getInstance().getTeams()));
     }
 }

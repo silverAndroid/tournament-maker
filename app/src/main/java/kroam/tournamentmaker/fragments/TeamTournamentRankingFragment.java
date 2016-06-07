@@ -12,7 +12,6 @@ import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.adapters.TournamentRankingAdapter;
-import kroam.tournamentmaker.database.TeamDataSource;
 
 /**
  * Created by Kyle on 2015-12-05.
@@ -52,10 +51,10 @@ public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename
         if (getArguments() != null) {
             teamName = getArguments().getString(ARG_PARAM1);
 
-            team = TeamDataSource.getInstance().getTeam(teamName);
+//            team = ParticipantsDataSource.getInstance().getTeam(teamName);
             associatedTournaments = new ArrayList<>();
             associatedTournaments.addAll(team.getAssociatedTournaments());
-            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.team_ranking_row, associatedTournaments, team));
+            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.row_team_ranking, associatedTournaments, team));
         }
     }
 
@@ -63,6 +62,6 @@ public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.tournament_ranking_fragment, container, false);
+        return inflater.inflate(R.layout.layout_listview, container, false);
     }
 }

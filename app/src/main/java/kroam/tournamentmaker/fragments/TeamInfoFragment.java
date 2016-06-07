@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
-import kroam.tournamentmaker.database.TeamDataSource;
+import kroam.tournamentmaker.database.ParticipantsDataSource;
 
 /**
  * Created by Kyle on 2015-12-04.
@@ -50,13 +50,13 @@ public class TeamInfoFragment extends Fragment {
         captainName = (TextView) getView().findViewById(R.id.edit_captain_name);
         phoneNumber = (TextView) getView().findViewById(R.id.edit_phone);
         email = (TextView) getView().findViewById(R.id.edit_email);
-        teamLogo = (ImageButton) getView().findViewById(R.id.btn_team_logo);
+        /*teamLogo = (ImageButton) getView().findViewById(R.id.btn_team_logo);
 
-        Team team = TeamDataSource.getInstance().getTeam(savedInstanceState.getString("name"));
+        Team team = ParticipantsDataSource.getInstance().getTeam(savedInstanceState.getString("name"));
         name.setText(team.getName());
         captainName.setText(team.getCaptainName());
         email.setText(team.getCaptainEmail());
-        phoneNumber.setText(team.getPhoneNumber());
+        phoneNumber.setText(team.getPhoneNumber());*/
     }
 
 
