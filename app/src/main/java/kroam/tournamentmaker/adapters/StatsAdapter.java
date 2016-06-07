@@ -27,16 +27,18 @@ public class StatsAdapter extends RecyclerView.Adapter {
     private boolean onBind;
 
     public StatsAdapter() {
-        stats = new ArrayList<>();
+        this("");
     }
 
     public StatsAdapter(String tournamentName) {
         stats = new ArrayList<>();
         this.tournamentName = tournamentName;
+        winningStatPosition = -1;
     }
 
     public StatsAdapter(ArrayList<Stat> stats) {
         this.stats = new ArrayList<>();
+        winningStatPosition = -1;
         addItems(stats);
     }
 
@@ -89,8 +91,8 @@ public class StatsAdapter extends RecyclerView.Adapter {
     public void addItems(ArrayList<Stat> stats) {
         int initialSize = this.stats.size();
         if (tournamentName != null)
-            for (Stat stat : stats) {
-                stat.setTournamentName(tournamentName);
+            for (int i = 0; i < stats.size(); i++) {
+                stats.get(i).setTournamentName(tournamentName);
             }
         this.stats.addAll(stats);
         notifyItemRangeInserted(initialSize, stats.size());
@@ -102,10 +104,13 @@ public class StatsAdapter extends RecyclerView.Adapter {
     }
 
     public ArrayList<Stat> getItems() {
-        for (Stat stat : stats) {
+        for (int i = 0; i < stats.size(); i++) {
+            Stat stat = stats.get(i);
             //removing empty keys
-            if (stat.getKey().equals(""))
-                stats.remove(stat);
+            if (stat.getKey().equals("") || stat.getKey() == null) {
+                deleteItem(i);
+                i--;
+            }
         }
         return stats;
     }
