@@ -72,4 +72,22 @@ public class ParticipantsDataSource {
             cursor.close();
         return teams;
     }
+
+    public Team getTeam(int teamID) {
+        database = DatabaseSingleton.getInstance().getReadableDatabase();
+        Team team = null;
+        String query = String.format("SELECT p.*, pt.%s FROM %s p JOIN %s pt ON p.%s = pt.%s WHERE p.%s=?",
+                DBColumns.LOGO_PATH, DBTables.PARTICIPANTS_TABLE, DBTables.PARTICIPANTS_TEAMS_TABLE,
+                DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.ID);
+        Log.i(TAG, "getTeam: " + query);
+
+        Cursor cursor = database.rawQuery(query, new String[]{Integer.toString(teamID)});
+        if (cursor.moveToFirst()) {
+            team = new Team(cursor);
+        }
+        if (!cursor.isClosed())
+            cursor.close();
+
+        return team;
+    }
 }
