@@ -12,7 +12,7 @@ public class VectorApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        VectorDrawableCompat.enableResourceInterceptionFor(true, getResources(), R.drawable.account_check, R.drawable
-                .close, R.drawable.information_outline, R.drawable.plus);
+        VectorDrawableCompat.enableResourceInterceptionFor(true, getResources(), R.drawable.account_check,
+                R.drawable.close, R.drawable.information_outline, R.drawable.plus_white);
     }
 }
