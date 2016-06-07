@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +22,9 @@ import android.widget.Toast;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.Util;
-import kroam.tournamentmaker.database.TeamDataSource;
+import kroam.tournamentmaker.database.DBColumns;
+import kroam.tournamentmaker.database.MissingColumnException;
+import kroam.tournamentmaker.database.ParticipantsDataSource;
 
 
 /**
@@ -44,24 +45,26 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.team_creation);
-        Button confirm;
-        Button cancel;
-
-        confirm = (Button) findViewById(R.id.btn_confirm);
-        confirm.setOnClickListener(this);
-
-        cancel = (Button) findViewById(R.id.btn_cancel);
-        cancel.setOnClickListener(this);
-
+        Button confirm = (Button) findViewById(R.id.btn_confirm);
+        Button cancel = (Button) findViewById(R.id.btn_cancel);
         name = (EditText) findViewById(R.id.edit_team_name);
         captainName = (EditText) findViewById(R.id.edit_captain_name);
         phoneNumber = (EditText) findViewById(R.id.edit_phone);
         email = (EditText) findViewById(R.id.edit_email);
         teamLogo = (ImageView) findViewById(R.id.btn_team_logo);
-        teamLogo.setOnClickListener(this);
 
-        if (getIntent().hasExtra("name")) {
-            Team team = TeamDataSource.getInstance().getTeam(getIntent().getStringExtra("name"));
+        if (confirm != null) {
+            confirm.setOnClickListener(this);
+        }
+        if (cancel != null) {
+            cancel.setOnClickListener(this);
+        }
+        if (teamLogo != null) {
+            teamLogo.setOnClickListener(this);
+        }
+
+       /* if (getIntent().hasExtra("name")) {
+            Team team = ParticipantsDataSource.getInstance().getTeam(getIntent().getStringExtra("name"));
             name.setText(team.getName());
             name.setEnabled(false);
             captainName.setText(team.getCaptainName());
@@ -72,7 +75,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             } catch (SecurityException e) {
                 requestPermissionManageDocuments();
             }
-        }
+        }*/
     }
 
     @Override
@@ -90,11 +93,26 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                         }).show();
                 break;
             case R.id.btn_confirm:
-                team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText().toString
-                        (), phoneNumber.getText().toString());
+                team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText
+                        ().toString(), phoneNumber.getText().toString());
                 team.setLogoPath(path);
-                TeamDataSource.getInstance().createTeam(team);
-
+                try {
+                    ParticipantsDataSource.getInstance().createTeam(team);
+                } catch (MissingColumnException e) {
+                    if (e.getMessage().equals(DBColumns.NAME)) {
+                        name.setError("Name cannot be empty!");
+                    } else if (e.getMessage().equals(DBColumns.LOGO_PATH)) {
+                        Util.generateDialog(this, "Error", "Please select a logo!")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                    } else
+                        throw e;
+                    return;
+                }
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("team", team);
                 setResult(RESULT_OK, returnIntent);
@@ -123,12 +141,13 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[]
+            grantResults) {
         if (requestCode == Util.PERMISSION_MANAGE_DOCUMENTS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Util.loadImage(teamLogo, Uri.parse(path), getContentResolver());
             } else {
-                Toast.makeText(getBaseContext(), "Couldn't load team logo!", Toast.LENGTH_SHORT);
+                Toast.makeText(getBaseContext(), "Couldn't load team logo!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -153,7 +172,6 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             intent.setAction(Intent.ACTION_GET_CONTENT);
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), Util
                     .IMAGE_LOCAL_CODE);
-
         }
     }
 
@@ -163,11 +181,9 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             final String permission = Manifest.permission.MANAGE_DOCUMENTS;
             if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-                    new AlertDialog.Builder(activity)
-                            .setTitle("Requesting Permission")
-                            .setMessage("This is being shown because you are constantly denying the permission this " +
-                                    "app needs to use to access your pictures on a separate application like Google " +
-                                    "Drive, Google Photos, etc.")
+                    Util.generateDialog(activity, "Requesting Permission", "This is being shown because you" +
+                            " are constantly denying the permission this app needs to use to access your " +
+                            "pictures on a separate application like Google Drive, Google Photos, etc.")
                             .setPositiveButton("I understand!", new DialogInterface
                                     .OnClickListener() {
                                 @Override

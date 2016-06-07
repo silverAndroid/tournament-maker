@@ -23,12 +23,12 @@ import java.util.List;
 import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Util;
 import kroam.tournamentmaker.database.DatabaseSingleton;
-import kroam.tournamentmaker.database.TournamentDataSource;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 import kroam.tournamentmaker.fragments.TeamFragment;
 import kroam.tournamentmaker.fragments.TournamentFragment;
 
 
-public class Tournaments_Teams_TabActivity extends AppCompatActivity {
+public class TournamentsTeamsTabActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -36,36 +36,53 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tournaments_teams_tabs);
+        setContentView(R.layout.activity_tabs_tournaments_teams);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //COPY PASTA
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        if (tabLayout != null) {
+            tabLayout.setupWithViewPager(viewPager);
+        }
         viewPager.setCurrentItem(getIntent().getIntExtra("tabNumber", 0));
 
         DatabaseSingleton.createInstance(getApplicationContext());
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (viewPager.getCurrentItem()) {
-                    case 0:
-                        //add Intent to Activity to send to create tournament
-                        Intent intent = new Intent(Tournaments_Teams_TabActivity.this, TournamentCreateActivity.class);
-                        startActivityForResult(intent, Util.TOURNAMENT_REQUEST_CODE);
-                        break;
-                    case 1:
-                        //add Intent to Activity to send to create team
-                        intent = new Intent(Tournaments_Teams_TabActivity.this, TeamCreateActivity.class);
-                        startActivityForResult(intent, Util.TEAM_REQUEST_CODE);
-                        break;
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    switch (viewPager.getCurrentItem()) {
+                        case 0:
+                            //add Intent to Activity to send to create tournament
+                            Intent intent = new Intent(TournamentsTeamsTabActivity.this,
+                                    TournamentCreateActivity.class);
+                            startActivityForResult(intent, Util.TOURNAMENT_REQUEST_CODE);
+                            break;
+                        case 1:
+                            //add Intent to Activity to send to create team
+                            intent = new Intent(TournamentsTeamsTabActivity.this, TeamCreateActivity.class);
+                            startActivityForResult(intent, Util.TEAM_REQUEST_CODE);
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DatabaseSingleton.getInstance().close();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        DatabaseSingleton.getInstance().close();
     }
 
     @Override
@@ -77,7 +94,7 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.instructions) {
-            new AlertDialog.Builder(Tournaments_Teams_TabActivity.this)
+            new AlertDialog.Builder(TournamentsTeamsTabActivity.this)
                     .setTitle("Instructions")
                     .setView(R.layout.instructions)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -103,7 +120,8 @@ public class Tournaments_Teams_TabActivity extends AppCompatActivity {
         if (requestCode == Util.TOURNAMENT_REQUEST_CODE) {
             if (resultCode == RESULT_OK)
                 TournamentFragment.getInstance().setListAdapter(new ArrayAdapter<>(this, android.R.layout
-                        .simple_list_item_1, android.R.id.text1, TournamentDataSource.getInstance().getTournaments()));
+                        .simple_list_item_1, android.R.id.text1, TournamentsDataSource.getInstance()
+                        .getTournaments()));
         } else if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK)
                 TeamFragment.getInstance().refresh();
