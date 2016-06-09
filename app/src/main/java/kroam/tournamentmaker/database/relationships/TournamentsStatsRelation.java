@@ -45,4 +45,18 @@ public class TournamentsStatsRelation {
         database.setTransactionSuccessful();
         database.endTransaction();
     }
+
+    public void deleteTournamentStatRelations(String tournamentName) {
+        database = DatabaseSingleton.getInstance().openDatabase();
+        String query = String.format("DELETE FROM %s WHERE %s=?;", DBTables.TOURNAMENTS_STATS_TABLE,
+                columns[0]);
+        Log.i(TAG, "deleteTournamentStatRelations: " + query);
+
+        database.beginTransaction();
+        SQLiteStatement statement = database.compileStatement(query);
+        statement.bindString(1, tournamentName);
+        statement.executeUpdateDelete();
+        database.setTransactionSuccessful();
+        database.endTransaction();
+    }
 }
