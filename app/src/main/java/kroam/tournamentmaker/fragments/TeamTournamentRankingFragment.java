@@ -54,7 +54,8 @@ public class TeamTournamentRankingFragment extends ListFragment {// TODO: Rename
 //            team = ParticipantsDataSource.getInstance().getTeam(teamName);
             associatedTournaments = new ArrayList<>();
             associatedTournaments.addAll(team.getAssociatedTournaments());
-            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.row_team_ranking, associatedTournaments, team));
+            setListAdapter(new TournamentRankingAdapter(getContext(), R.layout.row_team_ranking,
+                    associatedTournaments, team));
         }
     }
 

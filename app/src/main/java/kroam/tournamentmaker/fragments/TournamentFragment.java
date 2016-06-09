@@ -61,7 +61,7 @@ public class TournamentFragment extends ListFragment {
         Intent intent;
         Tournament tournament = tournaments.get(position);
         if (tournament.isCompleted()) {
-            //TODO: Show results in UpcomingResultRankingTabActivity.class
+
         } else {
             if (tournament.isRegistrationClosed())
                 intent = new Intent(getContext(), UpcomingResultRankingTabActivity.class);
