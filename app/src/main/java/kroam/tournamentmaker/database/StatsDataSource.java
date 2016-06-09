@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import kroam.tournamentmaker.Stat;
 
@@ -25,20 +26,27 @@ public class StatsDataSource {
     }
 
     public ArrayList<Stat> addStats(ArrayList<Stat> stats) {
-        database = DatabaseSingleton.getInstance().getWritableDatabase();
+        database = DatabaseSingleton.getInstance().openDatabase();
         String query = String.format("INSERT INTO %s (%s) VALUES (?);", DBTables.STATS_TABLE, columns[1]);
         Log.i(TAG, "addStats: " + query);
 
         database.beginTransaction();
         SQLiteStatement statement = database.compileStatement(query);
         for (int i = 0; i < stats.size(); i++) {
-            statement.bindString(1, stats.get(i).getKey());
-            long rowID = statement.executeInsert();
-            stats.get(i).setID(rowID);
+            if (stats.get(i).getID() == -1) {
+                statement.bindString(1, stats.get(i).getKey());
+                long rowID = statement.executeInsert();
+                stats.get(i).setID(rowID);
+            }
         }
 
         database.setTransactionSuccessful();
         database.endTransaction();
         return stats;
+    }
+
+    private Stat updateStat(Stat stat) {
+        database = DatabaseSingleton.getInstance().openDatabase();
+        return null;
     }
 }
