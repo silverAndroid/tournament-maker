@@ -1,6 +1,7 @@
 package kroam.tournamentmaker.database;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -39,31 +40,47 @@ public class TournamentsDataSource {
         }
 
         database = DatabaseSingleton.getInstance().openDatabase();
-        String query = String.format("INSERT INTO %s (%s, %s, %s) VALUES (?, ?, ?)", DBTables
-                .TOURNAMENTS_TABLE, columns[0], columns[1], columns[2]);
+        String query = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)", DBTables
+                .TOURNAMENTS_TABLE, columns[0], columns[1], columns[2], columns[4]);
+        try {
+            database.beginTransaction();
+            Log.i(TAG, "createTournament: " + query);
+
+            SQLiteStatement statement = database.compileStatement(query);
+            statement.bindString(1, tournament.getName());
+            statement.bindString(2, tournament.getType());
+            statement.bindLong(3, tournament.getMaxSize());
+            statement.bindLong(4, tournament.isRegistrationClosed() ? 1 : 0);
+            statement.executeInsert();
+            database.setTransactionSuccessful();
+        } catch (SQLiteConstraintException e) {
+            updateTournament(tournament);
+        } finally {
+            database.endTransaction();
+        }
+        addRelations(tournament);
+    }
+
+    public void updateTournament(Tournament tournament) {
+        database = DatabaseSingleton.getInstance().openDatabase();
+        String query = String.format("UPDATE %s SET %s=?, %s=?, %s=?, %s=?, %s=? WHERE %s=?", DBTables
+                .TOURNAMENTS_TABLE, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
+                .REGISTRATION_CLOSED, DBColumns.CURRENT_ROUND, DBColumns.NAME);
+        Log.i(TAG, "updateTournament: " + query);
+
         database.beginTransaction();
-        Log.i(TAG, "createTournament: " + query);
-
         SQLiteStatement statement = database.compileStatement(query);
-        statement.bindString(1, tournament.getName());
-        statement.bindString(2, tournament.getType());
-        statement.bindLong(3, tournament.getMaxSize());
-        statement.executeInsert();
-
+        statement.bindString(1, tournament.getType());
+        statement.bindLong(2, tournament.getMaxSize());
+        statement.bindLong(3, tournament.isCompleted() ? 1 : 0);
+        statement.bindLong(4, tournament.isRegistrationClosed() ? 1 : 0);
+        statement.bindLong(5, tournament.getCurrentRound());
+        statement.bindString(6, tournament.getName());
+        statement.executeUpdateDelete();
         database.setTransactionSuccessful();
         database.endTransaction();
-        ArrayList<Stat> stats = tournament.getStats();
-        ArrayList<Participant> participants = tournament.getTeams();
 
-        stats = StatsDataSource.getInstance().addStats(stats);
-        for (Stat stat : stats) {
-            TournamentsStatsRelation.getInstance().createTournamentStatRelation(tournament.getName(), stat
-                    .getID(), tournament.getWinningStatID() == stat.getID());
-        }
-        for (Participant participant : participants) {
-            TournamentsParticipantsRelation.getInstance().createTournamentParticipantRelation(tournament
-                    .getName(), participant.getID());
-        }
+        addRelations(tournament);
     }
 
     public ArrayList<Tournament> getTournaments() {
@@ -81,6 +98,25 @@ public class TournamentsDataSource {
         return tournaments;
     }
 
+    private void addRelations(Tournament tournament) {
+        ArrayList<Stat> stats = tournament.getStats();
+        ArrayList<Participant> participants = tournament.getTeams();
+
+        stats = StatsDataSource.getInstance().addStats(stats);
+        TournamentsStatsRelation.getInstance().deleteTournamentStatRelations(tournament.getName());
+        for (Stat stat : stats) {
+            TournamentsStatsRelation.getInstance().createTournamentStatRelation(tournament.getName(), stat
+                    .getID(), tournament.getWinningStatID() == stat.getID());
+        }
+
+        TournamentsParticipantsRelation.getInstance().deleteTournamentParticipantRelations(tournament
+                .getName());
+        for (Participant participant : participants) {
+            TournamentsParticipantsRelation.getInstance().createTournamentParticipantRelation(tournament
+                    .getName(), participant.getID());
+        }
+    }
+
     private Tournament getRelations(Tournament tournament) {
         String name = tournament.getName();
         StatsIndex statsIndex = getStatsFromTournament(name);
@@ -90,7 +126,6 @@ public class TournamentsDataSource {
     }
 
     private ArrayList<Participant> getTeamsFromTournament(String tournamentName, int maxSize) {
-        //TODO: if maxSize is 1, do query for players instead of teams
         ArrayList<Participant> participants = new ArrayList<>();
         String query = String.format("SELECT p.*, pt.%s FROM %s p JOIN %s pt ON p.%s = pt.%s JOIN %s tp ON " +
                 "p.%s = tp.%s WHERE %s=?;", DBColumns.LOGO_PATH, DBTables.PARTICIPANTS_TABLE, DBTables
