@@ -68,7 +68,6 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
             if (team != null) {
                 name.setText(team.getName());
                 name.setEnabled(false);
-                //TODO: Phase this out and use a similar mechanism to StatsAdapter to select the Captain
                 /*captainName.setText(team.getCaptainName());
                 email.setText(team.getCaptainEmail());
                 phoneNumber.setText(team.getPhoneNumber());*/
@@ -117,7 +116,7 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                     return;
                 }
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("team", team);
+                returnIntent.putExtra("teamID", team.getID());
                 setResult(RESULT_OK, returnIntent);
                 finish();
                 break;
@@ -182,7 +181,8 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             final Activity activity = TeamCreateActivity.this;
             final String permission = Manifest.permission.MANAGE_DOCUMENTS;
-            if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager
+                    .PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
                     Util.generateDialog(activity, "Requesting Permission", "This is being shown because you" +
                             " are constantly denying the permission this app needs to use to access your " +

@@ -33,7 +33,6 @@ import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.database.TournamentsDataSource;
 import kroam.tournamentmaker.fragments.TeamFragment;
 
-//TODO: Redo this entire class
 public class TournamentCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String ROUND_ROBIN = "Round Robin";
@@ -186,10 +185,12 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                /*RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.teams);
-                Team newTeam = (Team) data.getSerializableExtra("team");
+                RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.rv);
+                Team newTeam = ParticipantsDataSource.getInstance().getTeam(data.getIntExtra("teamID", -1));
                 selectTeamsAdapter[0].addTeam(newTeam);
-                selectedTeams.setAdapter(selectTeamsAdapter[0]);*/
+                if (selectedTeams != null) {
+                    selectedTeams.setAdapter(selectTeamsAdapter[0]);
+                }
             }
         }
     }
@@ -221,7 +222,6 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
             public void onShow(DialogInterface dialog) {
                 Dialog view = (Dialog) dialog;
                 RecyclerView teams = (RecyclerView) view.findViewById(R.id.rv);
-//                teams.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getBaseContext()));
                 teams.setLayoutManager(new LinearLayoutManager(getBaseContext()));
                 teams.setAdapter(selectTeamsAdapter[0] = new SelectTeamsAdapter(ParticipantsDataSource
                         .getInstance().getTeams(), viewTeamsAdapter[0].getSelectedTeams()));
