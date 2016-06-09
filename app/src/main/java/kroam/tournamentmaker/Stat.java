@@ -17,10 +17,12 @@ public class Stat {
     private String tournamentName;
 
     public Stat() {
+        id = -1;
     }
 
     public Stat(String key) {
         this.key = key;
+        id = -1;
     }
 
     public Stat(Cursor cursor) {
