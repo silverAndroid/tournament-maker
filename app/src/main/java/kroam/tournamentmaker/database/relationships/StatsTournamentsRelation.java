@@ -13,16 +13,16 @@ import kroam.tournamentmaker.database.MissingColumnException;
 /**
  * Created by silve on 2016-05-24.
  */
-public class TournamentsStatsRelation {
-    private static final String TAG = "TSR";
-    private static TournamentsStatsRelation ourInstance = new TournamentsStatsRelation();
+public class StatsTournamentsRelation {
+    private static final String TAG = "STR";
+    private static StatsTournamentsRelation ourInstance = new StatsTournamentsRelation();
     private SQLiteDatabase database;
     private String[] columns = {DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns.WINNING_STAT};
 
-    private TournamentsStatsRelation() {
+    private StatsTournamentsRelation() {
     }
 
-    public static TournamentsStatsRelation getInstance() {
+    public static StatsTournamentsRelation getInstance() {
         return ourInstance;
     }
 
@@ -32,10 +32,10 @@ public class TournamentsStatsRelation {
         }
 
         database = DatabaseSingleton.getInstance().openDatabase();
-        String query = String.format("INSERT INTO %s VALUES (?, ?, ?)", DBTables.TOURNAMENTS_STATS_TABLE);
-        database.beginTransaction();
+        String query = String.format("INSERT INTO %s VALUES (?, ?, ?)", DBTables.STATS_TOURNAMENTS);
         Log.i(TAG, "createTournamentStatRelation: " + query);
 
+        database.beginTransaction();
         SQLiteStatement statement = database.compileStatement(query);
         statement.bindString(1, tournamentName);
         statement.bindLong(2, statID);
@@ -48,8 +48,7 @@ public class TournamentsStatsRelation {
 
     public void deleteTournamentStatRelations(String tournamentName) {
         database = DatabaseSingleton.getInstance().openDatabase();
-        String query = String.format("DELETE FROM %s WHERE %s=?;", DBTables.TOURNAMENTS_STATS_TABLE,
-                columns[0]);
+        String query = String.format("DELETE FROM %s WHERE %s=?;", DBTables.STATS_TOURNAMENTS, columns[0]);
         Log.i(TAG, "deleteTournamentStatRelations: " + query);
 
         database.beginTransaction();
