@@ -104,7 +104,7 @@ public class MatchesDataSource {
 
     private Match getRelations(Match match, String tournamentName, int round) {
         ArrayList<Participant> participants = new ArrayList<>();
-        HashMap<Integer, Participant> participantHashMap = new HashMap<>();
+        HashMap<Long, Participant> participantHashMap = new HashMap<>();
         participants.addAll(getTeamsForMatch(tournamentName, round));
         for (Participant participant : participants) {
             participantHashMap.put(participant.getID(), participant);
@@ -118,7 +118,7 @@ public class MatchesDataSource {
 
     private Match getRelations(Match match, String tournamentName, int round, boolean finished) {
         ArrayList<Participant> participants = new ArrayList<>();
-        HashMap<Integer, Participant> participantHashMap = new HashMap<>();
+        HashMap<Long, Participant> participantHashMap = new HashMap<>();
         participants.addAll(getTeamsForMatch(tournamentName, round, finished));
         for (Participant participant : participants) {
             participantHashMap.put(participant.getID(), participant);
@@ -173,8 +173,7 @@ public class MatchesDataSource {
         return teams;
     }
 
-    private void getStatsForMatch(String tournamentName, int round, HashMap<Integer, Participant>
-            participants) {
+    private void getStatsForMatch(String tournamentName, int round, HashMap<Long, Participant> participants) {
         database = DatabaseSingleton.getInstance().openDatabase();
         String participantIDColumn = "participant_id";
         String query = String.format("SELECT s.*, sm.%s, p.%s AS %s FROM %s s JOIN %s sm ON s" +
@@ -188,14 +187,14 @@ public class MatchesDataSource {
         if (cursor.moveToFirst()) {
             do {
                 Stat stat = new Stat(cursor);
-                int participantID = cursor.getInt(cursor.getColumnIndex(participantIDColumn));
+                long participantID = cursor.getLong(cursor.getColumnIndex(participantIDColumn));
                 participants.get(participantID).addStat(stat);
             } while (cursor.moveToNext());
         }
         cursor.close();
     }
 
-    private void getStatsForMatch(String tournamentName, int round, HashMap<Integer, Participant>
+    private void getStatsForMatch(String tournamentName, int round, HashMap<Long, Participant>
             participants, boolean finished) {
         database = DatabaseSingleton.getInstance().openDatabase();
         String participantIDColumn = "participant_id";
@@ -212,7 +211,7 @@ public class MatchesDataSource {
         if (cursor.moveToFirst()) {
             do {
                 Stat stat = new Stat(cursor);
-                int participantID = cursor.getInt(cursor.getColumnIndex(participantIDColumn));
+                long participantID = cursor.getLong(cursor.getColumnIndex(participantIDColumn));
                 participants.get(participantID).addStat(stat);
             } while (cursor.moveToNext());
         }

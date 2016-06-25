@@ -24,7 +24,7 @@ public class TournamentsParticipantsRelation {
         return ourInstance;
     }
 
-    public void createTournamentParticipantRelation(String tournamentName, int participantID) {
+    public void createTournamentParticipantRelation(String tournamentName, long participantID) {
         database = DatabaseSingleton.getInstance().openDatabase();
         String query = String.format("INSERT INTO %s (%s, %s) VALUES (?, ?)", DBTables
                 .TOURNAMENTS_PARTICIPANTS, DBColumns.TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID);
