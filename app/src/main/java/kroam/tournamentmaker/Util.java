@@ -9,6 +9,15 @@ import android.support.v7.app.AlertDialog;
 import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import kroam.tournamentmaker.activities.TournamentCreateActivity;
+import kroam.tournamentmaker.database.MatchesDataSource;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 
 /**
  * Created by Rushil Perera on 11/24/2015.
@@ -80,18 +89,20 @@ public class Util {
     * Method currently only does Knockout Format(still requires Round Robin and Combinations)
     *
     */
-    /*public static ArrayList<Match> generateMatches(Tournament tournament) {
-        ArrayList<Team> teams = TournamentsDataSource.getInstance().getTeamsFromTournament(tournament.getName());
+    public static ArrayList<Match> generateMatches(Tournament tournament) {
+        ArrayList<Participant> teams = TournamentsDataSource.getInstance().getTeamsFromTournament(tournament
+                .getName(), tournament.getMaxSize());
         Collections.shuffle(teams);
-        Iterator<Team> teamIterator = teams.listIterator();
+        Iterator<Participant> teamIterator = teams.listIterator();
         ArrayList<Match> matches = new ArrayList<>();
         Match newMatch;
 
         switch (tournament.getType()) {
             case TournamentCreateActivity.KNOCKOUT:
                 while (teamIterator.hasNext()) {
-                    newMatch = new Match(teamIterator.next(), !teamIterator.hasNext() ? null : teamIterator.next(),
-                            UUID.randomUUID().toString());
+                    newMatch = new Match(UUID.randomUUID().toString(), teamIterator.next(), !teamIterator
+                            .hasNext() ? null : teamIterator.next(), tournament.getName(), tournament
+                            .getCurrentRound());
                     matches.add(newMatch);
                     MatchesDataSource.getInstance().createMatch(newMatch);
                 }
@@ -100,7 +111,8 @@ public class Util {
             case TournamentCreateActivity.ROUND_ROBIN:
                 for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
-                        newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
+                        newMatch = new Match(UUID.randomUUID().toString(), teams.get(aTeam), teams.get
+                                (otherTeam), tournament.getName(), tournament.getCurrentRound());
                         matches.add(newMatch);
                         MatchesDataSource.getInstance().createMatch(newMatch);
                     }
@@ -110,7 +122,8 @@ public class Util {
             case TournamentCreateActivity.COMBINATION:
                 for (int aTeam = 0; aTeam < teams.size() - 1; aTeam++) {
                     for (int otherTeam = aTeam + 1; otherTeam < teams.size(); otherTeam++) {
-                        newMatch = new Match(teams.get(aTeam), teams.get(otherTeam), UUID.randomUUID().toString());
+                        newMatch = new Match(UUID.randomUUID().toString(), teams.get(aTeam), teams.get
+                                (otherTeam), tournament.getName(), tournament.getCurrentRound());
                         matches.add(newMatch);
                         MatchesDataSource.getInstance().createMatch(newMatch);
                     }
@@ -120,44 +133,45 @@ public class Util {
             //knockout format.
         }
         return matches;
-
     }
 
-    *//*
-    * Method utilized to generate 2nd+ round of a tournament with Knockout or Combination format
-    * *//*
-    public static ArrayList<Match> generateMatches(Tournament tournament, ArrayList<Team> qualifyingTeams) {
+    /**
+     * Method utilized to generate 2nd+ round of a tournament with Knockout or Combination format
+     */
+    public static ArrayList<Match> generateMatches(Tournament tournament, ArrayList<Participant>
+            qualifyingTeams) {
         Match newMatch;
         ArrayList<Match> matches = new ArrayList<>();
 
         switch (tournament.getType()) {
             case TournamentCreateActivity.ROUND_ROBIN:
-                tournament.setCompleted(true);
+                tournament.setFinished(true);
                 TournamentsDataSource.getInstance().updateTournament(tournament);
             default:
                 if (qualifyingTeams.size() >= 2) {
-                    Iterator<Team> teamIterator = qualifyingTeams.listIterator();
+                    Iterator<Participant> teamIterator = qualifyingTeams.listIterator();
                     while (teamIterator.hasNext()) {
-                        newMatch = new Match(teamIterator.next(), teamIterator.hasNext() ? teamIterator.next() :
-                                null, UUID.randomUUID().toString());
+                        newMatch = new Match(UUID.randomUUID().toString(), teamIterator.next(), teamIterator
+                                .hasNext() ? teamIterator.next() : null, tournament.getName(), tournament
+                                .getCurrentRound());
                         matches.add(newMatch);
                         MatchesDataSource.getInstance().createMatch(newMatch);
                     }
                 } else {
-                    tournament.setCompleted(true);
+                    tournament.setFinished(true);
                     TournamentsDataSource.getInstance().updateTournament(tournament);
                 }
                 return matches;
         }
     }
 
-    public static ArrayList<Team> getListOfQualifiers(Tournament tournament, ArrayList<Match> matches, int
-            currentRound) {
-        ArrayList<Team> winners = new ArrayList<>();
+    /*public static ArrayList<Participant> getListOfQualifiers(Tournament tournament, ArrayList<Match>
+            matches, int currentRound) {
+        ArrayList<Participant> winners = new ArrayList<>();
 
         //qualifiers of the first round (RoundRobin format) of Combination
         if (tournament.getType().equals(TournamentCreateActivity.COMBINATION) && currentRound == 0) {
-            ArrayList<Team> teams = tournament.getTeams();
+            ArrayList<Participant> teams = tournament.getParticipants();
             //positions in this arrays correspond to respective position in the ArrayList<Team> in tournament
             int[] amountOfWins = new int[teams.size()];
             Team[] teamWinInstances = new Team[matches.size()];
@@ -177,13 +191,13 @@ public class Util {
             }
 
             for (int k = 0; k < amountOfWins.length; k++) {
-                mapOfWinsAndTeams.put(amountOfWins[k], tournament.getTeams().get(k));
+                mapOfWinsAndTeams.put(amountOfWins[k], tournament.getParticipants().get(k));
             }
 
             int swap;
             for (int c = 0; c < (amountOfWins.length - 1); c++) {
                 for (int d = 0; d < amountOfWins.length - c - 1; d++) {
-                    if (amountOfWins[d] > amountOfWins[d + 1]) *//* For descending order use < *//* {
+                    if (amountOfWins[d] > amountOfWins[d + 1]) *//*For descending order use <*//*{
                         swap = amountOfWins[d];
                         amountOfWins[d] = amountOfWins[d + 1];
                         amountOfWins[d + 1] = swap;
@@ -192,7 +206,7 @@ public class Util {
             }
 
             //Array that contains the wins of the qualifying teams. Used to get teams that qualify from mapOfWinsAndTeams
-            int[] qualifyingWins = new int[generateNumQualifiers(tournament.getTeams())];
+            int[] qualifyingWins = new int[generateNumQualifiers(tournament.getParticipants())];
             System.arraycopy(amountOfWins, 0, qualifyingWins, 0, qualifyingWins.length);
 
             for (int i = 0; i < qualifyingWins.length; i++) {
@@ -212,9 +226,9 @@ public class Util {
             winners.add(matches.get(aWinner).getWinner());
         }
         return winners;
-    }
+    }*/
 
-    public static int generateNumQualifiers(ArrayList<Team> roundOfRR) {
+    public static int generateNumQualifiers(ArrayList<Participant> roundOfRR) {
         int sizeExponent = 0;
         while (Math.pow(2, sizeExponent) < roundOfRR.size()) {
             sizeExponent++;
@@ -225,5 +239,5 @@ public class Util {
 
     public static int getRankingOf(Team team) {
         return 0;
-    }*/
+    }
 }
