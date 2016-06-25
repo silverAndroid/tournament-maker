@@ -20,11 +20,11 @@ public class DBColumns {
     public static final String WINNING_STAT = "WINNING_STAT";
     public static final String MATCH_ID = "MATCH_ID";
     public static final String PARTICIPANT_ID = "PARTICIPANT_ID";
-    public static final String MATCH_COMPLETED = "MATCH_COMPLETED";
     public static final String SCORE = "SCORE";
     public static final String EMAIL = "EMAIL";
     public static final String PHONE_NUMBER = "PHONE_NUMBER";
     public static final String STAT_KEY = "STAT_KEY";
     public static final String STAT_VALUE = "STAT_VALUE";
     public static final String TEAM_ID = "TEAM_ID";
+    public static final String ROUND = "ROUND";
 }
