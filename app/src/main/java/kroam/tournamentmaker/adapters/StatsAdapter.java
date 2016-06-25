@@ -36,10 +36,9 @@ public class StatsAdapter extends RecyclerView.Adapter {
         winningStatPosition = -1;
     }
 
-    public StatsAdapter(ArrayList<Stat> stats) {
+    public StatsAdapter(ArrayList<Stat> stats, long winningStatID) {
         this.stats = new ArrayList<>();
-        winningStatPosition = -1;
-        addItems(stats);
+        addItems(stats, winningStatID);
     }
 
     @Override
@@ -88,11 +87,13 @@ public class StatsAdapter extends RecyclerView.Adapter {
         notifyItemInserted(stats.size() - 1);
     }
 
-    public void addItems(ArrayList<Stat> stats) {
+    public void addItems(ArrayList<Stat> stats, long winningStatID) {
         int initialSize = this.stats.size();
         if (tournamentName != null)
             for (int i = 0; i < stats.size(); i++) {
                 stats.get(i).setTournamentName(tournamentName);
+                if (stats.get(i).getID() == winningStatID)
+                    winningStatPosition = i;
             }
         this.stats.addAll(stats);
         notifyItemRangeInserted(initialSize, stats.size());
@@ -141,7 +142,9 @@ public class StatsAdapter extends RecyclerView.Adapter {
 
                 @Override
                 public void afterTextChanged(Editable newText) {
-                    stats.set(getAdapterPosition(), new Stat(newText.toString()));
+                    Stat stat = stats.get(getAdapterPosition());
+                    stat.setKey(newText.toString());
+                    stats.set(getAdapterPosition(), stat);
                 }
             });
             winningStatSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
