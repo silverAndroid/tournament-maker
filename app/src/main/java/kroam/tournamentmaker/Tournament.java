@@ -18,17 +18,18 @@ public class Tournament {
     private boolean finished;
     private boolean registrationClosed;
     private int currentRound;
-    private ArrayList<Participant> teams;
+    private ArrayList<Participant> participants;
     private ArrayList<Stat> stats;
+    private ArrayList<Match> matches;
     private long winningStatID;
-    private boolean completed;
 
     public Tournament(String name, String type, int maxSize) {
         this.name = name;
         this.type = type;
         this.maxSize = maxSize;
-        teams = new ArrayList<>(maxSize);
+        participants = new ArrayList<>(maxSize);
         stats = new ArrayList<>();
+        matches = new ArrayList<>();
         currentRound = 1;
     }
 
@@ -36,8 +37,9 @@ public class Tournament {
         name = cursor.getString(cursor.getColumnIndex(DBColumns.NAME));
         type = cursor.getString(cursor.getColumnIndex(DBColumns.TYPE));
         maxSize = cursor.getInt(cursor.getColumnIndex(DBColumns.MAX_SIZE));
-        teams = new ArrayList<>(maxSize);
+        participants = new ArrayList<>(maxSize);
         stats = new ArrayList<>();
+        matches = new ArrayList<>();
         currentRound = cursor.getInt(cursor.getColumnIndex(DBColumns.CURRENT_ROUND));
         finished = cursor.getInt(cursor.getColumnIndex(DBColumns.FINISHED)) == 1;
         registrationClosed = cursor.getInt(cursor.getColumnIndex(DBColumns.REGISTRATION_CLOSED)) == 1;
@@ -55,16 +57,16 @@ public class Tournament {
         return maxSize;
     }
 
-    public ArrayList<Participant> getTeams() {
-        return teams;
+    public ArrayList<Participant> getParticipants() {
+        return participants;
     }
 
-    public void addTeam(Participant participant) {
-        teams.add(participant);
+    public void addParticipant(Participant participant) {
+        participants.add(participant);
     }
 
-    public void addTeams(ArrayList<Participant> participants) {
-        teams.addAll(participants);
+    public void addParticipants(ArrayList<Participant> participants) {
+        this.participants.addAll(participants);
     }
 
     public ArrayList<Stat> getStats() {
@@ -83,6 +85,14 @@ public class Tournament {
         if (winningStatIndex != -1) {
             winningStatID = stats.get(winningStatIndex).getID();
         }
+    }
+
+    public void addMatch(Match match) {
+        matches.add(match);
+    }
+
+    public void addMatches(ArrayList<Match> matches) {
+        this.matches.addAll(matches);
     }
 
     public long getWinningStatID() {
@@ -106,12 +116,16 @@ public class Tournament {
         return false;
     }
 
+    public void closeRegistration() {
+        registrationClosed = true;
+    }
+
     public void closeRegistration(boolean registrationClosed) {
         this.registrationClosed = registrationClosed;
     }
 
     public boolean isCompleted() {
-        return completed;
+        return finished;
     }
 
     public boolean isRegistrationClosed() {
@@ -121,5 +135,9 @@ public class Tournament {
     @Override
     public String toString() {
         return name;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
