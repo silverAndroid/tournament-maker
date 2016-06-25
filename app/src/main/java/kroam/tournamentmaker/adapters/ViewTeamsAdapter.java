@@ -20,7 +20,7 @@ public class ViewTeamsAdapter extends RecyclerView.Adapter<ViewTeamsAdapter.View
 
     private ArrayList<Participant> teams;
 
-    public ViewTeamsAdapter(ArrayList<Participant> teams) {
+    public ViewTeamsAdapter(ArrayList<? extends Participant> teams) {
         this.teams = new ArrayList<>();
         if (teams.size() > 0)
             this.teams.addAll(teams);
