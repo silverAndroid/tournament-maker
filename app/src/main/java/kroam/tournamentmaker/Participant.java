@@ -9,16 +9,19 @@ import java.util.ArrayList;
 public abstract class Participant implements Serializable {
 
     protected ArrayList<Tournament> associatedTournaments;
-    private int id;
+    private ArrayList<Stat> stats;
+    private long id;
     private String name;
 
     public Participant(String name) {
         this.name = name;
+        stats = new ArrayList<>();
     }
 
     public Participant(int id, String name) {
         this.id = id;
         this.name = name;
+        stats = new ArrayList<>();
     }
 
     public String toString() {
@@ -31,6 +34,18 @@ public abstract class Participant implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ArrayList<Stat> getStats() {
+        return stats;
+    }
+
+    public void addStat(Stat stat) {
+        stats.add(stat);
+    }
+
+    public void addStats(ArrayList<Stat> stats) {
+        this.stats.addAll(stats);
     }
 
     public ArrayList<Tournament> getAssociatedTournaments() {
@@ -53,7 +68,7 @@ public abstract class Participant implements Serializable {
 
     public abstract void addTournaments(ArrayList<Tournament> ts);
 
-    public int getID() {
+    public long getID() {
         return id;
     }
 
