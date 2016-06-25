@@ -91,4 +91,23 @@ public class ParticipantsDataSource {
 
         return team;
     }
+
+    public long updateTeam(Team team) {
+        database = DatabaseSingleton.getInstance().openDatabase();
+        String query = String.format("UPDATE %s SET %s=? WHERE %s=?", DBTables.PARTICIPANTS, columns[1],
+                columns[0]);
+        Log.i(TAG, "updateTeam: " + query);
+        long id = team.getID();
+
+        database.beginTransaction();
+        SQLiteStatement statement = database.compileStatement(query);
+        statement.bindString(1, team.getName());
+        statement.bindLong(2, id);
+        statement.executeUpdateDelete();
+        database.setTransactionSuccessful();
+        database.endTransaction();
+        ParticipantsTeamsRelation.getInstance().updateParticipantTeamRelation(id, team.getLogoPath());
+
+        return id;
+    }
 }
