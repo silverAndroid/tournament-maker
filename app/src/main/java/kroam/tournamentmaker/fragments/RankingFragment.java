@@ -44,7 +44,7 @@ public class RankingFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
             /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
-            setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getTeams(), tournament));*/
+            setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getParticipants(), tournament));*/
         }
     }
 
@@ -53,7 +53,7 @@ public class RankingFragment extends ListFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
-        setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getTeams(), tournament));*/
+        setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getParticipants(), tournament));*/
         return inflater.inflate(R.layout.fragment_ranking, container, false);
     }
 
@@ -65,6 +65,6 @@ public class RankingFragment extends ListFragment {
     public void updateRankings(String tournamentName) {
         /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
         if (getContext() != null)
-            setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getTeams(), tournament));*/
+            setListAdapter(new RankingAdapter(getContext(), R.layout.row_ranking, tournament.getParticipants(), tournament));*/
     }
 }
