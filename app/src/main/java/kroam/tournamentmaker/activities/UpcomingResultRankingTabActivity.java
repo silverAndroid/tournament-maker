@@ -17,32 +17,52 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.Util;
+import kroam.tournamentmaker.database.MatchesDataSource;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 import kroam.tournamentmaker.fragments.RankingFragment;
 import kroam.tournamentmaker.fragments.ResultFragment;
 import kroam.tournamentmaker.fragments.UpcomingFragment;
 
 
-public class UpcomingResultRankingTabActivity extends AppCompatActivity implements UpcomingFragment.FinishListener {
+public class UpcomingResultRankingTabActivity extends AppCompatActivity implements UpcomingFragment
+        .FinishListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private String name;
+    private ArrayList<Match> upcomingMatches;
+    private ArrayList<Match> finishedMatches;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs_upcoming_results_ranking);
         name = getIntent().getStringExtra("name");
+        Tournament tournament = TournamentsDataSource.getInstance().getTournament(name);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(name);
+        if (toolbar != null) {
+            toolbar.setTitle(name);
+        }
         setSupportActionBar(toolbar);
+
+        upcomingMatches = new ArrayList<>();
+        upcomingMatches.addAll(MatchesDataSource.getInstance().getMatchesForRound(name, tournament
+                .getCurrentRound(), false));
+        finishedMatches = new ArrayList<>();
+        finishedMatches.addAll(MatchesDataSource.getInstance().getMatchesForRound(name, tournament
+                .getCurrentRound(), true));
+
         //COPY PASTA
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        if (tabLayout != null) {
+            tabLayout.setupWithViewPager(viewPager);
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -70,8 +90,8 @@ public class UpcomingResultRankingTabActivity extends AppCompatActivity implemen
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(UpcomingFragment.newInstance(name), "Upcoming");
-        adapter.addFragment(ResultFragment.newInstance(name), "Results");
+        adapter.addFragment(UpcomingFragment.newInstance(upcomingMatches, name), "Upcoming");
+        adapter.addFragment(ResultFragment.newInstance(finishedMatches, name), "Results");
         adapter.addFragment(RankingFragment.newInstance(name), "Rankings");
         viewPager.setAdapter(adapter);
     }

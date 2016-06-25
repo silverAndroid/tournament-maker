@@ -16,13 +16,13 @@ import kroam.tournamentmaker.R;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.adapters.EnterStatsAdapter;
 import kroam.tournamentmaker.adapters.ScheduleAdapter;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 
 public class UpcomingFragment extends ListFragment {
 
     private static final String ARG_PARAM1 = "tournament_name";
-
+    private static ArrayList<Match> upcomingMatches;
     private String tournamentName;
-    private ArrayList<Match> upcomingMatches;
     private Tournament tournament;
     private FinishListener listener;
     private TextView round;
@@ -34,8 +34,10 @@ public class UpcomingFragment extends ListFragment {
     public UpcomingFragment() {
     }
 
-    public static UpcomingFragment newInstance(String tournamentName) {
+    public static UpcomingFragment newInstance(ArrayList<Match> matches, String tournamentName) {
         UpcomingFragment fragment = new UpcomingFragment();
+        upcomingMatches = new ArrayList<>();
+        upcomingMatches.addAll(matches);
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, tournamentName);
         fragment.setArguments(args);
@@ -49,9 +51,7 @@ public class UpcomingFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-//            tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
-            upcomingMatches = new ArrayList<>();
-//            upcomingMatches.addAll(tournament.getCurrentRoundOfActiveMatches());
+            tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
             setListAdapter(new ScheduleAdapter(getContext(), R.layout.row_upcoming_match, upcomingMatches));
         }
     }
@@ -62,7 +62,7 @@ public class UpcomingFragment extends ListFragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_upcoming, container, false);
         round = (TextView) v.findViewById(R.id.round_name);
-        round.setText(String.format("Round %d", tournament.getCurrentRound() + 1));
+        round.setText(String.format("Round %s", Integer.toString(tournament.getCurrentRound())));
         return v;
     }
 
@@ -89,7 +89,7 @@ public class UpcomingFragment extends ListFragment {
                         match.setWinner();
                         MatchesDataSource.getInstance().endMatch(upcomingMatches.get(position));
                         StatsDataSource.getInstance().updateStats(adapter[0].getStats());
-                        TournamentsDataSource.getInstance().getTournamentFromMatch(match.getId()).updateRankOf(match
+                        TournamentsDataSource.getInstance().getTournamentFromMatch(match.getID()).updateRankOf(match
                                 .getWinner()); //updated Dec 6 by Ocean
                         refresh();
                         if (ResultFragment.getInstance() != null)
@@ -148,7 +148,7 @@ public class UpcomingFragment extends ListFragment {
         try {
             listener = (FinishListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnHeadlineSelectedListener");
+            throw new ClassCastException(context.toString() + " must implement FinishListener");
         }
     }
 

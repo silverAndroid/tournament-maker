@@ -7,12 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+
+import kroam.tournamentmaker.Match;
 import kroam.tournamentmaker.R;
+import kroam.tournamentmaker.Tournament;
+import kroam.tournamentmaker.adapters.ResultsAdapter;
+import kroam.tournamentmaker.database.TournamentsDataSource;
 
 public class ResultFragment extends ListFragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static ResultFragment instance;
+    private static ArrayList<Match> finishedMatches;
 
     private String tournamentName;
 
@@ -23,12 +30,14 @@ public class ResultFragment extends ListFragment {
     public ResultFragment() {
     }
 
-    public static ResultFragment newInstance(String tournamentName) {
+    public static ResultFragment newInstance(ArrayList<Match> matches, String tournamentName) {
         ResultFragment fragment = new ResultFragment();
+        finishedMatches = new ArrayList<>();
+        finishedMatches.addAll(matches);
+        instance = fragment;
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, tournamentName);
         fragment.setArguments(args);
-        instance = fragment;
         return fragment;
     }
 
@@ -43,8 +52,8 @@ public class ResultFragment extends ListFragment {
         if (getArguments() != null) {
             tournamentName = getArguments().getString(ARG_PARAM1);
 
-            /*Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
-            setListAdapter(new ResultsAdapter(getContext(), R.layout.row_result, tournament.getInactiveMatches()));*/
+            Tournament tournament = TournamentsDataSource.getInstance().getTournament(tournamentName);
+            setListAdapter(new ResultsAdapter(getContext(), R.layout.row_result, finishedMatches));
         }
     }
 
