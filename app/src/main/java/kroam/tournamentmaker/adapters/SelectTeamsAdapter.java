@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -21,7 +20,7 @@ import kroam.tournamentmaker.Team;
 public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.TeamViewHolder> {
 
     private ArrayList<Team> teams;
-    private HashSet<Integer> selectedTeamIDs;
+    private HashSet<Long> selectedTeamIDs;
 
     public SelectTeamsAdapter(ArrayList<Team> teams, ArrayList<Participant> participants) {
         this.teams = new ArrayList<>(teams.size());
@@ -48,8 +47,8 @@ public class SelectTeamsAdapter extends RecyclerView.Adapter<SelectTeamsAdapter.
         return teams.size();
     }
 
-    public ArrayList<Participant> getSelectedTeams() {
-        ArrayList<Participant> selectedTeams = new ArrayList<>();
+    public ArrayList<Team> getSelectedTeams() {
+        ArrayList<Team> selectedTeams = new ArrayList<>();
         for (Team team : teams) {
             if (selectedTeamIDs.contains(team.getID())) {
                 selectedTeams.add(team);
