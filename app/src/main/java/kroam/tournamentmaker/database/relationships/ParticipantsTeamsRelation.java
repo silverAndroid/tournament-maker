@@ -43,4 +43,22 @@ public class ParticipantsTeamsRelation {
         database.setTransactionSuccessful();
         database.endTransaction();
     }
+
+    public void updateParticipantTeamRelation(long participantID, String logoPath) {
+        if (!Util.validateColumn(logoPath))
+            throw new MissingColumnException(columns[1]);
+
+        database = DatabaseSingleton.getInstance().openDatabase();
+        String query = String.format("UPDATE %s SET %s=? WHERE %s=?", DBTables.PARTICIPANTS_TEAMS,
+                columns[1], columns[0]);
+        Log.i(TAG, "updateParticipantTeamRelation: " + query);
+
+        database.beginTransaction();
+        SQLiteStatement statement = database.compileStatement(query);
+        statement.bindString(1, logoPath);
+        statement.bindLong(2, participantID);
+        statement.executeUpdateDelete();
+        database.setTransactionSuccessful();
+        database.endTransaction();
+    }
 }
