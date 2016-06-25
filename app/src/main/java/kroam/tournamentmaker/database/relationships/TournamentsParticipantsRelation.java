@@ -4,9 +4,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import java.util.ArrayList;
-
-import kroam.tournamentmaker.Participant;
 import kroam.tournamentmaker.database.DBColumns;
 import kroam.tournamentmaker.database.DBTables;
 import kroam.tournamentmaker.database.DatabaseSingleton;
@@ -30,7 +27,7 @@ public class TournamentsParticipantsRelation {
     public void createTournamentParticipantRelation(String tournamentName, int participantID) {
         database = DatabaseSingleton.getInstance().openDatabase();
         String query = String.format("INSERT INTO %s (%s, %s) VALUES (?, ?)", DBTables
-                .TOURNAMENTS_PARTICIPANTS_TABLE, DBColumns.TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID);
+                .TOURNAMENTS_PARTICIPANTS, DBColumns.TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID);
         database.beginTransaction();
         Log.i(TAG, "createTournamentParticipationRelation: " + query);
 
@@ -45,7 +42,7 @@ public class TournamentsParticipantsRelation {
 
     public void deleteTournamentParticipantRelations(String tournamentName) {
         database = DatabaseSingleton.getInstance().openDatabase();
-        String query = String.format("DELETE FROM %s WHERE %s=?;", DBTables.TOURNAMENTS_PARTICIPANTS_TABLE,
+        String query = String.format("DELETE FROM %s WHERE %s=?;", DBTables.TOURNAMENTS_PARTICIPANTS,
                 columns[0]);
         Log.i(TAG, "deleteTournamentParticipantRelations: " + query);
 

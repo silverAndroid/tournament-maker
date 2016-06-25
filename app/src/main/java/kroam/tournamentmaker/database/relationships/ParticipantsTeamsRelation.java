@@ -31,7 +31,7 @@ public class ParticipantsTeamsRelation {
             throw new MissingColumnException(columns[1]);
 
         database = DatabaseSingleton.getInstance().openDatabase();
-        String query = String.format("INSERT INTO %s VALUES (?, ?)", DBTables.PARTICIPANTS_TEAMS_TABLE);
+        String query = String.format("INSERT INTO %s VALUES (?, ?)", DBTables.PARTICIPANTS_TEAMS);
         database.beginTransaction();
         Log.i(TAG, "createParticipantTeamRelation: " + query);
 

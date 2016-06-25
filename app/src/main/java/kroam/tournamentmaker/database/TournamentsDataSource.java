@@ -1,7 +1,6 @@
 package kroam.tournamentmaker.database;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
@@ -13,8 +12,8 @@ import kroam.tournamentmaker.Stat;
 import kroam.tournamentmaker.Team;
 import kroam.tournamentmaker.Tournament;
 import kroam.tournamentmaker.Util;
+import kroam.tournamentmaker.database.relationships.StatsTournamentsRelation;
 import kroam.tournamentmaker.database.relationships.TournamentsParticipantsRelation;
-import kroam.tournamentmaker.database.relationships.TournamentsStatsRelation;
 
 /**
  * Created by Rushil Perera on 11/22/2015.
@@ -41,30 +40,26 @@ public class TournamentsDataSource {
 
         database = DatabaseSingleton.getInstance().openDatabase();
         String query = String.format("INSERT INTO %s (%s, %s, %s, %s) VALUES (?, ?, ?, ?)", DBTables
-                .TOURNAMENTS_TABLE, columns[0], columns[1], columns[2], columns[4]);
-        try {
-            database.beginTransaction();
-            Log.i(TAG, "createTournament: " + query);
+                .TOURNAMENTS, columns[0], columns[1], columns[2], columns[4]);
+        Log.i(TAG, "createTournament: " + query);
 
-            SQLiteStatement statement = database.compileStatement(query);
-            statement.bindString(1, tournament.getName());
-            statement.bindString(2, tournament.getType());
-            statement.bindLong(3, tournament.getMaxSize());
-            statement.bindLong(4, tournament.isRegistrationClosed() ? 1 : 0);
-            statement.executeInsert();
-            database.setTransactionSuccessful();
-        } catch (SQLiteConstraintException e) {
-            updateTournament(tournament);
-        } finally {
-            database.endTransaction();
-        }
+        database.beginTransaction();
+        SQLiteStatement statement = database.compileStatement(query);
+        statement.bindString(1, tournament.getName());
+        statement.bindString(2, tournament.getType());
+        statement.bindLong(3, tournament.getMaxSize());
+        statement.bindLong(4, tournament.isRegistrationClosed() ? 1 : 0);
+        statement.executeInsert();
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
         addRelations(tournament);
     }
 
     public void updateTournament(Tournament tournament) {
         database = DatabaseSingleton.getInstance().openDatabase();
         String query = String.format("UPDATE %s SET %s=?, %s=?, %s=?, %s=?, %s=? WHERE %s=?", DBTables
-                .TOURNAMENTS_TABLE, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
+                .TOURNAMENTS, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
                 .REGISTRATION_CLOSED, DBColumns.CURRENT_ROUND, DBColumns.NAME);
         Log.i(TAG, "updateTournament: " + query);
 
@@ -86,7 +81,7 @@ public class TournamentsDataSource {
     public ArrayList<Tournament> getTournaments() {
         ArrayList<Tournament> tournaments = new ArrayList<>();
         database = DatabaseSingleton.getInstance().getReadableDatabase();
-        Cursor cursor = database.query(DBTables.TOURNAMENTS_TABLE, columns, null, null, null, null, null);
+        Cursor cursor = database.query(DBTables.TOURNAMENTS, columns, null, null, null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 Tournament tournament = new Tournament(cursor);
@@ -100,12 +95,12 @@ public class TournamentsDataSource {
 
     private void addRelations(Tournament tournament) {
         ArrayList<Stat> stats = tournament.getStats();
-        ArrayList<Participant> participants = tournament.getTeams();
+        ArrayList<Participant> participants = tournament.getParticipants();
 
         stats = StatsDataSource.getInstance().addStats(stats);
-        TournamentsStatsRelation.getInstance().deleteTournamentStatRelations(tournament.getName());
+        StatsTournamentsRelation.getInstance().deleteTournamentStatRelations(tournament.getName());
         for (Stat stat : stats) {
-            TournamentsStatsRelation.getInstance().createTournamentStatRelation(tournament.getName(), stat
+            StatsTournamentsRelation.getInstance().createTournamentStatRelation(tournament.getName(), stat
                     .getID(), tournament.getWinningStatID() == stat.getID());
         }
 
@@ -121,17 +116,16 @@ public class TournamentsDataSource {
         String name = tournament.getName();
         StatsIndex statsIndex = getStatsFromTournament(name);
         tournament.addStats(statsIndex.stats, statsIndex.winningStatIndex);
-        tournament.addTeams(getTeamsFromTournament(name, tournament.getMaxSize()));
+        tournament.addParticipants(getTeamsFromTournament(name, tournament.getMaxSize()));
         return tournament;
     }
 
-    private ArrayList<Participant> getTeamsFromTournament(String tournamentName, int maxSize) {
+    public ArrayList<Participant> getTeamsFromTournament(String tournamentName, int maxSize) {
         ArrayList<Participant> participants = new ArrayList<>();
         String query = String.format("SELECT p.*, pt.%s FROM %s p JOIN %s pt ON p.%s = pt.%s JOIN %s tp ON " +
-                "p.%s = tp.%s WHERE %s=?;", DBColumns.LOGO_PATH, DBTables.PARTICIPANTS_TABLE, DBTables
-                .PARTICIPANTS_TEAMS_TABLE, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBTables
-                .TOURNAMENTS_PARTICIPANTS_TABLE, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns
-                .TOURNAMENT_NAME);
+                "p.%s = tp.%s WHERE %s=?;", DBColumns.LOGO_PATH, DBTables.PARTICIPANTS, DBTables
+                .PARTICIPANTS_TEAMS, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBTables
+                .TOURNAMENTS_PARTICIPANTS, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.TOURNAMENT_NAME);
         Cursor cursor = database.rawQuery(query, new String[]{tournamentName});
         if (cursor.moveToFirst()) {
             do {
@@ -147,8 +141,8 @@ public class TournamentsDataSource {
         ArrayList<Stat> stats = new ArrayList<>();
         int winningStatIndex = 0;
         String query = String.format("SELECT s.*, ts.%s FROM %s s JOIN %s ts ON s.%s = ts.%s WHERE %s=?;",
-                DBColumns.WINNING_STAT, DBTables.STATS_TABLE, DBTables.TOURNAMENTS_STATS_TABLE, DBColumns
-                        .ID, DBColumns.STAT_ID, DBColumns.TOURNAMENT_NAME);
+                DBColumns.WINNING_STAT, DBTables.STATS, DBTables.STATS_TOURNAMENTS, DBColumns.ID, DBColumns
+                        .STAT_ID, DBColumns.TOURNAMENT_NAME);
         Cursor cursor = database.rawQuery(query, new String[]{tournamentName});
         for (int i = 0; cursor.moveToNext(); i++) {
             Stat stat = new Stat(cursor);
@@ -162,8 +156,8 @@ public class TournamentsDataSource {
     }
 
     public Tournament getTournament(String tournamentName) {
-        Cursor cursor = database.query(DBTables.TOURNAMENTS_TABLE, columns, columns[0] + "=?",
-                new String[]{tournamentName}, null, null, null);
+        Cursor cursor = database.query(DBTables.TOURNAMENTS, columns, columns[0] + "=?", new
+                String[]{tournamentName}, null, null, null);
         Tournament tournament = null;
         if (cursor.moveToFirst()) {
             tournament = new Tournament(cursor);
