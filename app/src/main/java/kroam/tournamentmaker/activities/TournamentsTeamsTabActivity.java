@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
+import com.facebook.stetho.Stetho;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class TournamentsTeamsTabActivity extends AppCompatActivity {
         viewPager.setCurrentItem(getIntent().getIntExtra("tabNumber", 0));
 
         DatabaseSingleton.createInstance(getApplicationContext());
+        Stetho.initializeWithDefaults(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
