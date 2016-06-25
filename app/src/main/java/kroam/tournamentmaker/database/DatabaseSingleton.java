@@ -11,70 +11,83 @@ import android.util.Log;
 public class DatabaseSingleton extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "TOURNAMENT_MAKER_DB";
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
     private static final String TAG = "DatabaseSingleton";
 
     private static final String CREATE_TOURNAMENTS_TABLE = String.format("CREATE TABLE %s (%s TEXT PRIMARY " +
-                    "KEY, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL DEFAULT 0, %s INTEGER " +
-                    "NOT NULL DEFAULT 0, %s INTEGER NOT NULL DEFAULT 1);", DBTables.TOURNAMENTS_TABLE,
-            DBColumns.NAME, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
-                    .REGISTRATION_CLOSED, DBColumns.CURRENT_ROUND);
+            "KEY, %s TEXT NOT NULL, %s INTEGER NOT NULL, %s INTEGER NOT NULL DEFAULT 0, %s INTEGER " +
+            "NOT NULL DEFAULT 0, %s INTEGER NOT NULL DEFAULT 1);", DBTables.TOURNAMENTS, DBColumns
+            .NAME, DBColumns.TYPE, DBColumns.MAX_SIZE, DBColumns.FINISHED, DBColumns
+            .REGISTRATION_CLOSED, DBColumns.CURRENT_ROUND);
+
     private static final String CREATE_STATS_TABLE = String.format("CREATE TABLE %s (%s INTEGER PRIMARY KEY" +
-            " AUTOINCREMENT, %s TEXT NOT NULL UNIQUE);", DBTables.STATS_TABLE, DBColumns.ID, DBColumns.KEY);
+            " AUTOINCREMENT, %s TEXT NOT NULL UNIQUE);", DBTables.STATS, DBColumns.ID, DBColumns.KEY);
+
     private static final String CREATE_PARTICIPANTS_TABLE = String.format("CREATE TABLE %s (%s INTEGER " +
-            "PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s TEXT NOT NULL);", DBTables
-            .PARTICIPANTS_TABLE, DBColumns.ID, DBColumns.NAME, DBColumns.TYPE);
+                    "PRIMARY KEY AUTOINCREMENT, %s TEXT NOT NULL, %s TEXT NOT NULL);", DBTables.PARTICIPANTS,
+            DBColumns.ID, DBColumns.NAME, DBColumns.TYPE);
+
     private static final String CREATE_MATCHES_TABLE = String.format("CREATE TABLE %s (%s TEXT, %s INTEGER," +
-                    " %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(%s, %s) FOREIGN KEY (%s) REFERENCES %s " +
-                    "(%s));", DBTables.MATCHES_TABLE, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns
-                    .MATCH_COMPLETED, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID,
-            DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
+                    " %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s " +
+                    "(%s));", DBTables.MATCHES, DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.FINISHED,
+            DBColumns.ID, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID, DBTables.PARTICIPANTS,
+            DBColumns.ID);
+
     private static final String CREATE_TOURNAMENTS_PARTICIPANTS_TABLE = String.format("CREATE TABLE %s (%s " +
                     "TEXT, %s INTEGER, %s INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s " +
-                    "(%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_PARTICIPANTS_TABLE,
+                    "(%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_PARTICIPANTS,
             DBColumns.TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID, DBColumns.RANKING, DBColumns
                     .TOURNAMENT_NAME, DBColumns.PARTICIPANT_ID, DBColumns.TOURNAMENT_NAME, DBTables
-                    .TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.PARTICIPANT_ID, DBTables
-                    .PARTICIPANTS_TABLE, DBColumns.ID);
-    private static final String CREATE_TOURNAMENTS_STATS_TABLE = String.format("CREATE TABLE %s (%s TEXT, " +
+                    .TOURNAMENTS, DBColumns.NAME, DBColumns.PARTICIPANT_ID, DBTables.PARTICIPANTS,
+            DBColumns.ID);
+
+    private static final String CREATE_TOURNAMENTS_MATCHES_TABLE = String.format("CREATE TABLE %s (%s TEXT," +
+                    " %s TEXT, %s INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s (%s), " +
+                    "FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_MATCHES, DBColumns
+                    .TOURNAMENT_NAME, DBColumns.MATCH_ID, DBColumns.ROUND, DBColumns.TOURNAMENT_NAME,
+            DBColumns.MATCH_ID, DBColumns.TOURNAMENT_NAME, DBTables.TOURNAMENTS, DBColumns.NAME,
+            DBColumns.MATCH_ID, DBTables.MATCHES, DBColumns.ID);
+
+    private static final String CREATE_PARTICIPANTS_TEAMS_TABLE = String.format("CREATE TABLE %s (%s " +
+            "INTEGER PRIMARY KEY, %s TEXT, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+            .PARTICIPANTS_TEAMS, DBColumns.PARTICIPANT_ID, DBColumns.LOGO_PATH, DBColumns
+            .PARTICIPANT_ID, DBTables.PARTICIPANTS, DBColumns.ID);
+
+    private static final String CREATE_PARTICIPANTS_PEOPLE_TABLE = String.format("CREATE TABLE %s (%s " +
+            "INTEGER, %s TEXT, %s TEXT, PRIMARY KEY (%s, %s, %s), FOREIGN KEY (%s) REFERENCES %s " +
+            "(%s));", DBTables.PARTICIPANTS_PEOPLE, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns
+            .PHONE_NUMBER, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns.PHONE_NUMBER, DBColumns
+            .PARTICIPANT_ID, DBTables.PARTICIPANTS, DBColumns.ID);
+
+    private static final String CREATE_PEOPLE_TEAMS_TABLE = String.format("CREATE TABLE %s (%s INTEGER, %s " +
+            "INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY (%s) " +
+            "REFERENCES %s (%s));", DBTables.PEOPLE_TEAMS, DBColumns.PARTICIPANT_ID, DBColumns
+            .TEAM_ID, DBColumns.PARTICIPANT_ID, DBColumns.TEAM_ID, DBColumns.PARTICIPANT_ID, DBTables
+            .PARTICIPANTS, DBColumns.ID, DBColumns.TEAM_ID, DBTables.PARTICIPANTS, DBColumns.ID);
+
+    private static final String CREATE_PARTICIPANTS_CAPTAINS_TABLE = String.format("CREATE TABLE %s (%s " +
+            "INTEGER PRIMARY KEY, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+            .PARTICIPANTS_CAPTAINS, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID, DBTables
+            .PARTICIPANTS_PEOPLE, DBColumns.PARTICIPANT_ID);
+
+    private static final String CREATE_STATS_PARTICIPANTS_TABLE = String.format("CREATE TABLE %s (%s " +
+                    "INTEGER, %s INTEGER, %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY " +
+                    "(%s) REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
+                    .STATS_PARTICIPANTS, DBColumns.PARTICIPANT_ID, DBColumns.STAT_ID, DBColumns
+                    .STAT_VALUE, DBColumns.PARTICIPANT_ID, DBColumns.STAT_ID, DBColumns.PARTICIPANT_ID,
+            DBTables.PARTICIPANTS, DBColumns.ID, DBColumns.STAT_ID, DBTables.STATS, DBColumns.ID);
+
+    private static final String CREATE_STATS_TOURNAMENTS_TABLE = String.format("CREATE TABLE %s (%s TEXT, " +
                     "%s INTEGER, %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) " +
                     "REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
-                    .TOURNAMENTS_STATS_TABLE, DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns
+                    .STATS_TOURNAMENTS, DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns
                     .WINNING_STAT, DBColumns.TOURNAMENT_NAME, DBColumns.STAT_ID, DBColumns.TOURNAMENT_NAME,
-            DBTables.TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.STAT_ID, DBTables.STATS_TABLE, DBColumns
-                    .ID);
-    private static final String CREATE_TOURNAMENTS_MATCHES_TABLE = String.format("CREATE TABLE %s (%s TEXT," +
-                    " %s INTEGER, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) REFERENCES %s (%s), FOREIGN KEY " +
-                    "(%s) REFERENCES %s (%s));", DBTables.TOURNAMENTS_MATCHES_TABLE, DBColumns
-                    .TOURNAMENT_NAME, DBColumns.MATCH_ID, DBColumns.TOURNAMENT_NAME, DBColumns.MATCH_ID,
-            DBColumns.TOURNAMENT_NAME, DBTables.TOURNAMENTS_TABLE, DBColumns.NAME, DBColumns.MATCH_ID,
-            DBTables.MATCHES_TABLE, DBColumns.ID);
-    private static final String CREATE_PARTICIPANTS_TEAMS_TABLE = String.format("CREATE TABLE %s (%s " +
-            "INTEGER PRIMARY KEY, %s TEXT NOT NULL, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
-            .PARTICIPANTS_TEAMS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.LOGO_PATH, DBColumns
-            .PARTICIPANT_ID, DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
-    private static final String CREATE_PARTICIPANTS_PEOPLE_TABLE = String.format("CREATE TABLE %s (%s " +
-                    "INTEGER, %s TEXT, %s TEXT, %s INTEGER, PRIMARY KEY (%s, %s, %s, %s), FOREIGN KEY (%s) " +
-                    "REFERENCES %s (%s), FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
-                    .PARTICIPANTS_PEOPLE_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns
-                    .PHONE_NUMBER, DBColumns.TEAM_ID, DBColumns.PARTICIPANT_ID, DBColumns.EMAIL, DBColumns
-                    .PHONE_NUMBER, DBColumns.TEAM_ID, DBColumns.PARTICIPANT_ID, DBTables
-                    .PARTICIPANTS_TABLE, DBColumns.ID, DBColumns.TEAM_ID, DBTables.PARTICIPANTS_TABLE,
-            DBColumns.ID);
-    private static final String CREATE_PARTICIPANTS_CAPTAINS_TABLE = String.format("CREATE TABLE %s (%s " +
-                    "INTEGER PRIMARY KEY, FOREIGN KEY (%s) REFERENCES %s (%s));", DBTables
-                    .PARTICIPANTS_CAPTAINS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns.PARTICIPANT_ID,
-            DBTables.PARTICIPANTS_PEOPLE_TABLE, DBColumns.PARTICIPANT_ID);
-    private static final String CREATE_PARTICIPANTS_STATS_TABLE = String.format("CREATE TABLE %s (%s " +
-            "INTEGER, %s TEXT, %s INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (%s, %s), FOREIGN KEY (%s) " +
-            "REFERENCES %s (%s));", DBTables.PARTICIPANTS_STATS_TABLE, DBColumns.PARTICIPANT_ID, DBColumns
-            .STAT_KEY, DBColumns.STAT_VALUE, DBColumns.PARTICIPANT_ID, DBColumns.STAT_KEY, DBColumns
-            .PARTICIPANT_ID, DBTables.PARTICIPANTS_TABLE, DBColumns.ID);
+            DBTables.TOURNAMENTS, DBColumns.NAME, DBColumns.STAT_ID, DBTables.STATS, DBColumns.ID);
 
     private static DatabaseSingleton instance;
+    private static Context context;
     private int activeDatabaseCount = 0;
     private SQLiteDatabase connection; // always returns the same connection instance
-    private static Context context;
 
     private DatabaseSingleton(Context context) {
         this(context, DB_NAME, null, VERSION);
@@ -112,44 +125,34 @@ public class DatabaseSingleton extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_STATS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_MATCHES_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_PARTICIPANTS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_STATS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_TOURNAMENTS_MATCHES_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_TEAMS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_PEOPLE_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_CAPTAINS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_PARTICIPANTS_STATS_TABLE);
-        Log.d(TAG, "onCreate: " + CREATE_MATCHES_TABLE);
         db.execSQL(CREATE_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_STATS_TABLE);
         db.execSQL(CREATE_PARTICIPANTS_TABLE);
         db.execSQL(CREATE_MATCHES_TABLE);
         db.execSQL(CREATE_TOURNAMENTS_PARTICIPANTS_TABLE);
-        db.execSQL(CREATE_TOURNAMENTS_STATS_TABLE);
+        db.execSQL(CREATE_STATS_TOURNAMENTS_TABLE);
         db.execSQL(CREATE_TOURNAMENTS_MATCHES_TABLE);
         db.execSQL(CREATE_PARTICIPANTS_TEAMS_TABLE);
         db.execSQL(CREATE_PARTICIPANTS_PEOPLE_TABLE);
         db.execSQL(CREATE_PARTICIPANTS_CAPTAINS_TABLE);
-        db.execSQL(CREATE_PARTICIPANTS_STATS_TABLE);
+        db.execSQL(CREATE_STATS_PARTICIPANTS_TABLE);
+        db.execSQL(CREATE_PEOPLE_TEAMS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.STATS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.MATCHES_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_PARTICIPANTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_STATS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_MATCHES_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_TEAMS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_PEOPLE_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_CAPTAINS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_STATS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.STATS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.MATCHES);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_PARTICIPANTS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.STATS_TOURNAMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.TOURNAMENTS_MATCHES);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_TEAMS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_PEOPLE);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PARTICIPANTS_CAPTAINS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.STATS_PARTICIPANTS);
+        db.execSQL("DROP TABLE IF EXISTS " + DBTables.PEOPLE_TEAMS);
         onCreate(db);
     }
 
