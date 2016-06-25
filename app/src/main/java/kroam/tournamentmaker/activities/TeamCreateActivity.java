@@ -33,6 +33,8 @@ import kroam.tournamentmaker.database.ParticipantsDataSource;
 public class TeamCreateActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String RESOURCE_PREFIX = "android.resource://kroam.tournamentmaker/drawable/";
+    private boolean update;
+
     Team team;
     EditText name;
     EditText captainName;
@@ -76,7 +78,12 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                 } catch (SecurityException e) {
                     requestPermissionManageDocuments();
                 }
+                update = true;
+            } else {
+                update = false;
             }
+        } else {
+            update = false;
         }
     }
 
@@ -98,8 +105,13 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                 team = new Team(name.getText().toString(), captainName.getText().toString(), email.getText
                         ().toString(), phoneNumber.getText().toString());
                 team.setLogoPath(path);
+                long id;
                 try {
-                    ParticipantsDataSource.getInstance().createTeam(team);
+                    if (update) {
+                        id = ParticipantsDataSource.getInstance().updateTeam(team);
+                    } else {
+                        id = ParticipantsDataSource.getInstance().createTeam(team);
+                    }
                 } catch (MissingColumnException e) {
                     if (e.getMessage().equals(DBColumns.NAME)) {
                         name.setError("Name cannot be empty!");
@@ -116,8 +128,8 @@ public class TeamCreateActivity extends AppCompatActivity implements View.OnClic
                     return;
                 }
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("teamID", team.getID());
-                setResult(RESULT_OK, returnIntent);
+                returnIntent.putExtra("teamID", id);
+                setResult(id == -1 ? RESULT_CANCELED : RESULT_OK, returnIntent);
                 finish();
                 break;
             case R.id.btn_cancel:
