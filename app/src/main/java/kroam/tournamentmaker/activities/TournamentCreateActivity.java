@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,6 @@ import kroam.tournamentmaker.adapters.ViewTeamsAdapter;
 import kroam.tournamentmaker.database.DBColumns;
 import kroam.tournamentmaker.database.MissingColumnException;
 import kroam.tournamentmaker.database.ParticipantsDataSource;
-import kroam.tournamentmaker.database.StatsDataSource;
 import kroam.tournamentmaker.database.TournamentsDataSource;
 import kroam.tournamentmaker.fragments.TeamFragment;
 
@@ -40,6 +40,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
     public static final String COMBINATION = "Combination";
     private final ViewTeamsAdapter[] viewTeamsAdapter = new ViewTeamsAdapter[1];
     private final SelectTeamsAdapter[] selectTeamsAdapter = new SelectTeamsAdapter[1];
+    private boolean update;
 
     StatsAdapter adapter;
     NumberPicker sizePicker;
@@ -96,6 +97,7 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         viewTeamsAdapter[0] = new ViewTeamsAdapter(new ArrayList<Participant>());
 
         if (getIntent().hasExtra("name")) {
+            update = true;
             String name = getIntent().getStringExtra("name");
             Tournament tournament = TournamentsDataSource.getInstance().getTournament(name);
             this.name.setText(tournament.getName());
@@ -122,11 +124,15 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
             RecyclerView teamNameList = (RecyclerView) findViewById(R.id.rv);
             if (teamNameList != null) {
                 teamNameList.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-                teamNameList.setAdapter(viewTeamsAdapter[0] = new ViewTeamsAdapter(tournament.getTeams()));
+                teamNameList.setAdapter(viewTeamsAdapter[0] = new ViewTeamsAdapter(tournament
+                        .getParticipants()));
             }
             if (stats != null) {
-                stats.setAdapter(adapter = new StatsAdapter(tournament.getStats()));
+                stats.setAdapter(adapter = new StatsAdapter(tournament.getStats(), tournament
+                        .getWinningStatID()));
             }
+        } else {
+            update = false;
         }
     }
 
@@ -186,17 +192,22 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         if (requestCode == Util.TEAM_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 RecyclerView selectedTeams = (RecyclerView) selectDialog.findViewById(R.id.rv);
-                Team newTeam = ParticipantsDataSource.getInstance().getTeam(data.getIntExtra("teamID", -1));
-                selectTeamsAdapter[0].addTeam(newTeam);
-                if (selectedTeams != null) {
-                    selectedTeams.setAdapter(selectTeamsAdapter[0]);
+                Team newTeam = ParticipantsDataSource.getInstance().getTeam(data.getLongExtra("teamID", -1));
+                if (newTeam != null) {
+                    selectTeamsAdapter[0].addTeam(newTeam);
+                    if (selectedTeams != null) {
+                        selectedTeams.setAdapter(selectTeamsAdapter[0]);
+                    }
+                } else {
+                    Toast.makeText(getBaseContext(), "Failed to create team!", Toast.LENGTH_SHORT).show();
                 }
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getBaseContext(), "Failed to create team!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void selectTeams() {
-        //TODO: Fix weird dialog padding issue
         selectDialog = Util.generateDialog(TournamentCreateActivity.this, "Select Teams")
                 .setView(R.layout.select_team_panel)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -238,19 +249,23 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
         selectDialog.show();
     }
 
-    private void saveTournament(boolean registrationCompleted) {
+    private void saveTournament(boolean registrationFinished) {
         String tournamentName = name.getText().toString();
         adapter.setTournamentName(tournamentName);
         int selectedRadioButtonID = typeGroup.getCheckedRadioButtonId();
         String tournamentType = selectedRadioButtonID == R.id.radio_round_robin ? ROUND_ROBIN :
                 selectedRadioButtonID == R.id.radio_knockout ? KNOCKOUT : COMBINATION;
         Tournament tournament = new Tournament(tournamentName, tournamentType, sizePicker.getValue());
-        tournament.closeRegistration(registrationCompleted);
+        tournament.closeRegistration(registrationFinished);
         tournament.addStats(adapter.getItems(), adapter.getWinningStatPosition());
         if (viewTeamsAdapter[0] != null)
-            tournament.addTeams(viewTeamsAdapter[0].getSelectedTeams());
+            tournament.addParticipants(viewTeamsAdapter[0].getSelectedTeams());
         try {
-            TournamentsDataSource.getInstance().createTournament(tournament);
+            if (update) {
+                TournamentsDataSource.getInstance().updateTournament(tournament);
+            } else {
+                TournamentsDataSource.getInstance().createTournament(tournament);
+            }
         } catch (MissingColumnException e) {
             if (e.getMessage().equals(DBColumns.NAME)) {
                 name.setError("Name cannot be empty!");
@@ -260,8 +275,10 @@ public class TournamentCreateActivity extends AppCompatActivity implements View.
                 throw e;
             return;
         }
+        Util.generateMatches(tournament);
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
+        finish();
     }
 
     private void closeRegistration() {
